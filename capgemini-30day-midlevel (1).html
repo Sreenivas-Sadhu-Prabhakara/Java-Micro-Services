@@ -1,0 +1,2149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>30-Day Java Microservices — Capgemini · Mid-Level Track</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Roboto+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+<style>
+:root{
+  --cn:#003D5B;--cb:#0070AD;--cs:#41B6E6;--cc:#00ABDC;
+  --cw:#FFFFFF;--clg:#F4F6F9;--cdg:#2D3748;
+  --lab:#1A4A6B;--note:#1C3A2A;--rubric:#3D1A4A;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--cn);font-family:'Roboto',sans-serif}
+#pres{position:relative;width:100vw;height:100vh;overflow:hidden;cursor:pointer;user-select:none}
+
+/* ── Slides ── */
+.slide{position:absolute;top:0;left:0;width:100%;height:100%;display:none;flex-direction:column;will-change:transform;overflow:hidden}
+.s-dark{background:var(--cn);color:#fff}
+.s-navy{background:#00304A;color:#fff}
+.s-blue{background:var(--cb);color:#fff}
+.s-light{background:var(--clg);color:var(--cdg)}
+.s-white{background:#fff;color:var(--cdg)}
+.s-mid{background:#E8F4FC;color:var(--cdg)}
+
+/* ── Top content zone ── */
+.s-top{flex:1;padding:1.4rem 2.8rem 1rem;overflow:hidden;position:relative}
+.s-top::before{content:'';position:absolute;inset:0;pointer-events:none}
+.s-dark .s-top::before,.s-navy .s-top::before{background-image:radial-gradient(circle,rgba(255,255,255,.035) 1px,transparent 1px);background-size:26px 26px}
+.s-light .s-top::before,.s-white .s-top::before,.s-mid .s-top::before{background-image:radial-gradient(circle,rgba(0,61,91,.045) 1px,transparent 1px);background-size:26px 26px}
+.s-blue .s-top::before{background-image:radial-gradient(circle,rgba(255,255,255,.04) 1px,transparent 1px);background-size:26px 26px}
+
+/* ── Bottom 3-panel strip ── */
+.s-btm{display:grid;grid-template-columns:1fr 1fr 1fr;flex-shrink:0;height:128px;border-top:1px solid rgba(255,255,255,.06)}
+.s-dark .s-btm,.s-navy .s-btm,.s-blue .s-btm{border-top-color:rgba(255,255,255,.08)}
+.s-light .s-btm,.s-white .s-btm,.s-mid .s-btm{border-top-color:rgba(0,61,91,.1)}
+.panel{padding:.65rem 1rem;display:flex;flex-direction:column;gap:.3rem;overflow:hidden}
+.panel+.panel{border-left:1px solid rgba(255,255,255,.06)}
+.s-light .panel+.panel,.s-white .panel+.panel,.s-mid .panel+.panel{border-left-color:rgba(0,61,91,.1)}
+.panel-lab  {background:rgba(0,60,91,.45)}
+.panel-note {background:rgba(0,50,30,.4)}
+.panel-rub  {background:rgba(50,0,80,.35)}
+.s-light  .panel-lab,.s-white .panel-lab,.s-mid .panel-lab  {background:rgba(0,112,173,.07)}
+.s-light  .panel-note,.s-white .panel-note,.s-mid .panel-note{background:rgba(0,100,50,.06)}
+.s-light  .panel-rub,.s-white .panel-rub,.s-mid .panel-rub  {background:rgba(100,0,160,.05)}
+.plabel{font-size:.56rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.15rem}
+.panel-lab  .plabel{color:var(--cs)}
+.panel-note .plabel{color:#4ADE80}
+.panel-rub  .plabel{color:#C084FC}
+.s-light .panel-lab .plabel,.s-white .panel-lab .plabel,.s-mid .panel-lab .plabel{color:var(--cb)}
+.s-light .panel-note .plabel,.s-white .panel-note .plabel,.s-mid .panel-note .plabel{color:#16a34a}
+.s-light .panel-rub .plabel,.s-white .panel-rub .plabel,.s-mid .panel-rub .plabel{color:#7B5EA7}
+.ptext{font-size:.71rem;line-height:1.55;color:rgba(255,255,255,.72)}
+.s-light .ptext,.s-white .ptext,.s-mid .ptext{color:#374151}
+
+/* ── Capgemini header strip ── */
+.cap-strip{height:4px;background:linear-gradient(90deg,var(--cn) 0%,var(--cb) 40%,var(--cs) 70%,var(--cc) 100%);flex-shrink:0}
+
+/* ── Capgemini day badge ── */
+.daybadge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(0,112,173,.18);border:1px solid rgba(65,182,230,.28);border-radius:6px;padding:.22rem .75rem}
+.daybadge-d{font-size:.6rem;font-weight:700;color:var(--cs);text-transform:uppercase;letter-spacing:.1em}
+.daybadge-n{font-size:.62rem;color:rgba(255,255,255,.5)}
+.s-light .daybadge,.s-white .daybadge,.s-mid .daybadge{background:rgba(0,112,173,.08);border-color:rgba(0,112,173,.22)}
+.s-light .daybadge-d,.s-white .daybadge-d,.s-mid .daybadge-d{color:var(--cb)}
+.s-light .daybadge-n,.s-white .daybadge-n,.s-mid .daybadge-n{color:#6B7280}
+
+/* ── Tags ── */
+.tag{display:inline-flex;align-items:center;padding:.16rem .65rem;border-radius:4px;font-size:.6rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;white-space:nowrap}
+.tg-b{background:rgba(0,112,173,.14);color:var(--cb);border:1px solid rgba(0,112,173,.28)}
+.tg-s{background:rgba(65,182,230,.14);color:#1A88B8;border:1px solid rgba(65,182,230,.28)}
+.tg-w{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.22)}
+.tg-g{background:rgba(0,180,120,.12);color:#00875A;border:1px solid rgba(0,180,120,.24)}
+.tg-r{background:rgba(220,53,69,.1);color:#C0392B;border:1px solid rgba(220,53,69,.22)}
+.tg-d{background:rgba(0,61,91,.09);color:var(--cn);border:1px solid rgba(0,61,91,.2)}
+.tg-a{background:rgba(255,152,0,.1);color:#C05000;border:1px solid rgba(255,152,0,.22)}
+.tg-p{background:rgba(160,50,220,.1);color:#7B2FBE;border:1px solid rgba(160,50,220,.2)}
+
+/* ── Cards ── */
+.cd{background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.09);border-radius:9px;padding:.8rem 1rem}
+.cl{background:#fff;border:1px solid rgba(0,61,91,.1);border-radius:9px;padding:.8rem 1rem;box-shadow:0 1px 10px rgba(0,0,0,.06)}
+.cm{background:#EBF5FB;border:1px solid rgba(0,112,173,.13);border-radius:9px;padding:.8rem 1rem}
+
+/* ── Code ── */
+.cb{background:#001E2E;border-radius:9px;padding:.85rem 1rem;font-family:'Roboto Mono',monospace;font-size:.68rem;line-height:1.78;color:#E2E8F0;border:1px solid rgba(0,112,173,.18);overflow:hidden}
+.ck{color:#41B6E6}.cc{color:#7DD3FC}.cs{color:#6EE7B7}.cm_{color:#475569}.ca{color:#C084FC}.ce{color:#FDE68A}.cr{color:#F87171}
+
+/* ── Dividers ── */
+.dv-b{width:44px;height:4px;background:var(--cb);border-radius:2px;display:block}
+.dv-s{width:44px;height:4px;background:var(--cs);border-radius:2px;display:block}
+.dv-w{width:44px;height:4px;background:#fff;border-radius:2px;display:block}
+
+/* ── Nav ── */
+#indicator{position:fixed;bottom:.85rem;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:4px;z-index:200}
+.dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.18);transition:all .3s ease}
+.dot.on{background:var(--cs);transform:scale(1.7)}
+#pg{position:fixed;bottom:.8rem;right:1.8rem;font-size:.62rem;font-weight:700;letter-spacing:.08em;color:rgba(255,255,255,.25);z-index:200}
+#nhint{position:fixed;bottom:.8rem;left:1.8rem;font-size:.6rem;letter-spacing:.06em;color:rgba(255,255,255,.18);z-index:200}
+
+/* ── Print ── */
+@media print{
+  *,*::before,*::after{print-color-adjust:exact!important;-webkit-print-color-adjust:exact!important}
+  @page{size:297mm 210mm landscape;margin:0}
+  html,body{overflow:visible!important;height:auto!important}
+  #pres{overflow:visible!important;height:auto!important}
+  .slide{display:flex!important;position:relative!important;top:auto!important;left:auto!important;width:297mm!important;height:210mm!important;transform:none!important;opacity:1!important;page-break-after:always!important;break-after:page!important}
+  #indicator,#pg,#nhint{display:none!important}
+}
+</style>
+</head>
+<body>
+<div id="pres">
+
+<!-- ══ SLIDE 01: TITLE ══ -->
+<div class="slide s-dark" id="s0">
+  <div class="cap-strip"></div>
+  <div class="s-top" style="display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:1.1rem">
+    <div style="position:absolute;inset:0;background:radial-gradient(circle at 55% 45%,rgba(0,112,173,.13) 0%,transparent 60%);pointer-events:none"></div>
+    <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:1rem">
+      <div style="display:flex;align-items:center;gap:.7rem;background:rgba(0,112,173,.2);border:1px solid rgba(65,182,230,.28);border-radius:8px;padding:.5rem 1.2rem">
+        <svg width="120" height="20" viewBox="0 0 120 20"><circle cx="10" cy="10" r="10" fill="#0070AD"/><text x="10" y="14.5" text-anchor="middle" font-family="Roboto" font-size="10" font-weight="900" fill="white">C</text><text x="28" y="14.5" font-family="Roboto" font-size="12" font-weight="700" fill="white">Capgemini</text></svg>
+        <div style="width:1px;height:16px;background:rgba(255,255,255,.2)"></div>
+        <span style="font-size:.65rem;font-weight:500;color:rgba(255,255,255,.55);letter-spacing:.07em">TECHNOLOGY &amp; ENGINEERING</span>
+      </div>
+      <div>
+        <div style="font-size:.68rem;font-weight:500;color:var(--cs);text-transform:uppercase;letter-spacing:.2em;margin-bottom:.6rem">30-Day Professional Development · Mid-Level Track</div>
+        <h1 style="font-size:3.5rem;font-weight:900;line-height:1.05;color:#fff">Modern Distributed<br><span style="color:var(--cs)">Java Microservices</span></h1>
+        <span class="dv-w" style="margin:.8rem auto 0;display:block"></span>
+      </div>
+      <p style="font-size:.92rem;color:rgba(255,255,255,.55);max-width:600px;line-height:1.7">Daily 1-hour sessions · Java 21 LTS · Spring Boot 3 · BFF → Middleware → System API<br>Docker · PostgreSQL · OWASP · SOLID · Clean Code</p>
+      <div style="display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center">
+        <span class="tag tg-w">Java 21 LTS</span><span class="tag tg-w">Spring Boot 3</span><span class="tag tg-w">Docker Compose</span><span class="tag tg-w">PostgreSQL + JPA</span><span class="tag tg-w">OWASP Top 10</span><span class="tag tg-w">SOLID + Clean Code</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:.6rem;max-width:780px;width:100%">
+        <div style="background:rgba(0,112,173,.18);border:1px solid rgba(65,182,230,.22);border-radius:8px;padding:.55rem;text-align:center"><div style="font-size:.55rem;font-weight:700;color:var(--cs);text-transform:uppercase;letter-spacing:.07em">Programme</div><div style="font-size:.9rem;font-weight:800;color:#fff">CGI-JMS-30</div></div>
+        <div style="background:rgba(0,112,173,.18);border:1px solid rgba(65,182,230,.22);border-radius:8px;padding:.55rem;text-align:center"><div style="font-size:.55rem;font-weight:700;color:var(--cs);text-transform:uppercase;letter-spacing:.07em">Duration</div><div style="font-size:.9rem;font-weight:800;color:#fff">30 Days</div></div>
+        <div style="background:rgba(0,112,173,.18);border:1px solid rgba(65,182,230,.22);border-radius:8px;padding:.55rem;text-align:center"><div style="font-size:.55rem;font-weight:700;color:var(--cs);text-transform:uppercase;letter-spacing:.07em">Format</div><div style="font-size:.9rem;font-weight:800;color:#fff">1 hr/day</div></div>
+        <div style="background:rgba(0,112,173,.18);border:1px solid rgba(65,182,230,.22);border-radius:8px;padding:.55rem;text-align:center"><div style="font-size:.55rem;font-weight:700;color:var(--cs);text-transform:uppercase;letter-spacing:.07em">Audience</div><div style="font-size:.9rem;font-weight:800;color:#fff">Mid-Level</div></div>
+        <div style="background:rgba(0,112,173,.18);border:1px solid rgba(65,182,230,.22);border-radius:8px;padding:.55rem;text-align:center"><div style="font-size:.55rem;font-weight:700;color:var(--cs);text-transform:uppercase;letter-spacing:.07em">Output</div><div style="font-size:.9rem;font-weight:800;color:#fff">Capstone</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="s-btm">
+    <div class="panel panel-lab"><div class="plabel">🔬 Lab Format (Every Day)</div><div class="ptext">Each session ends with a focused 10–15 min lab tied directly to the theory. Labs build on each other — by Day 30, participants have a complete runnable system. No throwaway exercises.</div></div>
+    <div class="panel panel-note"><div class="plabel">📋 Trainer Notes</div><div class="ptext">Target audience: mid-level Java developers (2–5 yrs exp). Assumes OOP, REST basics, and Git proficiency. No reactive programming knowledge required — Virtual Threads replace that need.</div></div>
+    <div class="panel panel-rub"><div class="plabel">📊 Assessment Framework</div><div class="ptext">Each day has a 5-point exit check. Weekly assessments (Days 7, 14, 21). Capstone on Days 27–28. Pass: 70%. Merit: 85%. Distinction: 95%. Scores logged in training record.</div></div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 02: DAY 1 — WHY 3-LAYER ARCHITECTURE ══ -->
+<div class="slide s-white" id="s1">
+  <div class="cap-strip"></div>
+  <div class="s-top">
+    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.7rem;flex-wrap:wrap">
+      <div class="daybadge"><span class="daybadge-d">Day 1</span><span class="daybadge-n">Week 1 · Architecture WHY</span></div>
+      <span class="tag tg-b">SCQA Framework</span><span class="tag tg-d">Minto Pyramid</span>
+    </div>
+    <h2 style="font-size:2.2rem;font-weight:900;color:var(--cn);line-height:1.1">Why a 3-Layer Architecture?</h2>
+    <span class="dv-b" style="margin:.6rem 0 1rem;display:block"></span>
+    <div style="display:grid;grid-template-columns:1.1fr 1fr;gap:1.1rem">
+      <div style="display:flex;flex-direction:column;gap:.7rem">
+        <div class="cl" style="border-left:3px solid var(--cb)">
+          <div style="font-size:.65rem;font-weight:700;color:var(--cb);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.2rem">Situation → Complication</div>
+          <p style="font-size:.84rem;color:#4A5568;line-height:1.55">You know how to build a Spring Boot app. Your monolith works. But as the team grows to 6+ developers, deployment coupling, inability to scale independently, and security boundary collapse become daily problems that slow delivery.</p>
+        </div>
+        <div class="cl" style="border-left:3px solid var(--cs)">
+          <div style="font-size:.65rem;font-weight:700;color:var(--cb);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.2rem">Answer — Conclusion First (Minto)</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem;font-size:.75rem">
+            <div style="background:rgba(0,112,173,.07);border-radius:7px;padding:.5rem;text-align:center"><div style="color:var(--cb);font-weight:700;margin-bottom:.15rem">Layer 1</div><div style="font-weight:800;color:var(--cn)">BFF</div><div style="color:#6B7280;font-size:.68rem">:8080 · Auth · Shape</div></div>
+            <div style="background:rgba(0,171,220,.07);border-radius:7px;padding:.5rem;text-align:center"><div style="color:var(--cc);font-weight:700;margin-bottom:.15rem">Layer 2</div><div style="font-weight:800;color:var(--cn)">Middleware</div><div style="color:#6B7280;font-size:.68rem">:8081 · Orchestrate</div></div>
+            <div style="background:rgba(65,182,230,.07);border-radius:7px;padding:.5rem;text-align:center"><div style="color:var(--cs);font-weight:700;margin-bottom:.15rem">Layer 3</div><div style="font-weight:800;color:var(--cn)">System API</div><div style="color:#6B7280;font-size:.68rem">:8082 · Domain</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="cl">
+        <div style="font-size:.65rem;font-weight:700;color:var(--cb);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem">Responsibility Boundaries — The Non-Negotiable Rules</div>
+        <table style="width:100%;border-collapse:collapse;font-size:.78rem">
+          <thead><tr style="background:var(--cb)"><th style="color:#fff;padding:.35rem .55rem;text-align:left;border-radius:4px 0 0 0">Layer</th><th style="color:#fff;padding:.35rem .55rem;text-align:left">✅ Owns</th><th style="color:#fff;padding:.35rem .55rem;text-align:left;border-radius:0 4px 0 0">⛔ Never</th></tr></thead>
+          <tbody>
+            <tr style="border-bottom:1px solid rgba(0,61,91,.08)"><td style="padding:.32rem .55rem;font-weight:700;color:var(--cb)">BFF</td><td style="padding:.32rem .55rem;color:#4A5568">Auth, shaping, CORS, rate limit</td><td style="padding:.32rem .55rem;color:#C0392B">Business logic, SQL</td></tr>
+            <tr style="border-bottom:1px solid rgba(0,61,91,.08)"><td style="padding:.32rem .55rem;font-weight:700;color:var(--cc)">Middleware</td><td style="padding:.32rem .55rem;color:#4A5568">Fan-out, transform, resilience</td><td style="padding:.32rem .55rem;color:#C0392B">UI logic, DB calls</td></tr>
+            <tr><td style="padding:.32rem .55rem;font-weight:700;color:var(--cs)">System API</td><td style="padding:.32rem .55rem;color:#4A5568">All domain rules, JPA, events</td><td style="padding:.32rem .55rem;color:#C0392B">Client shaping, direct web</td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:.65rem;background:rgba(0,61,91,.04);border-radius:7px;padding:.5rem .65rem;font-size:.76rem;color:#374151;line-height:1.5"><strong style="color:var(--cb)">Mid-level insight:</strong> You've probably seen these concerns mixed together. Naming the boundary explicitly is half the battle. The other half is enforcing it in code review.</div>
+      </div>
+    </div>
+  </div>
+  <div class="s-btm">
+    <div class="panel panel-lab"><div class="plabel">🔬 Day 1 Lab (10 min)</div><div class="ptext">Take your current or most recent project. Draw its request path on paper. Label which concerns belong in BFF vs Middleware vs System API. Identify 3 responsibility violations. Share with a partner — did they find the same ones?</div></div>
+    <div class="panel panel-note"><div class="plabel">📋 Trainer Notes</div><div class="ptext">Mid-level devs will recognise the monolith pain — anchor the conversation to a real project they've worked on. Don't spend time selling microservices; they know the concept. Focus on the WHERE of each concern, not the WHAT.</div></div>
+    <div class="panel panel-rub"><div class="plabel">📊 Exit Check (5 pts)</div><div class="ptext">✦ Names all 3 layers and ports (2 pts) ✦ Correctly assigns at least 4 concerns to the right layer (2 pts) ✦ Identifies at least 1 violation in their own project code (1 pt)</div></div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 03: DAY 2 — JAVA 21 FOR MID-LEVEL DEVS ══ -->
+<div class="slide s-dark" id="s2">
+  <div class="cap-strip"></div>
+  <div class="s-top">
+    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.7rem;flex-wrap:wrap">
+      <div class="daybadge"><span class="daybadge-d">Day 2</span><span class="daybadge-n">Week 1 · Java 21 LTS</span></div>
+      <span class="tag tg-w">Virtual Threads</span><span class="tag tg-w">Records · Sealed · Pattern Match</span>
+    </div>
+    <h2 style="font-size:2.2rem;font-weight:900;color:#fff;line-height:1.1">Java 21 — Stop Writing Java 8 in 2025</h2>
+    <span class="dv-s" style="margin:.6rem 0 1rem;display:block"></span>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+      <div style="display:flex;flex-direction:column;gap:.65rem">
+        <div class="cd" style="border-left:3px solid var(--cs)">
+          <div style="font-size:.65rem;font-weight:700;color:var(--cs);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.2rem">🧵 Virtual Threads — JEP 444</div>
+          <p style="font-size:.81rem;color:rgba(255,255,255,.65);line-height:1.5">Write blocking code, get non-blocking throughput. Millions of threads at near-zero overhead. In Middleware: replace reactive chains with simple <code style="color:#FDE68A">Executors.newVirtualThreadPerTaskExecutor()</code> fan-outs. No WebFlux, no Mono, no Flux.</p>
+        </div>
+        <div class="cd" style="border-left:3px solid var(--cc)">
+          <div style="font-size:.65rem;font-weight:700;color:var(--cc);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.2rem">📝 Records — JEP 395</div>
+          <p style="font-size:.81rem;color:rgba(255,255,255,.65);line-height:1.5">Immutable DTOs in one line. No Lombok @Data needed. Canonical constructor, equals, hashCode, toString — generated. Used for every DTO crossing a layer boundary in our architecture.</p>
+        </div>
+        <div class="cd" style="border-left:3px solid var(--cb)">
+          <div style="font-size:.65rem;font-weight:700;color:var(--cb);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.2rem">🎯 Pattern Match Switch — JEP 441</div>
+          <p style="font-size:.81rem;color:rgba(255,255,255,.65);line-height:1.5">Exhaustive switch on types. Compiler enforces completeness — no unchecked branches. Domain error routing in System API becomes type-safe and compile-verified.</p>
+        </div>
+      </div>
+      <div class="cb">
+        <div style="font-size:.62rem;color:#475569;margin-bottom:.55rem">All 3 features — live code walkthrough</div>
+<span class="cm_">// ① Record DTO — zero boilerplate, immutable</span>
+<span class="ck">public record</span> <span class="cc">UserResponse</span>(String name, String email) {}
+
+<span class="cm_">// ② Sealed class — exhaustive domain errors</span>
+<span class="ck">public sealed interface</span> <span class="cc">Result</span>&lt;T&gt;
+    <span class="ck">permits</span> <span class="cc">Ok</span>, <span class="cc">Err</span> {}
+<span class="ck">public record</span> <span class="cc">Ok</span>&lt;T&gt;(T data) <span class="ck">implements</span> Result&lt;T&gt; {}
+<span class="ck">public record</span> <span class="cc">Err</span>&lt;T&gt;(String msg) <span class="ck">implements</span> Result&lt;T&gt; {}
+
+<span class="cm_">// ③ Pattern match — compiler enforces all cases</span>
+String describe(Result&lt;?&gt; r) {
+  <span class="ck">return switch</span> (r) {
+    <span class="ck">case</span> <span class="cc">Ok</span>&lt;?&gt;  o <span class="ca">-&gt;</span> <span class="cs">"OK: "</span>  + o.data();
+    <span class="ck">case</span> <span class="cc">Err</span>&lt;?&gt; e <span class="ca">-&gt;</span> <span class="cs">"ERR: "</span> + e.msg();
+  };  <span class="cm_">// ← compile error if case is missing</span>
+}
+
+<span class="cm_">// ④ Virtual Threads — parallel fan-out is trivial</span>
+<span class="ck">try</span>(<span class="ck">var</span> ex = Executors.newVirtualThreadPerTaskExecutor()) {
+  <span class="ck">var</span> user  = ex.submit(() <span class="ca">-&gt;</span> userApi.get(id));
+  <span class="ck">var</span> prefs = ex.submit(() <span class="ca">-&gt;</span> prefApi.get(id));
+  <span class="ck">return new</span> <span class="cc">Dashboard</span>(user.get(), prefs.get());
+}  <span class="cm_">// blocking .get() is fine — VTs park, not block OS thread</span>
+      </div>
+    </div>
+  </div>
+  <div class="s-btm">
+    <div class="panel panel-lab"><div class="plabel">🔬 Day 2 Lab (12 min)</div><div class="ptext">① Convert an existing DTO class (8+ fields) to a Record. ② Create a sealed Result&lt;T&gt; hierarchy with Ok/Err. ③ Refactor an if-instanceof chain to a pattern-match switch. Verify the compiler rejects an incomplete switch.</div></div>
+    <div class="panel panel-note"><div class="plabel">📋 Trainer Notes</div><div class="ptext">Mid-level devs may be familiar with Lombok. Emphasise that Records are a language-level feature — no annotation processor, no byte-code manipulation. The "compiler errors on missing case" point is the key insight for sealed classes.</div></div>
+    <div class="panel panel-rub"><div class="plabel">📊 Exit Check (5 pts)</div><div class="ptext">✦ Record compiles with correct canonical constructor (1 pt) ✦ Sealed interface permits correct subclasses (2 pts) ✦ Pattern match switch is exhaustive — no default needed (2 pts)</div></div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 04: DAY 3 — SPRING BOOT 3 DEEP CONFIG ══ -->
+<div class="slide s-light" id="s3">
+  <div class="cap-strip"></div>
+  <div class="s-top">
+    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.7rem;flex-wrap:wrap">
+      <div class="daybadge"><span class="daybadge-d">Day 3</span><span class="daybadge-n">Week 1 · Spring Boot 3</span></div>
+      <span class="tag tg-b">Auto-config · Profiles · RestClient</span>
+    </div>
+    <h2 style="font-size:2.2rem;font-weight:900;color:var(--cn);line-height:1.1">Spring Boot 3 — Configuration Done Right</h2>
+    <span class="dv-b" style="margin:.6rem 0 1rem;display:block"></span>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.9rem">
+      <div class="cl">
+        <div style="font-size:.62rem;font-weight:700;color:var(--cb);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.35rem">🔧 Profiles + Config Hierarchy</div>
+        <div style="font-family:'Roboto Mono',monospace;font-size:.68rem;background:#001E2E;border-radius:7px;padding:.65rem;color:#E2E8F0;line-height:1.75;border:1px solid rgba(0,112,173,.18)">
+<span style="color:#41B6E6">spring.profiles.active</span>: dev
+
+<span style="color:#6EE7B7"># application.yml (base)</span>
+<span style="color:#41B6E6">server.port</span>: 8080
+<span style="color:#41B6E6">spring.jpa.ddl-auto</span>: validate
+
+<span style="color:#6EE7B7"># application-dev.yml (override)</span>
+<span style="color:#41B6E6">spring.jpa.show-sql</span>: true
+<span style="color:#41B6E6">logging.level.root</span>: DEBUG
+
+<span style="color:#6EE7B7"># application-prod.yml (secure)</span>
+<span style="color:#41B6E6">spring.datasource.url</span>: <span style="color:#F87171">${DATABASE_URL}</span>
+        </div>
+      </div>
+      <div class="cl">
+        <div style="font-size:.62rem;font-weight:700;color:var(--cb);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.35rem">🌐 RestClient (New in 3.2)</div>
+        <p style="font-size:.79rem;color:#4A5568;line-height:1.5;margin-bottom:.5rem">Replaces RestTemplate. Fluent, synchronous. Works perfectly with Virtual Threads — no reactive overhead.</p>
+        <div style="font-family:'Roboto Mono',monospace;font-size:.67rem;background:#001E2E;border-radius:7px;padding:.65rem;color:#E2E8F0;line-height:1.75;border:1px solid rgba(0,112,173,.18)">
+<span style="color:#C084FC">@Bean</span>
+RestClient middlewareClient(RestClient.Builder b) {
+  <span style="color:#41B6E6">return</span> b.baseUrl(<span style="color:#FDE68A">"${middleware.url}"</span>)
+    .defaultHeader(<span style="color:#6EE7B7">"X-Service"</span>, <span style="color:#6EE7B7">"bff"</span>)
+    .build();
+}
+
+UserDto getUser(Long id) {
+  <span style="color:#41B6E6">return</span> client.get()
+    .uri(<span style="color:#6EE7B7">"/users/{id}"</span>, id)
+    .retrieve()
+    .body(UserDto.class);
+}
+        </div>
+      </div>
+      <div class="cl">
+        <div style="font-size:.62rem;font-weight:700;color:var(--cb);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.35rem">📊 Actuator + @ConfigurationProperties</div>
+        <div style="font-family:'Roboto Mono',monospace;font-size:.67rem;background:#001E2E;border-radius:7px;padding:.65rem;color:#E2E8F0;line-height:1.75;border:1px solid rgba(0,112,173,.18)">
+<span style="color:#C084FC">@ConfigurationProperties</span>(prefix=<span style="color:#6EE7B7">"app"</span>)
+<span style="color:#41B6E6">public record</span> <span style="color:#7DD3FC">AppConfig</span>(
+  String middlewareUrl,
+  Duration cacheTtl,
+  <span style="color:#41B6E6">int</span> maxRetries
+) {}  <span style="color:#475569">// type-safe, validated, IDE-friendly</span>
+
+<span style="color:#475569"># Actuator health — used in Docker</span>
+management:
+  endpoints.web.exposure.include:
+    - health
+    - info
+        </div>
+        <p style="font-size:.74rem;color:#4A5568;margin-top:.5rem;line-height:1.4">Use Records for <code style="background:#EBF5FB;padding:.03rem .22rem;border-radius:3px">@ConfigurationProperties</code> — immutable, validated at startup.</p>
+      </div>
+    </div>
+  </div>
+  <div class="s-btm">
+    <div class="panel panel-lab"><div class="plabel">🔬 Day 3 Lab (12 min)</div><div class="ptext">Scaffold all 3 Spring Boot projects using Spring Initializr (BFF, Middleware, System API). Add application.yml with dev/prod profiles. Configure a RestClient bean in BFF pointing to a localhost Middleware URL. Verify Actuator health endpoint returns UP.</div></div>
+    <div class="panel panel-note"><div class="plabel">📋 Trainer Notes</div><div class="ptext">Mid-level devs likely know @Value. Push them toward @ConfigurationProperties — it gives type safety, validation at startup, and IDE completion. Spring Initializr URL: start.spring.io — use the dependencies: Web, Actuator, Validation, Lombok.</div></div>
+    <div class="panel panel-rub"><div class="plabel">📊 Exit Check (5 pts)</div><div class="ptext">✦ 3 projects initialised with correct dependencies (1 pt) ✦ profile-specific YAML overrides work (1 pt) ✦ RestClient bean configured correctly (2 pts) ✦ /actuator/health returns 200 (1 pt)</div></div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 05: DAY 4 — SOLID IN DISTRIBUTED SYSTEMS ══ -->
+<div class="slide s-dark" id="s4">
+  <div class="cap-strip"></div>
+  <div class="s-top">
+    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.7rem;flex-wrap:wrap">
+      <div class="daybadge"><span class="daybadge-d">Day 4</span><span class="daybadge-n">Week 1 · SOLID</span></div>
+      <span class="tag tg-w">Applied to Microservices · Not just theory</span>
+    </div>
+    <h2 style="font-size:2.2rem;font-weight:900;color:#fff;line-height:1.1">SOLID — Applied to a Distributed Architecture</h2>
+    <span class="dv-s" style="margin:.6rem 0 1rem;display:block"></span>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:.6rem;margin-bottom:.8rem">
+      <div style="background:rgba(0,112,173,.12);border:1px solid rgba(65,182,230,.22);border-radius:8px;padding:.75rem;text-align:center">
+        <div style="font-size:1.9rem;font-weight:900;color:var(--cs);line-height:1">S</div>
+        <div style="font-size:.58rem;font-weight:700;color:var(--cs);margin:.2rem 0;text-transform:uppercase;letter-spacing:.05em">Single Responsibility</div>
+        <div style="font-size:.68rem;color:rgba(255,255,255,.5);line-height:1.4">BFF = client facing. System API = domain only. Never mix.</div>
+      </div>
+      <div style="background:rgba(0,171,220,.12);border:1px solid rgba(0,171,220,.22);border-radius:8px;padding:.75rem;text-align:center">
+        <div style="font-size:1.9rem;font-weight:900;color:var(--cc);line-height:1">O</div>
+        <div style="font-size:.58rem;font-weight:700;color:var(--cc);margin:.2rem 0;text-transform:uppercase;letter-spacing:.05em">Open / Closed</div>
+        <div style="font-size:.68rem;color:rgba(255,255,255,.5);line-height:1.4">Add Middleware strategies without touching stable classes.</div>
+      </div>
+      <div style="background:rgba(65,182,230,.12);border:1px solid rgba(65,182,230,.22);border-radius:8px;padding:.75rem;text-align:center">
+        <div style="font-size:1.9rem;font-weight:900;color:var(--cs);line-height:1">L</div>
+        <div style="font-size:.58rem;font-weight:700;color:var(--cs);margin:.2rem 0;text-transform:uppercase;letter-spacing:.05em">Liskov Substitution</div>
+        <div style="font-size:.68rem;color:rgba(255,255,255,.5);line-height:1.4">Any Repository impl must fully honour JPA contract.</div>
+      </div>
+      <div style="background:rgba(0,150,100,.1);border:1px solid rgba(0,150,100,.22);border-radius:8px;padding:.75rem;text-align:center">
+        <div style="font-size:1.9rem;font-weight:900;color:#4ADE80;line-height:1">I</div>
+        <div style="font-size:.58rem;font-weight:700;color:#4ADE80;margin:.2rem 0;text-transform:uppercase;letter-spacing:.05em">Interface Segregation</div>
+        <div style="font-size:.68rem;color:rgba(255,255,255,.5);line-height:1.4">Separate read/write ports in System API. Small interfaces.</div>
+      </div>
+      <div style="background:rgba(255,152,0,.08);border:1px solid rgba(255,152,0,.2);border-radius:8px;padding:.75rem;text-align:center">
+        <div style="font-size:1.9rem;font-weight:900;color:#FDE68A;line-height:1">D</div>
+        <div style="font-size:.58rem;font-weight:700;color:#FDE68A;margin:.2rem 0;text-transform:uppercase;letter-spacing:.05em">Dependency Inversion</div>
+        <div style="font-size:.68rem;color:rgba(255,255,255,.5);line-height:1.4">Services depend on interfaces. Spring injects concretions.</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.9rem">
+      <div class="cb" style="font-size:.67rem">
+        <div style="font-size:.62rem;color:#475569;margin-bottom:.55rem">DIP violation vs correct pattern</div>
+<span class="cm_">// ❌ VIOLATION — coupled to Hibernate</span>
+<span class="ck">private</span> <span class="cc">HibernateUserRepositoryImpl</span> repo;
+<span class="cm_">// Can't test without a real DB ↑</span>
+
+<span class="cm_">// ✅ CORRECT — depends on abstraction (DIP)</span>
+<span class="ca">@Service</span>
+<span class="ca">@RequiredArgsConstructor</span>
+<span class="ck">public class</span> <span class="cc">UserService</span> {
+  <span class="ck">private final</span> <span class="cc">UserRepository</span> repo; <span class="cm_">// interface!</span>
+  <span class="cm_">// Swap for H2 in tests — zero changes here</span>
+}
+
+<span class="cm_">// ISP — split read/write ports</span>
+<span class="ck">public interface</span> <span class="cc">UserReadPort</span>  { <span class="cc">UserDto</span>    find(Long id); }
+<span class="ck">public interface</span> <span class="cc">UserWritePort</span> { <span class="cc">UserDto</span>    save(<span class="cc">UserCmd</span> cmd); }
+<span class="cm_">// BFF only injects UserReadPort → can't accidentally mutate</span>
+      </div>
+      <div class="cd">
+        <div style="font-size:.65rem;font-weight:700;color:var(--cs);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.45rem">SOLID → Architecture Mapping</div>
+        <table style="width:100%;border-collapse:collapse;font-size:.76rem">
+          <tr style="border-bottom:1px solid rgba(255,255,255,.07)"><td style="padding:.24rem 0;color:var(--cs);font-weight:700;width:16px">S</td><td style="padding:.24rem .45rem;color:rgba(255,255,255,.6)">BFF thin controller — delegates only, no logic</td></tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,.07)"><td style="padding:.24rem 0;color:var(--cc);font-weight:700">O</td><td style="padding:.24rem .45rem;color:rgba(255,255,255,.6)">Middleware strategies are open to extension</td></tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,.07)"><td style="padding:.24rem 0;color:var(--cs);font-weight:700">L</td><td style="padding:.24rem .45rem;color:rgba(255,255,255,.6)">All Repository subtypes honour same contract</td></tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,.07)"><td style="padding:.24rem 0;color:#4ADE80;font-weight:700">I</td><td style="padding:.24rem .45rem;color:rgba(255,255,255,.6)">Separate read/write ports in System API</td></tr>
+          <tr><td style="padding:.24rem 0;color:#FDE68A;font-weight:700">D</td><td style="padding:.24rem .45rem;color:rgba(255,255,255,.6)">Constructor injection only — no @Autowired field</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="s-btm">
+    <div class="panel panel-lab"><div class="plabel">🔬 Day 4 Lab (12 min)</div><div class="ptext">Provided: a 60-line UserController with mixed concerns. Task: identify all 5 SOLID violations (one per principle). Refactor to apply DIP using constructor injection. Add a UserReadPort and UserWritePort interface. Peer-review swap.</div></div>
+    <div class="panel panel-note"><div class="plabel">📋 Trainer Notes</div><div class="ptext">Mid-level devs know SOLID names but often can't apply them under time pressure. The lab code deliberately has all 5 violations. Most people find S, O, D quickly. L and I take longer — walk through if time allows.</div></div>
+    <div class="panel panel-rub"><div class="plabel">📊 Exit Check (5 pts)</div><div class="ptext">✦ Correctly identifies all 5 violations with reasons (3 pts) ✦ Refactored service uses constructor injection (1 pt) ✦ Read/write port interfaces defined and injected correctly (1 pt)</div></div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 06: DAY 5 — CLEAN CODE ══ -->
+<div class="slide s-mid" id="s5">
+  <div class="cap-strip"></div>
+  <div class="s-top">
+    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.7rem;flex-wrap:wrap">
+      <div class="daybadge"><span class="daybadge-d">Day 5</span><span class="daybadge-n">Week 1 · Clean Code</span></div>
+      <span class="tag tg-b">Robert C. Martin · Boy Scout Rule</span>
+    </div>
+    <h2 style="font-size:2.2rem;font-weight:900;color:var(--cn);line-height:1.1">Clean Code — Writing for the Next Developer</h2>
+    <span class="dv-b" style="margin:.6rem 0 1rem;display:block"></span>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+      <div style="display:flex;flex-direction:column;gap:.7rem">
+        <div class="cl" style="border-left:3px solid var(--cb)">
+          <div style="font-size:.62rem;font-weight:700;color:var(--cb);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem">📛 Names Reveal Intent</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.4rem;font-size:.76rem">
+            <div style="background:#FEF2F2;border-radius:5px;padding:.35rem .5rem"><div style="color:#dc2626;font-weight:700;font-size:.62rem;margin-bottom:.15rem">❌ Bad</div><code style="color:#6B7280">d, tmp, flag, proc(), doIt()</code></div>
+            <div style="background:#F0FDF4;border-radius:5px;padding:.35rem .5rem"><div style="color:#16a34a;font-weight:700;font-size:.62rem;margin-bottom:.15rem">✅ Good</div><code style="color:#374151">daysSinceModified, findActiveUserById()</code></div>
+          </div>
+        </div>
+        <div class="cl" style="border-left:3px solid var(--cs)">
+          <div style="font-size:.62rem;font-weight:700;color:var(--cb);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem">📏 Function Size Rules</div>
+          <ul style="font-size:.81rem;color:#4A5568;line-height:1.85;list-style:none;padding:0">
+            <li>✦ Max 20 lines — extract if longer</li>
+            <li>✦ Do exactly one thing — no side effects</li>
+            <li>✦ Max 3 params — use a Parameter Object beyond that</li>
+            <li>✦ No boolean flag args — split into two methods</li>
+          </ul>
+        </div>
+        <div class="cl" style="border-left:3px solid var(--cc)">
+          <div style="font-size:.62rem;font-weight:700;color:var(--cb);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem">🧹 Boy Scout Rule</div>
+          <p style="font-size:.81rem;color:#4A5568;line-height:1.5">Always leave code cleaner than you found it. Rename one confusing variable. Extract one long method. Fix one typo in a comment. Compound over months = maintainable codebase.</p>
+        </div>
+      </div>
+      <div class="cb">
+        <div style="font-size:.62rem;color:#475569;margin-bottom:.55rem">Before / After — UserService</div>
+<span class="cm_">// ❌ BEFORE — Clean Code debt</span>
+<span class="ck">public</span> Object proc(Long id, boolean active) {
+  Object r = repo.findById(id);
+  <span class="ck">if</span> (active) { doStuff(r); }
+  <span class="ck">return</span> transform(r);
+}
+
+<span class="cm_">// ✅ AFTER — Self-documenting, single purpose</span>
+<span class="ca">@Transactional</span>(readOnly = <span class="ck">true</span>)
+<span class="ck">public</span> <span class="cc">UserDto</span> findActiveUserById(Long userId) {
+  <span class="ck">return</span> userRepository
+      .findByIdAndStatusActive(userId)
+      .map(userMapper::toDto)
+      .orElseThrow(() <span class="ca">-&gt;</span>
+          <span class="ck">new</span> <span class="cc">UserNotFoundException</span>(userId));
+}
+
+<span class="cm_">// What changed:</span>
+<span class="cm_">// ① Method name reveals intent (no "proc")</span>
+<span class="cm_">// ② No boolean flag — active is implied by method name</span>
+<span class="cm_">// ③ Optional forces caller to handle "not found"</span>
+<span class="cm_">// ④ @Transactional(readOnly) signals no writes</span>
+      </div>
+    </div>
+  </div>
+  <div class="s-btm">
+    <div class="panel panel-lab"><div class="plabel">🔬 Day 5 Lab (12 min)</div><div class="ptext">Provided: a 45-line "legacy" OrderService with 10 named violations (bad names, long methods, boolean flags, magic numbers, misleading comments). Identify all 10. Refactor 5 of them. Submit refactored file — peer compare diffs.</div></div>
+    <div class="panel panel-note"><div class="plabel">📋 Trainer Notes</div><div class="ptext">Mid-level devs produce this kind of code under deadline pressure. The goal isn't to shame — it's to build the reflex. Point out that the "after" code takes the same time to write once you practise. Use your own old code if you have it — it's more credible.</div></div>
+    <div class="panel panel-rub"><div class="plabel">📊 Exit Check (5 pts)</div><div class="ptext">✦ Identifies 8+ of 10 violations with correct principle name (3 pts) ✦ 5 refactored methods each ≤20 lines and intent-named (1 pt) ✦ No magic numbers remain in refactored code (1 pt)</div></div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 07: DAY 6 — DOCKER ══ -->
+<div class="slide s-dark" id="s6">
+  <div class="cap-strip"></div>
+  <div class="s-top">
+    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.7rem;flex-wrap:wrap">
+      <div class="daybadge"><span class="daybadge-d">Day 6</span><span class="daybadge-n">Week 1 · Docker</span></div>
+      <span class="tag tg-w">🐳 Multi-stage Dockerfile · Non-root · Secrets</span>
+    </div>
+    <h2 style="font-size:2.2rem;font-weight:900;color:#fff;line-height:1.1">Docker — Production-Grade Container Patterns</h2>
+    <span class="dv-s" style="margin:.6rem 0 1rem;display:block"></span>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+      <div class="cb" style="font-size:.68rem">
+        <div style="font-size:.62rem;color:#475569;margin-bottom:.55rem">Dockerfile — multi-stage, non-root (OWASP)</div>
+<span style="color:#41B6E6">FROM</span> eclipse-temurin:<span style="color:#6EE7B7">21-jdk-alpine</span> <span style="color:#41B6E6">AS</span> build
+<span style="color:#41B6E6">WORKDIR</span> /app
+<span style="color:#41B6E6">COPY</span> pom.xml .
+<span style="color:#41B6E6">RUN</span> ./mvnw dependency:resolve    <span style="color:#475569"># cache layer</span>
+<span style="color:#41B6E6">COPY</span> src ./src
+<span style="color:#41B6E6">RUN</span> ./mvnw package -DskipTests
+
+<span style="color:#475569"># ── Runtime image (minimal) ──</span>
+<span style="color:#41B6E6">FROM</span> eclipse-temurin:<span style="color:#6EE7B7">21-jre-alpine</span>
+
+<span style="color:#475569"># Never run as root — OWASP A05</span>
+<span style="color:#41B6E6">RUN</span> addgroup -S capapp &amp;&amp; adduser -S capapp -G capapp
+<span style="color:#41B6E6">USER</span> capapp
+
+<span style="color:#41B6E6">COPY</span> --from=build /app/target/*.jar app.jar
+<span style="color:#41B6E6">EXPOSE</span> 8080
+<span style="color:#41B6E6">ENTRYPOINT</span> ["java",
+  "-XX:+UseVirtualThreads",    <span style="color:#475569"># Java 21</span>
+  "-jar","app.jar"]
+      </div>
+      <div style="display:flex;flex-direction:column;gap:.7rem">
+        <div class="cd" style="border-left:3px solid var(--cs)">
+          <div style="font-size:.62rem;font-weight:700;color:var(--cs);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.25rem">🌐 Bridge Network Rules</div>
+          <ul style="font-size:.8rem;color:rgba(255,255,255,.65);line-height:1.8;list-style:none;padding:0">
+            <li>✦ Containers talk by service name: <code style="color:#FDE68A">http://middleware:8081</code></li>
+            <li>✦ System API has <strong style="color:#fff">no public port</strong> — only Middleware reaches it</li>
+            <li>✦ BFF is the only container exposed on port 8080</li>
+          </ul>
+        </div>
+        <div class="cd" style="border-left:3px solid #F87171">
+          <div style="font-size:.62rem;font-weight:700;color:#F87171;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.25rem">🔐 Secrets — Never In Images</div>
+          <div style="font-family:'Roboto Mono',monospace;font-size:.67rem;color:#E2E8F0;line-height:1.75">
+<span style="color:#475569"># .env (git-ignored always)</span>
+DATABASE_URL=jdbc:postgresql://db:5432/capdb
+DB_PASSWORD=<span style="color:#F87171">str0ngPa$$word</span>
+
+<span style="color:#475569"># docker-compose.yml</span>
+<span style="color:#41B6E6">system-api</span>:
+  env_file: .env  <span style="color:#475569"># injected at runtime</span>
+          </div>
+        </div>
+        <div class="cd">
+          <div style="font-size:.62rem;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.25rem">⚡ Layer Caching — Build Speed</div>
+          <p style="font-size:.79rem;color:rgba(255,255,255,.6);line-height:1.5">Copy <code style="color:#FDE68A">pom.xml</code> and resolve deps first, then copy source. Docker caches the dependency layer — rebuilds take seconds, not minutes, when only source changes.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="s-btm">
+    <div class="panel panel-lab"><div class="plabel">🔬 Day 6 Lab (12 min)</div><div class="ptext">Write the Dockerfile for the BFF service using multi-stage. Build it: docker build -t bff:dev . Run it with -e DATABASE_URL and verify the non-root user with: docker exec bff whoami (should return capapp). Test /actuator/health.</div></div>
+    <div class="panel panel-note"><div class="plabel">📋 Trainer Notes</div><div class="ptext">Mid-level devs often know Docker basics but skip multi-stage and non-root user. Emphasise those two specifically — they are required in Capgemini's client delivery standards. The caching layer trick is a quality-of-life win they'll thank you for later.</div></div>
+    <div class="panel panel-rub"><div class="plabel">📊 Exit Check (5 pts)</div><div class="ptext">✦ Multi-stage build produces a JRE-only runtime image (2 pts) ✦ Non-root user created and set with USER directive (2 pts) ✦ No credentials in Dockerfile — only env_file injection (1 pt)</div></div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 08: DAY 7 — WEEK 1 ASSESSMENT ══ -->
+<div class="slide s-white" id="s7">
+  <div class="cap-strip"></div>
+  <div class="s-top">
+    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.7rem;flex-wrap:wrap">
+      <div class="daybadge"><span class="daybadge-d">Day 7</span><span class="daybadge-n">Week 1 · Assessment + Lab</span></div>
+      <span class="tag tg-r">Week 1 Assessment</span><span class="tag tg-d">Integration Lab</span>
+    </div>
+    <h2 style="font-size:2.2rem;font-weight:900;color:var(--cn);line-height:1.1">Week 1 — Knowledge Check + Integration Lab</h2>
+    <span class="dv-b" style="margin:.6rem 0 1rem;display:block"></span>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.1rem">
+      <div class="cl">
+        <div style="font-size:.62rem;font-weight:700;color:var(--cb);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem">❓ 10-Question Written Assessment (30 min)</div>
+        <div style="display:flex;flex-direction:column;gap:.3rem">
+          <div style="background:#EBF5FB;border-radius:6px;padding:.42rem .65rem;font-size:.79rem;color:var(--cn)"><strong style="color:var(--cb)">Q1.</strong> Which SOLID principle does constructor injection enforce?</div>
+          <div style="background:#EBF5FB;border-radius:6px;padding:.42rem .65rem;font-size:.79rem;color:var(--cn)"><strong style="color:var(--cb)">Q2.</strong> What JEP introduced Virtual Threads, and how do they differ from platform threads in resource usage?</div>
+          <div style="background:#EBF5FB;border-radius:6px;padding:.42rem .65rem;font-size:.79rem;color:var(--cn)"><strong style="color:var(--cb)">Q3.</strong> Name two things the BFF layer must NEVER do and explain why.</div>
+          <div style="background:#EBF5FB;border-radius:6px;padding:.42rem .65rem;font-size:.79rem;color:var(--cn)"><strong style="color:var(--cb)">Q4.</strong> What is wrong with <code style="background:#fff;padding:.03rem .2rem;border-radius:3px">ddl-auto: create-drop</code> in a production YAML?</div>
+          <div style="background:#EBF5FB;border-radius:6px;padding:.42rem .65rem;font-size:.79rem;color:var(--cn)"><strong style="color:var(--cb)">Q5.</strong> Why run a Docker container as a non-root user? Name the OWASP category.</div>
+          <div style="background:rgba(0,61,91,.05);border-radius:6px;padding:.42rem .65rem;font-size:.75rem;color:#6B7280"><strong style="color:rgba(0,112,173,.5)">Q6–10.</strong> Distributed on paper — covers Records, Sealed classes, pattern matching, RestClient, and profile config.</div>
+        </div>
+      </div>
+      <div>
+        <div class="cl" style="margin-bottom:.7rem">
+          <div style="font-size:.62rem;font-weight:700;color:var(--cb);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.4rem">🔨 Integration Lab (25 min) — Legacy Refactor</div>
+          <p style="font-size:.81rem;color:#4A5568;line-height:1.55;margin-bottom:.5rem">Provided: a single 120-line monolithic <code style="background:#EBF5FB;padding:.03rem .22rem;border-radius:3px">UserController.java</code> with mixed concerns, SOLID violations, and no tests.</p>
+          <ol style="font-size:.8rem;color:#4A5568;line-height:1.9;padding-left:1.1rem">
+            <li>Split into BFF Controller / Domain Service / Repository Interface</li>
+            <li>Apply constructor injection throughout</li>
+            <li>Rename all methods and variables to reveal intent</li>
+            <li>Extract 2 long methods so each is ≤ 20 lines</li>
+          </ol>
+        </div>
+        <div class="cl" style="background:rgba(0,61,91,.03);border-color:rgba(0,61,91,.1)">
+          <div style="font-size:.62rem;font-weight:700;color:var(--cb);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem">📊 Week 1 Grading</div>
+          <table style="width:100%;border-collapse:collapse;font-size:.76rem">
+            <tr style="border-bottom:1px solid rgba(0,61,91,.08)"><td style="padding:.22rem 0;color:#4A5568">Written assessment</td><td style="color:var(--cb);font-weight:700;text-align:right">50 pts</td></tr>
+            <tr style="border-bottom:1px solid rgba(0,61,91,.08)"><td style="padding:.22rem 0;color:#4A5568">Integration lab quality</td><td style="color:var(--cb);font-weight:700;text-align:right">30 pts</td></tr>
+            <tr style="border-bottom:1px solid rgba(0,61,91,.08)"><td style="padding:.22rem 0;color:#4A5568">Daily exit checks (5 × 5)</td><td style="color:var(--cb);font-weight:700;text-align:right">25 pts</td></tr>
+            <tr><td style="padding:.22rem 0;color:var(--cn);font-weight:700">Week 1 Total</td><td style="color:var(--cn);font-weight:700;text-align:right">105 pts</td></tr>
+          </table>
+          <div style="margin-top:.5rem;font-size:.73rem;color:#6B7280">Participants below 70% are paired with the trainer for supplemental review before Week 2 begins.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="s-btm">
+    <div class="panel panel-lab"><div class="plabel">🔬 Day 7 Full-Hour Lab</div><div class="ptext">30 min written assessment (individual, closed notes). 25 min integration lab (individual). 5 min peer review swap — each person reviews a partner's refactored code against the SOLID checklist. Mark it together.</div></div>
+    <div class="panel panel-note"><div class="plabel">📋 Trainer Notes</div><div class="ptext">Mark assessments during the integration lab. Return grades before end of day. Flag anyone below 70% — arrange a 20-min 1:1 catch-up before Day 8. The gap most mid-level devs have is usually SOLID L and I — focus remediation there.</div></div>
+    <div class="panel panel-rub"><div class="plabel">📊 Pass Threshold</div><div class="ptext">✦ Pass (70+): Proceed to Week 2 ✦ Merit (85+): Assigned to peer-mentor role in Week 2 labs ✦ Below 70%: Supplemental session before Day 8 · No participant is left behind</div></div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 09: DAY 8 — MICROSERVICES PATTERNS ══ -->
+<div class="slide s-dark" id="s8">
+  <div class="cap-strip"></div>
+  <div class="s-top">
+    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.7rem;flex-wrap:wrap">
+      <div class="daybadge"><span class="daybadge-d">Day 8</span><span class="daybadge-n">Week 2 · Microservices Patterns</span></div>
+      <span class="tag tg-w">BFF · Aggregator · Circuit Breaker · Strangler Fig</span>
+    </div>
+    <h2 style="font-size:2.2rem;font-weight:900;color:#fff;line-height:1.1">Patterns That Make Microservices Work in Production</h2>
+    <span class="dv-s" style="margin:.6rem 0 1rem;display:block"></span>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.85rem">
+      <div class="cd" style="border-top:3px solid var(--cs)">
+        <div style="font-size:.62rem;font-weight:700;color:var(--cs);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.25rem">🎭 BFF (Backend for Frontend)</div>
+        <p style="font-size:.79rem;color:rgba(255,255,255,.65);line-height:1.5">One BFF per client type. Web BFF returns rich JSON; mobile BFF returns compressed minimal payloads. Avoids over-fetching. The BFF owns the <em>shape</em> contract with that client — nobody else does.</p>
+      </div>
+      <div class="cd" style="border-top:3px solid var(--cc)">
+        <div style="font-size:.62rem;font-weight:700;color:var(--cc);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.25rem">🔀 Aggregator</div>
+        <p style="font-size:.79rem;color:rgba(255,255,255,.65);line-height:1.5">Middleware fans out to N downstream services and merges results. Client makes one call. Correlation ID propagates the full call graph. Virtual Threads make parallel fan-out trivial — no reactive boilerplate.</p>
+      </div>
+      <div class="cd" style="border-top:3px solid var(--cb)">
+        <div style="font-size:.62rem;font-weight:700;color:var(--cs);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.25rem">🛡️ Circuit Breaker</div>
+        <p style="font-size:.79rem;color:rgba(255,255,255,.65);line-height:1.5">Resilience4j monitors downstream failure rate. OPEN state stops calls when threshold exceeded. HALF-OPEN probes recovery. Prevents cascade: one failing service doesn't take down all three layers.</p>
+      </div>
+      <div class="cd" style="border-top:3px solid var(--cs)">
+        <div style="font-size:.62rem;font-weight:700;color:var(--cs);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.25rem">🌿 Strangler Fig</div>
+        <p style="font-size:.79rem;color:rgba(255,255,255,.65);line-height:1.5">Incrementally strangle a monolith. BFF routes some paths to new services, others to the legacy app. No big-bang migration. Client never knows. Move one domain at a time until the monolith is empty.</p>
+      </div>
+      <div class="cd" style="border-top:3px solid var(--cc)">
+        <div style="font-size:.62rem;font-weight:700;color:var(--cc);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.25rem">📬 Transactional Outbox</div>
+        <p style="font-size:.79rem;color:rgba(255,255,255,.65);line-height:1.5">Reliable event publishing: write domain event to outbox table in the same DB transaction as the domain change. Separate poller publishes to Kafka/SQS. Guarantees at-least-once delivery without 2PC.</p>
+      </div>
+      <div class="cd" style="border-top:3px solid var(--cb)">
+        <div style="font-size:.62rem;font-weight:700;color:var(--cs);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.25rem">🔑 API Gateway vs BFF</div>
+        <p style="font-size:.79rem;color:rgba(255,255,255,.65);line-height:1.5">Gateway handles routing, SSL termination, rate limiting at infra level. BFF handles client-specific shaping at application level. They are complementary — a gateway sits in front of multiple BFFs in a mature deployment.</p>
+      </div>
+    </div>
+  </div>
+  <div class="s-btm">
+    <div class="panel panel-lab"><div class="plabel">🔬 Day 8 Lab (12 min)</div><div class="ptext">Scenario: "Get User Dashboard" requires data from UserService, OrderService, and PreferenceService. Draw the full call graph using Aggregator + Circuit Breaker. Label: which layer handles fan-out? Where does the circuit breaker sit? What does the BFF receive? Present to the group.</div></div>
+    <div class="panel panel-note"><div class="plabel">📋 Trainer Notes</div><div class="ptext">Mid-level devs often conflate the API Gateway and BFF patterns. Spend extra time on the distinction — it comes up in every enterprise architecture discussion. The Strangler Fig is the most practically useful pattern for their existing client projects.</div></div>
+    <div class="panel panel-rub"><div class="plabel">📊 Exit Check (5 pts)</div><div class="ptext">✦ Correctly places fan-out in Middleware, not BFF (2 pts) ✦ Circuit breaker sits between Middleware and System API (1 pt) ✦ BFF receives a single merged response (1 pt) ✦ Can explain Strangler Fig applied to a real project (1 pt)</div></div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 10: DAY 9 — BFF FULL IMPLEMENTATION ══ -->
+<div class="slide s-light" id="s9">
+  <div class="cap-strip"></div>
+  <div class="s-top">
+    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.7rem;flex-wrap:wrap">
+      <div class="daybadge"><span class="daybadge-d">Day 9</span><span class="daybadge-n">Week 2 · Layer 1 BFF</span></div>
+      <span class="tag tg-b">Full Controller · JWT · Response Shaping</span>
+    </div>
+    <h2 style="font-size:2.2rem;font-weight:900;color:var(--cn);line-height:1.1">BFF — Complete Implementation</h2>
+    <span class="dv-b" style="margin:.6rem 0 1rem;display:block"></span>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+      <div class="cb" style="font-size:.67rem">
+        <div style="font-size:.62rem;color:#475569;margin-bottom:.55rem">UserBffController.java — production-complete</div>
+<span class="ca">@RestController</span>
+<span class="ca">@RequestMapping</span>(<span class="cs">"/api/v1/users"</span>)
+<span class="ca">@RequiredArgsConstructor</span>
+<span class="ca">@Validated</span>
+<span class="ck">public class</span> <span class="cc">UserBffController</span> {
+
+  <span class="ck">private final</span> <span class="cc">MiddlewareClient</span> mwClient;  <span class="cm_">// DIP</span>
+
+  <span class="ca">@GetMapping</span>(<span class="cs">"/{id}"</span>)
+  <span class="ca">@PreAuthorize</span>(<span class="cs">"hasRole('USER')"</span>)
+  <span class="ck">public</span> <span class="cc">UserClientView</span> getUser(
+      <span class="ca">@PathVariable</span> <span class="ca">@Positive</span> Long id) {
+    <span class="cm_">// Delegate + shape — no logic in BFF</span>
+    <span class="ck">return</span> mwClient.getUser(id).toClientView();
+  }
+
+  <span class="ca">@ExceptionHandler</span>(<span class="cc">UserNotFoundException</span>.class)
+  <span class="ck">public</span> <span class="cc">ProblemDetail</span> notFound(<span class="cc">UserNotFoundException</span> e) {
+    <span class="cm_">// OWASP A09 — structured, no stack trace</span>
+    <span class="ck">return</span> <span class="cc">ProblemDetail</span>.forStatusAndDetail(
+        <span class="cc">HttpStatus</span>.NOT_FOUND, e.getMessage());
+  }
+}
+
+<span class="cm_">// Record DTO strips internal fields from domain object</span>
+<span class="ck">public record</span> <span class="cc">UserClientView</span>(
+    String displayName,
+    String avatarUrl
+    <span class="cm_">// no email, phone, internal role, or audit fields</span>
+) {}
+      </div>
+      <div style="display:flex;flex-direction:column;gap:.7rem">
+        <div class="cl" style="border-left:3px solid var(--cb)">
+          <div style="font-size:.62rem;font-weight:700;color:var(--cb);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem">✅ BFF Owns</div>
+          <ul style="font-size:.8rem;color:#4A5568;line-height:1.8;list-style:none;padding:0">
+            <li>✦ JWT validation via <code style="background:#EBF5FB;padding:.03rem .22rem;border-radius:3px">@PreAuthorize</code></li>
+            <li>✦ <code style="background:#EBF5FB;padding:.03rem .22rem;border-radius:3px">@Valid</code> — input validation before any call</li>
+            <li>✦ Response shaping — only fields the client needs</li>
+            <li>✦ CORS headers + security response headers</li>
+            <li>✦ Correlation-ID forwarding to Middleware</li>
+          </ul>
+        </div>
+        <div class="cl" style="border-left:3px solid #C0392B">
+          <div style="font-size:.62rem;font-weight:700;color:#C0392B;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem">⛔ BFF Never Does</div>
+          <ul style="font-size:.8rem;color:#4A5568;line-height:1.8;list-style:none;padding:0">
+            <li>✦ No SQL, no JPA repository calls</li>
+            <li>✦ No business validation (is user eligible? — that's System API)</li>
+            <li>✦ No caching of sensitive personal data</li>
+            <li>✦ No service-to-service fan-out (that's Middleware)</li>
+          </ul>
+        </div>
+        <div class="cm" style="padding:.65rem .85rem">
+          <div style="font-size:.62rem;font-weight:700;color:var(--cb);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.2rem">🔑 Spring Security Filter Chain (Preview)</div>
+          <p style="font-size:.78rem;color:var(--cn);line-height:1.5">Full JWT filter implementation is covered on Day 15. Today: understand that the filter populates SecurityContextHolder <em>before</em> the controller method is called. <code>@PreAuthorize</code> reads from that context.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="s-btm">
+    <div class="panel panel-lab"><div class="plabel">🔬 Day 9 Lab (12 min)</div><div class="ptext">Add a GET /api/v1/users/{id} endpoint to your BFF project. Create a UserClientView record with 3 fields (subset of domain). Wire a MiddlewareClient RestClient bean. Add @Valid + @Positive on the path variable. Test with curl — verify 400 for negative IDs.</div></div>
+    <div class="panel panel-note"><div class="plabel">📋 Trainer Notes</div><div class="ptext">The most common mid-level mistake is adding if-else business logic in the controller. Live-code an example of a "sneaky" BFF that checks user roles internally instead of relying on @PreAuthorize — then show why that breaks layering.</div></div>
+    <div class="panel panel-rub"><div class="plabel">📊 Exit Check (5 pts)</div><div class="ptext">✦ Controller has zero business logic — delegates only (2 pts) ✦ UserClientView strips at least 2 internal fields (1 pt) ✦ @Valid passes for valid input, 400 for invalid (1 pt) ✦ Exception handler returns ProblemDetail, not raw exception (1 pt)</div></div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 11: DAY 10 — MIDDLEWARE ORCHESTRATION ══ -->
+<div class="slide s-navy" id="s10">
+  <div class="cap-strip"></div>
+  <div class="s-top">
+    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.7rem;flex-wrap:wrap">
+      <div class="daybadge"><span class="daybadge-d">Day 10</span><span class="daybadge-n">Week 2 · Layer 2 Middleware</span></div>
+      <span class="tag tg-w">Resilience4j · Virtual Threads · MapStruct</span>
+    </div>
+    <h2 style="font-size:2.2rem;font-weight:900;color:#fff;line-height:1.1">Middleware — Orchestration &amp; Resilience</h2>
+    <span class="dv-s" style="margin:.6rem 0 1rem;display:block"></span>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+      <div style="display:flex;flex-direction:column;gap:.7rem">
+        <div class="cb" style="font-size:.67rem">
+          <div style="font-size:.62rem;color:#475569;margin-bottom:.55rem">DashboardOrchestrator.java</div>
+<span class="ca">@Service</span> <span class="ca">@RequiredArgsConstructor</span>
+<span class="ck">public class</span> <span class="cc">DashboardOrchestrator</span> {
+  <span class="ck">private final</span> <span class="cc">UserApiClient</span>    userApi;
+  <span class="ck">private final</span> <span class="cc">OrderApiClient</span>   orderApi;
+  <span class="ck">private final</span> <span class="cc">DashboardMapper</span>  mapper;
+
+  <span class="ca">@CircuitBreaker</span>(name=<span class="cs">"systemApi"</span>,
+      fallbackMethod=<span class="cs">"fallback"</span>)
+  <span class="ca">@Retry</span>(name=<span class="cs">"systemApi"</span>)
+  <span class="ck">public</span> <span class="cc">DashboardDto</span> getDashboard(Long userId) {
+    <span class="ck">try</span>(<span class="ck">var</span> ex = Executors
+         .newVirtualThreadPerTaskExecutor()) {
+      <span class="ck">var</span> user   = ex.submit(() <span class="ca">-&gt;</span> userApi.get(userId));
+      <span class="ck">var</span> orders = ex.submit(() <span class="ca">-&gt;</span> orderApi.get(userId));
+      <span class="ck">return</span> mapper.toDto(user.get(), orders.get());
+    }
+  }
+
+  <span class="cc">DashboardDto</span> fallback(Long id, Exception e) {
+    <span class="ck">return</span> <span class="cc">DashboardDto</span>.empty(); <span class="cm_">// graceful degrade</span>
+  }
+}
+        </div>
+        <div class="cd">
+          <div style="font-size:.62rem;font-weight:700;color:var(--cs);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.25rem">🔄 MapStruct — Compile-Time Mapping</div>
+          <div style="font-family:'Roboto Mono',monospace;font-size:.67rem;color:#E2E8F0;line-height:1.75">
+<span class="ca">@Mapper</span>(componentModel = <span class="cs">"spring"</span>)
+<span class="ck">public interface</span> <span class="cc">DashboardMapper</span> {
+  <span class="cc">DashboardDto</span> toDto(<span class="cc">UserApiResponse</span> u,
+                      <span class="cc">OrderApiResponse</span> o);
+  <span class="cm_">// Zero reflection. Compile-time safe.</span>
+}
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:.7rem">
+        <div class="cd" style="border-left:3px solid var(--cs)">
+          <div style="font-size:.62rem;font-weight:700;color:var(--cs);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.25rem">🛡️ Resilience4j Config</div>
+          <div style="font-family:'Roboto Mono',monospace;font-size:.67rem;color:#E2E8F0;line-height:1.75">
+resilience4j:
+&nbsp;&nbsp;<span style="color:#41B6E6">circuitbreaker</span>:
+&nbsp;&nbsp;&nbsp;&nbsp;instances.systemApi:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;slidingWindowSize: 10
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;failureRateThreshold: 50
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;waitDurationInOpenState: 30s
+&nbsp;&nbsp;<span style="color:#41B6E6">retry</span>:
+&nbsp;&nbsp;&nbsp;&nbsp;instances.systemApi:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;maxAttempts: 3
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;waitDuration: 500ms
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enableExponentialBackoff: true
+          </div>
+        </div>
+        <div class="cd" style="border-left:3px solid var(--cc)">
+          <div style="font-size:.62rem;font-weight:700;color:var(--cc);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.25rem">💾 Redis Caching (OWASP A02)</div>
+          <div style="font-family:'Roboto Mono',monospace;font-size:.67rem;color:#E2E8F0;line-height:1.75">
+<span class="ca">@Cacheable</span>(value=<span class="cs">"users"</span>,
+    key=<span class="cs">"#userId"</span>, unless=<span class="cs">"#result == null"</span>)
+<span class="ck">public</span> <span class="cc">UserDto</span> getUser(Long userId) { ... }
+
+<span class="ca">@CacheEvict</span>(value=<span class="cs">"users"</span>, key=<span class="cs">"#userId"</span>)
+<span class="ck">public void</span> evictUser(Long userId) { ... }
+<span class="cm_">// Never cache sensitive PII fields</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="s-btm">
+    <div class="panel panel-lab"><div class="plabel">🔬 Day 10 Lab (12 min)</div><div class="ptext">Implement DashboardOrchestrator with Virtual Thread fan-out. Add @CircuitBreaker annotation. Mock System API to return 503 — verify fallback triggers after 5 failures. Check the circuit opens and returns DashboardDto.empty() gracefully.</div></div>
+    <div class="panel panel-note"><div class="plabel">📋 Trainer Notes</div><div class="ptext">Demo the circuit breaker state machine using Resilience4j's built-in event endpoint: /actuator/circuitbreakers. Mid-level devs find it satisfying to see the state transitions in real time. Hammer with Artillery or a simple for-loop to trip the threshold.</div></div>
+    <div class="panel panel-rub"><div class="plabel">📊 Exit Check (5 pts)</div><div class="ptext">✦ Fan-out uses Virtual Threads (not thread pool) (2 pts) ✦ Circuit breaker triggers after threshold and returns fallback (2 pts) ✦ MapStruct mapper has zero @Autowired — Spring DI (1 pt)</div></div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 12: DAY 11 — SYSTEM API + DDD ══ -->
+<div class="slide s-white" id="s11">
+  <div class="cap-strip"></div>
+  <div class="s-top">
+    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.7rem;flex-wrap:wrap">
+      <div class="daybadge"><span class="daybadge-d">Day 11</span><span class="daybadge-n">Week 2 · Layer 3 System API</span></div>
+      <span class="tag tg-b">DDD Entities · Value Objects · Domain Events</span>
+    </div>
+    <h2 style="font-size:2.2rem;font-weight:900;color:var(--cn);line-height:1.1">System API — Domain Core &amp; DDD Building Blocks</h2>
+    <span class="dv-b" style="margin:.6rem 0 1rem;display:block"></span>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+      <div class="cb" style="font-size:.67rem">
+        <div style="font-size:.62rem;color:#475569;margin-bottom:.55rem">User Entity + Email Value Object</div>
+<span class="ca">@Entity</span> <span class="ca">@Table</span>(name=<span class="cs">"users"</span>)
+<span class="ck">public class</span> <span class="cc">User</span> {
+  <span class="ca">@Id</span> <span class="ca">@GeneratedValue</span>
+  <span class="ck">private</span> Long id;
+
+  <span class="ca">@Embedded</span>
+  <span class="ck">private</span> <span class="cc">Email</span> email;            <span class="cm_">// Value Object</span>
+
+  <span class="ca">@Enumerated</span>(<span class="cc">EnumType</span>.STRING)
+  <span class="ck">private</span> <span class="cc">UserStatus</span> status = <span class="cc">ACTIVE</span>;
+
+  <span class="ca">@Column</span>(updatable=<span class="ck">false</span>)
+  <span class="ck">private</span> <span class="cc">Instant</span> createdAt = <span class="cc">Instant</span>.now();
+
+  <span class="cm_">// Domain behaviour — not just a data bag!</span>
+  <span class="ck">public void</span> deactivate() {
+    <span class="ck">if</span> (status == <span class="cc">INACTIVE</span>)
+      <span class="ck">throw new</span> <span class="cc">UserAlreadyInactiveException</span>(id);
+    <span class="ck">this</span>.status = <span class="cc">INACTIVE</span>;
+    <span class="cc">DomainEvents</span>.raise(<span class="ck">new</span> <span class="cc">UserDeactivatedEvent</span>(id));
+  }
+}
+
+<span class="cm_">// Value Object — immutable, self-validating</span>
+<span class="ca">@Embeddable</span>
+<span class="ck">public record</span> <span class="cc">Email</span>(String value) {
+  <span class="ck">public</span> <span class="cc">Email</span> {   <span class="cm_">// compact constructor validates</span>
+    <span class="ck">if</span> (!value.matches(<span class="cs">"[^@]+@[^@]+\\.[^@]+"</span>))
+      <span class="ck">throw new</span> <span class="cc">InvalidEmailException</span>(value);
+  }
+}
+      </div>
+      <div style="display:flex;flex-direction:column;gap:.7rem">
+        <div class="cl">
+          <div style="font-size:.62rem;font-weight:700;color:var(--cb);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem">🏛️ DDD Building Blocks</div>
+          <table style="width:100%;border-collapse:collapse;font-size:.77rem">
+            <tr style="background:#EBF5FB"><td style="padding:.28rem .45rem;font-weight:700;color:var(--cb);border-radius:4px">Entity</td><td style="padding:.28rem .45rem;color:#4A5568">Has identity (ID). User, Order, Product</td></tr>
+            <tr><td style="padding:.28rem .45rem;font-weight:700;color:var(--cc)">Value Object</td><td style="padding:.28rem .45rem;color:#4A5568">Defined by value. Email, Money, Address</td></tr>
+            <tr style="background:#EBF5FB"><td style="padding:.28rem .45rem;font-weight:700;color:var(--cs)">Aggregate</td><td style="padding:.28rem .45rem;color:#4A5568">Consistency boundary. Order + OrderLines</td></tr>
+            <tr><td style="padding:.28rem .45rem;font-weight:700;color:var(--cn)">Domain Service</td><td style="padding:.28rem .45rem;color:#4A5568">Logic spanning multiple entities</td></tr>
+            <tr style="background:#EBF5FB"><td style="padding:.28rem .45rem;font-weight:700;color:var(--cb)">Domain Event</td><td style="padding:.28rem .45rem;color:#4A5568">Something important that happened</td></tr>
+          </table>
+        </div>
+        <div class="cl">
+          <div style="font-size:.62rem;font-weight:700;color:var(--cb);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem">📦 Package Structure</div>
+          <div style="font-family:'Roboto Mono',monospace;font-size:.69rem;color:var(--cn);line-height:1.8;background:#F4F6F9;padding:.6rem;border-radius:7px">
+            <div style="color:#9CA3AF">com.capgemini.systemapi/</div>
+            <div style="margin-left:.9rem;color:var(--cb);font-weight:700">domain/ <span style="color:#9CA3AF;font-weight:400">entity/ valueobject/ event/</span></div>
+            <div style="margin-left:.9rem;color:var(--cc);font-weight:700">application/ <span style="color:#9CA3AF;font-weight:400">service/ port/</span></div>
+            <div style="margin-left:.9rem;color:var(--cs);font-weight:700">infrastructure/ <span style="color:#9CA3AF;font-weight:400">jpa/ config/</span></div>
+            <div style="margin-left:.9rem;color:var(--cn);font-weight:700">presentation/ <span style="color:#9CA3AF;font-weight:400">controller/ dto/</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="s-btm">
+    <div class="panel panel-lab"><div class="plabel">🔬 Day 11 Lab (12 min)</div><div class="ptext">Create the User entity in System API. Add an Email value object (record + @Embeddable). Add a deactivate() method that throws an exception if already inactive and raises a UserDeactivatedEvent. Write 2 unit tests: one for the happy path, one for the exception case.</div></div>
+    <div class="panel panel-note"><div class="plabel">📋 Trainer Notes</div><div class="ptext">The common mid-level mistake is making entities pure data bags (only getters/setters). Challenge them: "where does the deactivation rule live?" The rule belongs in the entity. If it's in the service, you'll end up duplicating it. Push them toward rich domain models.</div></div>
+    <div class="panel panel-rub"><div class="plabel">📊 Exit Check (5 pts)</div><div class="ptext">✦ Email is a Value Object (record + @Embeddable + validation) (2 pts) ✦ deactivate() method raises domain event (1 pt) ✦ Unit test covers both happy path and exception case (2 pts)</div></div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 13: DAY 12 — POSTGRESQL + JPA + FLYWAY ══ -->
+<div class="slide s-dark" id="s12">
+  <div class="cap-strip"></div>
+  <div class="s-top">
+    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.7rem;flex-wrap:wrap">
+      <div class="daybadge"><span class="daybadge-d">Day 12</span><span class="daybadge-n">Week 2 · Data Layer</span></div>
+      <span class="tag tg-g">PostgreSQL · Spring Data JPA · Flyway</span>
+    </div>
+    <h2 style="font-size:2.2rem;font-weight:900;color:#fff;line-height:1.1">Data Persistence — Production Patterns</h2>
+    <span class="dv-s" style="margin:.6rem 0 1rem;display:block"></span>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.85rem">
+      <div class="cd">
+        <div style="font-size:.62rem;font-weight:700;color:var(--cs);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem">🔌 Application Config</div>
+        <div style="font-family:'Roboto Mono',monospace;font-size:.67rem;color:#E2E8F0;line-height:1.75">
+spring:
+&nbsp;&nbsp;<span style="color:#41B6E6">datasource</span>:
+&nbsp;&nbsp;&nbsp;&nbsp;url: <span style="color:#F87171">${DATABASE_URL}</span>
+&nbsp;&nbsp;&nbsp;&nbsp;hikari:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;maximum-pool-size: 20
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;connection-timeout: 30000
+&nbsp;&nbsp;<span style="color:#41B6E6">jpa</span>:
+&nbsp;&nbsp;&nbsp;&nbsp;ddl-auto: validate <span style="color:#475569"># ← never "create"</span>
+&nbsp;&nbsp;&nbsp;&nbsp;show-sql: false   <span style="color:#475569"># ← never in prod</span>
+&nbsp;&nbsp;&nbsp;&nbsp;properties.hibernate.dialect:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PostgreSQLDialect
+        </div>
+      </div>
+      <div class="cd">
+        <div style="font-size:.62rem;font-weight:700;color:var(--cs);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem">🏗️ Flyway Migrations</div>
+        <div style="font-family:'Roboto Mono',monospace;font-size:.68rem;color:#E2E8F0;line-height:1.85">
+<span style="color:#9CA3AF">db/migration/</span>
+<span style="color:#6EE7B7">V1__create_users.sql</span>
+<span style="color:#6EE7B7">V2__add_roles.sql</span>
+<span style="color:#6EE7B7">V3__index_email.sql</span>
+<span style="color:#6EE7B7">V4__add_audit_cols.sql</span>
+<span style="color:#6EE7B7">V5__soft_delete.sql</span>
+        </div>
+        <p style="font-size:.76rem;color:rgba(255,255,255,.55);margin-top:.5rem;line-height:1.4">Never skip versions. Never modify existing migrations. Flyway runs at startup — schema is always current-exact.</p>
+      </div>
+      <div class="cd">
+        <div style="font-size:.62rem;font-weight:700;color:var(--cs);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem">🗄️ Repository Pattern</div>
+        <div style="font-family:'Roboto Mono',monospace;font-size:.67rem;color:#E2E8F0;line-height:1.75">
+<span class="ca">@Repository</span>
+<span class="ck">public interface</span> <span class="cc">UserRepository</span>
+    <span class="ck">extends</span> JpaRepository&lt;<span class="cc">User</span>, Long&gt; {
+
+  Optional&lt;User&gt; findByEmail(<span class="cc">Email</span> email);
+
+  Page&lt;User&gt; findByStatus(
+      <span class="cc">UserStatus</span> s, <span class="cc">Pageable</span> p);
+
+  <span class="ca">@Modifying</span>
+  <span class="ca">@Transactional</span>
+  <span class="ca">@Query</span>(<span class="cs">"UPDATE User u SET u.deletedAt=:now WHERE u.id=:id"</span>)
+  <span class="ck">void</span> softDelete(Long id, <span class="cc">Instant</span> now);
+}
+        </div>
+      </div>
+    </div>
+    <div class="cd" style="margin-top:.75rem;border-color:rgba(65,182,230,.2)">
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem;font-size:.76rem">
+        <div><div style="color:var(--cs);font-weight:700;margin-bottom:.15rem">📐 @Transactional rules</div><div style="color:rgba(255,255,255,.55)">Service layer only. <code style="color:#FDE68A">readOnly=true</code> for all reads. Never in controller or repository.</div></div>
+        <div><div style="color:var(--cs);font-weight:700;margin-bottom:.15rem">♻️ JPA Lifecycle</div><div style="color:rgba(255,255,255,.55)">Transient → persist() → Managed → detach() → Detached → remove() → Removed</div></div>
+        <div><div style="color:var(--cs);font-weight:700;margin-bottom:.15rem">🐛 N+1 Problem</div><div style="color:rgba(255,255,255,.55)">Use <code style="color:#FDE68A">@EntityGraph</code> or <code style="color:#FDE68A">JOIN FETCH</code> for associations. Never lazy-load in a loop.</div></div>
+        <div><div style="color:var(--cs);font-weight:700;margin-bottom:.15rem">🔒 Security (OWASP A03)</div><div style="color:rgba(255,255,255,.55)">JPA parameterised queries only. Never string-concatenate SQL. @Query with named params.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="s-btm">
+    <div class="panel panel-lab"><div class="plabel">🔬 Day 12 Lab (12 min)</div><div class="ptext">Write V1__create_users.sql migration (id, email, status, created_at, deleted_at). Create UserRepository with findByEmail and a Page findByStatus. Test the migration with Flyway — run, then add V2 to add an index. Verify schema with psql.</div></div>
+    <div class="panel panel-note"><div class="plabel">📋 Trainer Notes</div><div class="ptext">The N+1 problem surprises mid-level devs — they write clean-looking code that generates 101 queries. Live-demo: enable show-sql=true temporarily, loop over users and access orders. Then fix with @EntityGraph. The horror-to-fix ratio is memorable.</div></div>
+    <div class="panel panel-rub"><div class="plabel">📊 Exit Check (5 pts)</div><div class="ptext">✦ V1 migration creates correct schema with constraints (2 pts) ✦ findByEmail uses Optional (1 pt) ✦ findByStatus uses Page for pagination (1 pt) ✦ No raw SQL string concatenation anywhere (1 pt)</div></div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 14: DAY 13 — DOCKER COMPOSE + NETWORKING ══ -->
+<div class="slide s-light" id="s13">
+  <div class="cap-strip"></div>
+  <div class="s-top">
+    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.7rem;flex-wrap:wrap">
+      <div class="daybadge"><span class="daybadge-d">Day 13</span><span class="daybadge-n">Week 2 · Docker Compose</span></div>
+      <span class="tag" style="background:rgba(0,150,210,.12);color:#0284c7;border:1px solid rgba(0,150,210,.25)">🐳 4 Containers · Bridge Network · Healthchecks</span>
+    </div>
+    <h2 style="font-size:2.2rem;font-weight:900;color:var(--cn);line-height:1.1">Docker Compose — Wire All 4 Containers</h2>
+    <span class="dv-b" style="margin:.6rem 0 1rem;display:block"></span>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+      <div style="font-family:'Roboto Mono',monospace;font-size:.67rem;background:#001E2E;border-radius:9px;padding:.85rem 1rem;color:#E2E8F0;line-height:1.75;border:1px solid rgba(0,112,173,.18)">
+        <div style="font-size:.6rem;color:#475569;margin-bottom:.5rem">docker-compose.yml (production-ready)</div>
+<span style="color:#41B6E6">services</span>:
+  <span style="color:#6EE7B7">bff</span>:
+    image: capgemini/bff:latest
+    ports: [<span style="color:#6EE7B7">"8080:8080"</span>]
+    networks: [cap-net]
+    env_file: .env
+    depends_on:
+      middleware: {condition: service_healthy}
+    healthcheck:
+      test: ["CMD","curl","-f",
+             "http://localhost:8080/actuator/health"]
+      interval: 30s; retries: 3
+
+  <span style="color:#C084FC">middleware</span>:
+    image: capgemini/middleware:latest
+    networks: [cap-net]
+    depends_on:
+      system-api: {condition: service_healthy}
+
+  <span style="color:#7DD3FC">system-api</span>:
+    image: capgemini/system-api:latest
+    networks: [cap-net]        <span style="color:#475569">← no ports!</span>
+    environment:
+      DATABASE_URL: <span style="color:#F87171">${DATABASE_URL}</span>
+
+  <span style="color:#6EE7B7">db</span>:
+    image: postgres:16-alpine
+    volumes: [pgdata:/var/lib/postgresql/data]
+    networks: [cap-net]
+    environment:
+      POSTGRES_PASSWORD: <span style="color:#F87171">${DB_PASSWORD}</span>
+
+<span style="color:#41B6E6">networks</span>:
+  cap-net: {driver: bridge}
+
+<span style="color:#41B6E6">volumes</span>:
+  pgdata:
+      </div>
+      <div style="display:flex;flex-direction:column;gap:.7rem">
+        <div class="cl" style="border-left:3px solid var(--cb)">
+          <div style="font-size:.62rem;font-weight:700;color:var(--cb);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem">🌐 Inter-Container Communication</div>
+          <ul style="font-size:.8rem;color:#4A5568;line-height:1.85;list-style:none;padding:0">
+            <li>✦ BFF calls: <code style="background:#EBF5FB;padding:.03rem .22rem;border-radius:3px">http://middleware:8081/api/users</code></li>
+            <li>✦ Middleware calls: <code style="background:#EBF5FB;padding:.03rem .22rem;border-radius:3px">http://system-api:8082/api/users</code></li>
+            <li>✦ System API calls: <code style="background:#EBF5FB;padding:.03rem .22rem;border-radius:3px">jdbc:postgresql://db:5432/capdb</code></li>
+            <li>✦ No external traffic can reach system-api — no port mapping</li>
+          </ul>
+        </div>
+        <div class="cl" style="border-left:3px solid #C0392B">
+          <div style="font-size:.62rem;font-weight:700;color:#C0392B;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem">🔐 .env File (always git-ignored)</div>
+          <div style="font-family:'Roboto Mono',monospace;font-size:.69rem;background:#FEF2F2;border-radius:6px;padding:.55rem;color:#991B1B;line-height:1.75">
+DATABASE_URL=jdbc:postgresql://db:5432/capdb<br>
+DB_NAME=capdb<br>
+DB_USER=capuser<br>
+DB_PASSWORD=str0ngPa$$word<br>
+SPRING_PROFILES_ACTIVE=prod
+          </div>
+        </div>
+        <div class="cl">
+          <div style="font-size:.62rem;font-weight:700;color:var(--cb);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.25rem">📊 depends_on + healthcheck</div>
+          <p style="font-size:.78rem;color:#4A5568;line-height:1.5"><code style="background:#EBF5FB;padding:.03rem .22rem;border-radius:3px">condition: service_healthy</code> ensures containers start in dependency order. BFF waits for Middleware, which waits for System API, which waits for DB — Flyway migrations complete before any requests arrive.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="s-btm">
+    <div class="panel panel-lab"><div class="plabel">🔬 Day 13 Lab (15 min)</div><div class="ptext">Write the full docker-compose.yml. Create .env with all secrets. Run: docker compose up. Verify all 4 containers reach healthy. Call GET /api/v1/users/1 through BFF — confirm the full chain BFF → Middleware → System API → PostgreSQL returns data. Show logs with docker compose logs -f.</div></div>
+    <div class="panel panel-note"><div class="plabel">📋 Trainer Notes</div><div class="ptext">This is the first end-to-end run — expect it to fail at least twice for most participants. Common issues: wrong service names in RestClient URLs (should match docker-compose service keys), missing env vars, and System API not getting the DB healthcheck right. Budget 5 min for triage.</div></div>
+    <div class="panel panel-rub"><div class="plabel">📊 Exit Check (5 pts)</div><div class="ptext">✦ docker compose up shows all 4 containers healthy (2 pts) ✦ System API has no public port mapping (1 pt) ✦ BFF request returns data through full stack (2 pts)</div></div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 15: DAY 14 — WEEK 2 ASSESSMENT ══ -->
+<div class="slide s-blue" id="s14">
+  <div class="cap-strip"></div>
+  <div class="s-top">
+    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.7rem;flex-wrap:wrap">
+      <div class="daybadge"><span class="daybadge-d">Day 14</span><span class="daybadge-n">Week 2 · Architecture Milestone</span></div>
+      <span class="tag tg-w">Week 2 Assessment</span><span class="tag tg-w">Integration Milestone</span>
+    </div>
+    <h2 style="font-size:2.2rem;font-weight:900;color:#fff;line-height:1.1">Week 2 — Architecture Milestone Assessment</h2>
+    <span class="dv-w" style="margin:.6rem 0 1rem;display:block"></span>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.1rem">
+      <div style="display:flex;flex-direction:column;gap:.7rem">
+        <div class="cd" style="background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2)">
+          <div style="font-size:.62rem;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.45rem">🎯 Milestone Deliverables (40 min)</div>
+          <div style="display:flex;flex-direction:column;gap:.3rem">
+            <div style="display:flex;align-items:center;gap:.55rem"><div style="width:18px;height:18px;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.3);border-radius:3px;flex-shrink:0"></div><span style="font-size:.8rem;color:rgba(255,255,255,.85)">3 Spring Boot projects scaffold, compile, pass tests</span></div>
+            <div style="display:flex;align-items:center;gap:.55rem"><div style="width:18px;height:18px;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.3);border-radius:3px;flex-shrink:0"></div><span style="font-size:.8rem;color:rgba(255,255,255,.85)">User entity + Email value object + Flyway V1 migration</span></div>
+            <div style="display:flex;align-items:center;gap:.55rem"><div style="width:18px;height:18px;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.3);border-radius:3px;flex-shrink:0"></div><span style="font-size:.8rem;color:rgba(255,255,255,.85)">BFF GET /api/v1/users/{id} delegates to Middleware</span></div>
+            <div style="display:flex;align-items:center;gap:.55rem"><div style="width:18px;height:18px;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.3);border-radius:3px;flex-shrink:0"></div><span style="font-size:.8rem;color:rgba(255,255,255,.85)">Middleware fans out with Virtual Threads + circuit breaker</span></div>
+            <div style="display:flex;align-items:center;gap:.55rem"><div style="width:18px;height:18px;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.3);border-radius:3px;flex-shrink:0"></div><span style="font-size:.8rem;color:rgba(255,255,255,.85)">docker compose up → all 4 healthy → end-to-end request works</span></div>
+            <div style="display:flex;align-items:center;gap:.55rem"><div style="width:18px;height:18px;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.3);border-radius:3px;flex-shrink:0"></div><span style="font-size:.8rem;color:rgba(255,255,255,.85)">Zero hardcoded credentials anywhere in source code</span></div>
+          </div>
+        </div>
+        <div class="cd" style="background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2)">
+          <div style="font-size:.62rem;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.35rem">📐 Code Review Checklist</div>
+          <ul style="font-size:.79rem;color:rgba(255,255,255,.72);line-height:1.8;list-style:none;padding:0">
+            <li>☐ BFF controller has zero business logic</li>
+            <li>☐ All services use constructor injection only</li>
+            <li>☐ @Transactional only on service layer methods</li>
+            <li>☐ Methods are &lt;20 lines, intent-revealing names</li>
+          </ul>
+        </div>
+      </div>
+      <div class="cd" style="background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2)">
+        <div style="font-size:.62rem;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.45rem">📊 Week 2 Scoring Rubric (100 pts)</div>
+        <table style="width:100%;border-collapse:collapse;font-size:.77rem">
+          <tr style="border-bottom:1px solid rgba(255,255,255,.1)"><td style="padding:.26rem 0;color:rgba(255,255,255,.75)">3 layers compiling with correct concerns</td><td style="color:#6EE7B7;font-weight:700;text-align:right">25 pts</td></tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,.1)"><td style="padding:.26rem 0;color:rgba(255,255,255,.75)">SOLID + Clean Code applied throughout</td><td style="color:#6EE7B7;font-weight:700;text-align:right">20 pts</td></tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,.1)"><td style="padding:.26rem 0;color:rgba(255,255,255,.75)">Docker Compose — all 4 healthy, no port leaks</td><td style="color:#6EE7B7;font-weight:700;text-align:right">20 pts</td></tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,.1)"><td style="padding:.26rem 0;color:rgba(255,255,255,.75)">JPA + Flyway — correct schema, no ddl-auto create</td><td style="color:#6EE7B7;font-weight:700;text-align:right">20 pts</td></tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,.1)"><td style="padding:.26rem 0;color:rgba(255,255,255,.75)">Security baseline — secrets in env only</td><td style="color:#6EE7B7;font-weight:700;text-align:right">15 pts</td></tr>
+          <tr><td style="padding:.3rem 0;color:#fff;font-weight:700">Total</td><td style="color:#fff;font-weight:700;text-align:right">100 pts</td></tr>
+        </table>
+        <div style="margin-top:.65rem;background:rgba(255,255,255,.07);border-radius:7px;padding:.5rem .65rem;font-size:.74rem;color:rgba(255,255,255,.55)">Code is submitted via Git PR to the training repository. Trainer reviews and leaves inline comments before Day 15.</div>
+      </div>
+    </div>
+  </div>
+  <div class="s-btm">
+    <div class="panel panel-lab"><div class="plabel">🔬 Day 14 Full-Hour Lab</div><div class="ptext">40 min: individual build milestone — achieve all 6 deliverables. 15 min: trainer code walkthrough with live feedback. 5 min: create a Git PR to training repo — commit message must describe what each layer does in one sentence.</div></div>
+    <div class="panel panel-note"><div class="plabel">📋 Trainer Notes</div><div class="ptext">Read all PRs before Day 15. Leave 2–3 inline comments per PR minimum. Focus on: (1) any business logic in BFF, (2) field injection instead of constructor, (3) credentials in application.yml. These three issues are the most common at mid-level.</div></div>
+    <div class="panel panel-rub"><div class="plabel">📊 Pass Threshold + Progression</div><div class="ptext">✦ 70+: Proceed to Week 3 ✦ 85+: Designated as code review partner in Week 3 labs ✦ Below 70%: 30-min architecture review with trainer before Day 15 — focus on layer responsibility boundaries</div></div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 16: DAY 15 — BFF FULL BUILD ══ -->
+<div class="slide s-white" id="s15">
+  <div class="cap-strip"></div>
+  <div class="s-top">
+    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.7rem;flex-wrap:wrap">
+      <div class="daybadge"><span class="daybadge-d">Day 15</span><span class="daybadge-n">Week 3 · BFF Build</span></div>
+      <span class="tag tg-b">CRUD · Validation · Error Handling</span>
+    </div>
+    <h2 style="font-size:2.2rem;font-weight:900;color:var(--cn);line-height:1.1">BFF — Full CRUD + Production Error Handling</h2>
+    <span class="dv-b" style="margin:.6rem 0 1rem;display:block"></span>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+      <div class="cb" style="font-size:.66rem">
+        <div style="font-size:.6rem;color:#475569;margin-bottom:.5rem">BFF — all operations</div>
+<span class="ca">@RestController</span> <span class="ca">@RequestMapping</span>(<span class="cs">"/api/v1/users"</span>)
+<span class="ca">@RequiredArgsConstructor</span> <span class="ca">@Validated</span>
+<span class="ck">public class</span> <span class="cc">UserBffController</span> {
+
+  <span class="ck">private final</span> <span class="cc">MiddlewareClient</span> mwClient;
+
+  <span class="ca">@GetMapping</span>
+  <span class="ca">@PreAuthorize</span>(<span class="cs">"hasRole('USER')"</span>)
+  <span class="ck">public</span> Page&lt;UserSummary&gt; list(
+      <span class="ca">@PageableDefault</span>(size=20) <span class="cc">Pageable</span> p) {
+    <span class="ck">return</span> mwClient.listUsers(p).map(UserSummary::from);
+  }
+
+  <span class="ca">@PostMapping</span>
+  <span class="ca">@PreAuthorize</span>(<span class="cs">"hasRole('ADMIN')"</span>)
+  <span class="ca">@ResponseStatus</span>(<span class="cc">HttpStatus</span>.CREATED)
+  <span class="ck">public</span> <span class="cc">UserClientView</span> create(
+      <span class="ca">@RequestBody</span> <span class="ca">@Valid</span> <span class="cc">CreateUserRequest</span> req) {
+    <span class="ck">return</span> mwClient.createUser(req).toClientView();
+  }
+
+  <span class="ca">@PatchMapping</span>(<span class="cs">"/{id}/deactivate"</span>)
+  <span class="ca">@PreAuthorize</span>(<span class="cs">"hasRole('ADMIN')"</span>)
+  <span class="ck">public</span> <span class="cc">ResponseEntity</span>&lt;Void&gt; deactivate(
+      <span class="ca">@PathVariable</span> <span class="ca">@Positive</span> Long id) {
+    mwClient.deactivateUser(id);
+    <span class="ck">return</span> <span class="cc">ResponseEntity</span>.noContent().build();
+  }
+}
+
+<span class="cm_">// Validated input DTO — uses Java 21 record</span>
+<span class="ck">public record</span> <span class="cc">CreateUserRequest</span>(
+    <span class="ca">@NotBlank</span> String name,
+    <span class="ca">@Email</span>     String email
+) {}
+      </div>
+      <div style="display:flex;flex-direction:column;gap:.7rem">
+        <div class="cl">
+          <div style="font-size:.62rem;font-weight:700;color:var(--cb);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem">⚠ Global Error Handler</div>
+          <div style="font-family:'Roboto Mono',monospace;font-size:.67rem;background:#001E2E;border-radius:7px;padding:.65rem;color:#E2E8F0;line-height:1.75;border:1px solid rgba(0,112,173,.18)">
+<span class="ca">@RestControllerAdvice</span>
+<span class="ck">public class</span> <span class="cc">GlobalExceptionHandler</span> {
+
+  <span class="ca">@ExceptionHandler</span>(<span class="cc">MethodArgumentNotValidException</span>.class)
+  <span class="ca">@ResponseStatus</span>(<span class="cc">HttpStatus</span>.BAD_REQUEST)
+  <span class="ck">public</span> <span class="cc">ProblemDetail</span> validationFailed(<span class="cc">Exception</span> e) {
+    <span class="ck">var</span> pd = <span class="cc">ProblemDetail</span>.forStatus(400);
+    pd.setTitle(<span class="cs">"Validation Failed"</span>);
+    <span class="cm_">// OWASP A09 — no stack trace, no internal details</span>
+    <span class="ck">return</span> pd;
+  }
+}
+          </div>
+        </div>
+        <div class="cl">
+          <div style="font-size:.62rem;font-weight:700;color:var(--cb);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.25rem">📋 HTTP Status Conventions</div>
+          <table style="width:100%;border-collapse:collapse;font-size:.76rem">
+            <tr style="border-bottom:1px solid rgba(0,61,91,.07)"><td style="padding:.22rem 0;color:var(--cb);font-weight:700">201 Created</td><td style="padding:.22rem .5rem;color:#4A5568">POST success — return new resource</td></tr>
+            <tr style="border-bottom:1px solid rgba(0,61,91,.07)"><td style="padding:.22rem 0;color:var(--cb);font-weight:700">204 No Content</td><td style="padding:.22rem .5rem;color:#4A5568">PATCH/DELETE success — no body</td></tr>
+            <tr style="border-bottom:1px solid rgba(0,61,91,.07)"><td style="padding:.22rem 0;color:var(--cb);font-weight:700">400 Bad Request</td><td style="padding:.22rem .5rem;color:#4A5568">Validation failure — use ProblemDetail</td></tr>
+            <tr><td style="padding:.22rem 0;color:var(--cb);font-weight:700">409 Conflict</td><td style="padding:.22rem .5rem;color:#4A5568">Business rule violation (already active)</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="s-btm">
+    <div class="panel panel-lab"><div class="plabel">🔬 Day 15 Lab (12 min)</div><div class="ptext">Add POST /api/v1/users and PATCH /{id}/deactivate to BFF. Add @Valid on CreateUserRequest record. Add GlobalExceptionHandler returning ProblemDetail for validation errors. Test: curl POST with missing email — verify 400 with structured error body (no stack trace).</div></div>
+    <div class="panel panel-note"><div class="plabel">📋 Trainer Notes</div><div class="ptext">Focus on ProblemDetail (RFC 7807) — it's Spring Boot 3's built-in structured error format. Mid-level devs often return generic 500 errors or raw exception messages. Show the difference: structured error is client-friendly and secure; raw exception is an OWASP A09 violation.</div></div>
+    <div class="panel panel-rub"><div class="plabel">📊 Exit Check (5 pts)</div><div class="ptext">✦ POST endpoint validates request with @Valid and returns 201 (2 pts) ✦ PATCH returns 204 No Content on success (1 pt) ✦ Validation failure returns 400 ProblemDetail with no stack trace (2 pts)</div></div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 17: DAY 16 — JWT + SPRING SECURITY 6 ══ -->
+<div class="slide s-dark" id="s16">
+  <div class="cap-strip"></div>
+  <div class="s-top">
+    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.7rem;flex-wrap:wrap">
+      <div class="daybadge"><span class="daybadge-d">Day 16</span><span class="daybadge-n">Week 3 · Security</span></div>
+      <span class="tag tg-r">JWT · Spring Security 6 · OAuth2</span>
+    </div>
+    <h2 style="font-size:2.2rem;font-weight:900;color:#fff;line-height:1.1">JWT + Spring Security 6 — Auth at the BFF Layer</h2>
+    <span class="dv-s" style="margin:.6rem 0 1rem;display:block"></span>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+      <div style="display:flex;flex-direction:column;gap:.65rem">
+        <div class="cb" style="font-size:.67rem;flex:1">
+          <div style="font-size:.62rem;color:#475569;margin-bottom:.5rem">SecurityConfig.java + JwtAuthFilter.java</div>
+<span class="ca">@Configuration</span> <span class="ca">@EnableMethodSecurity</span>
+<span class="ck">public class</span> <span class="cc">SecurityConfig</span> {
+  <span class="ca">@Bean</span>
+  SecurityFilterChain chain(HttpSecurity h,
+      <span class="cc">JwtAuthFilter</span> filter) <span class="ck">throws</span> Exception {
+    <span class="ck">return</span> h
+      .csrf(<span class="cc">AbstractHttpConfigurer</span>::disable)
+      .sessionManagement(s <span class="ca">-&gt;</span>
+          s.sessionCreationPolicy(<span class="cc">STATELESS</span>))
+      .authorizeHttpRequests(a <span class="ca">-&gt;</span> a
+          .requestMatchers(<span class="cs">"/actuator/health"</span>).permitAll()
+          .anyRequest().authenticated())
+      .addFilterBefore(filter,
+          <span class="cc">UsernamePasswordAuthenticationFilter</span>.class)
+      .build();
+  }
+}
+
+<span class="cm_">// JwtAuthFilter — intercepts every request</span>
+<span class="ca">@Component</span> <span class="ca">@RequiredArgsConstructor</span>
+<span class="ck">public class</span> <span class="cc">JwtAuthFilter</span>
+    <span class="ck">extends</span> <span class="cc">OncePerRequestFilter</span> {
+  <span class="ck">private final</span> <span class="cc">JwtValidator</span> validator;
+
+  <span class="ca">@Override</span>
+  <span class="ck">protected void</span> doFilterInternal(
+      <span class="cc">HttpServletRequest</span> req, <span class="cc">HttpServletResponse</span> res,
+      <span class="cc">FilterChain</span> chain) <span class="ck">throws</span> Exception {
+    extractBearer(req).ifPresent(token <span class="ca">-&gt;</span>
+        <span class="cc">SecurityContextHolder</span>.getContext()
+            .setAuthentication(validator.validate(token)));
+    chain.doFilter(req, res);
+  }
+}
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:.65rem">
+        <div class="cd" style="border-left:3px solid var(--cs)">
+          <div style="font-size:.62rem;font-weight:700;color:var(--cs);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.25rem">🔑 JWT Best Practices (OWASP A07)</div>
+          <ul style="font-size:.79rem;color:rgba(255,255,255,.65);line-height:1.8;list-style:none;padding:0">
+            <li>✦ Short access token TTL (15 min) + refresh tokens</li>
+            <li>✦ RS256 (asymmetric) not HS256 in multi-service systems</li>
+            <li>✦ Always validate: <code style="color:#FDE68A">iss</code>, <code style="color:#FDE68A">aud</code>, <code style="color:#FDE68A">exp</code> claims</li>
+            <li>✦ Never store JWTs in localStorage — use HttpOnly cookies</li>
+            <li>✦ Short TTL is your revocation mechanism — no token denylist needed</li>
+          </ul>
+        </div>
+        <div class="cd" style="border-left:3px solid #F87171">
+          <div style="font-size:.62rem;font-weight:700;color:#F87171;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.25rem">🔗 Service-to-Service Auth</div>
+          <p style="font-size:.79rem;color:rgba(255,255,255,.65);line-height:1.5;margin-bottom:.35rem">BFF → Middleware and Middleware → System API use <strong style="color:#fff">separate service JWTs</strong>. The client's token is never forwarded — re-signed with a service identity to propagate trust.</p>
+          <div style="font-family:'Roboto Mono',monospace;font-size:.66rem;color:#E2E8F0;line-height:1.7">
+<span class="cm_">// BFF adds service JWT header</span>
+client.get().uri(<span class="cs">"/users/{id}"</span>, id)
+  .header(<span class="cs">"X-Service-Token"</span>,
+      serviceTokenProvider.getToken())
+  .retrieve()...
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="s-btm">
+    <div class="panel panel-lab"><div class="plabel">🔬 Day 16 Lab (12 min)</div><div class="ptext">Add SecurityConfig to BFF. Write a JwtAuthFilter that extracts the Bearer token and puts a mock UsernamePasswordAuthenticationToken in the context. Test with curl: ① no token → 401, ② invalid token → 401, ③ valid token → 200. @PreAuthorize must reject ADMIN endpoints for USER role.</div></div>
+    <div class="panel panel-note"><div class="plabel">📋 Trainer Notes</div><div class="ptext">The Spring Security 6 DSL changed completely from version 5 — most StackOverflow answers are for the old syntax. Warn participants. The lambda-based chain is the correct pattern. Focus on stateless session management — critical for horizontally-scaled containers.</div></div>
+    <div class="panel panel-rub"><div class="plabel">📊 Exit Check (5 pts)</div><div class="ptext">✦ Missing token returns 401, not 403 (1 pt) ✦ Session policy is STATELESS (1 pt) ✦ /actuator/health is permit-all without a token (1 pt) ✦ @PreAuthorize rejects wrong role with 403 (2 pts)</div></div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 18: DAY 17 — RESILIENCE + CACHING ══ -->
+<div class="slide s-mid" id="s17">
+  <div class="cap-strip"></div>
+  <div class="s-top">
+    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.7rem;flex-wrap:wrap">
+      <div class="daybadge"><span class="daybadge-d">Day 17</span><span class="daybadge-n">Week 3 · Resilience &amp; Caching</span></div>
+      <span class="tag tg-b">Resilience4j · Bulkhead · Redis Cache</span>
+    </div>
+    <h2 style="font-size:2.2rem;font-weight:900;color:var(--cn);line-height:1.1">Resilience Patterns — Failing Safely at Scale</h2>
+    <span class="dv-b" style="margin:.6rem 0 1rem;display:block"></span>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.85rem">
+      <div class="cl" style="border-top:3px solid var(--cb)">
+        <div style="font-size:.62rem;font-weight:700;color:var(--cb);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.25rem">⚡ Circuit Breaker States</div>
+        <svg viewBox="0 0 210 90" width="100%" xmlns="http://www.w3.org/2000/svg" style="display:block;margin-bottom:.35rem">
+          <rect x="5" y="20" width="60" height="26" rx="6" fill="rgba(0,112,173,.1)" stroke="#0070AD" stroke-width="1.2"/>
+          <text x="35" y="37" text-anchor="middle" font-family="Roboto" font-size="9" font-weight="700" fill="#0070AD">CLOSED</text>
+          <rect x="75" y="20" width="60" height="26" rx="6" fill="rgba(248,113,113,.1)" stroke="#F87171" stroke-width="1.2"/>
+          <text x="105" y="37" text-anchor="middle" font-family="Roboto" font-size="9" font-weight="700" fill="#F87171">OPEN</text>
+          <rect x="145" y="20" width="60" height="26" rx="6" fill="rgba(253,230,138,.1)" stroke="#FDE68A" stroke-width="1.2"/>
+          <text x="175" y="37" text-anchor="middle" font-family="Roboto" font-size="8" font-weight="700" fill="#C09000">HALF-OPEN</text>
+          <path d="M65 33 L75 33" stroke="#F87171" stroke-width="1.2" marker-end="url(#ar)"/>
+          <path d="M135 33 L145 33" stroke="#FDE68A" stroke-width="1.2" marker-end="url(#ar2)"/>
+          <path d="M175 46 Q175 70 35 70 L35 46" stroke="#0070AD" stroke-width="1.2" fill="none" marker-end="url(#ar3)" stroke-dasharray="3,2"/>
+          <text x="105" y="80" text-anchor="middle" font-family="Roboto" font-size="7.5" fill="#6B7280">probe succeeds → CLOSED</text>
+          <defs>
+            <marker id="ar" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto"><path d="M0,0L5,2.5L0,5Z" fill="#F87171"/></marker>
+            <marker id="ar2" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto"><path d="M0,0L5,2.5L0,5Z" fill="#FDE68A"/></marker>
+            <marker id="ar3" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto"><path d="M0,0L5,2.5L0,5Z" fill="#0070AD"/></marker>
+          </defs>
+        </svg>
+        <p style="font-size:.76rem;color:#4A5568;line-height:1.45">Failure rate &gt; 50%: CLOSED → OPEN. Calls immediately return fallback. After 30s: HALF-OPEN probes. Success: back to CLOSED.</p>
+      </div>
+      <div class="cl" style="border-top:3px solid var(--cc)">
+        <div style="font-size:.62rem;font-weight:700;color:var(--cc);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.25rem">🏗️ Bulkhead — Thread Isolation</div>
+        <div style="font-family:'Roboto Mono',monospace;font-size:.67rem;background:#001E2E;border-radius:7px;padding:.6rem;color:#E2E8F0;line-height:1.75;border:1px solid rgba(0,112,173,.18)">
+resilience4j.bulkhead:
+&nbsp;&nbsp;instances.userService:
+&nbsp;&nbsp;&nbsp;&nbsp;maxConcurrentCalls: 25
+&nbsp;&nbsp;&nbsp;&nbsp;maxWaitDuration: 100ms
+        </div>
+        <p style="font-size:.76rem;color:#4A5568;margin-top:.4rem;line-height:1.45">Caps concurrent calls to a slow downstream. Prevents one slow service from exhausting all threads and taking down the entire Middleware.</p>
+      </div>
+      <div class="cl" style="border-top:3px solid var(--cs)">
+        <div style="font-size:.62rem;font-weight:700;color:var(--cs);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.25rem">💾 Redis Caching Strategy</div>
+        <div style="font-family:'Roboto Mono',monospace;font-size:.67rem;background:#001E2E;border-radius:7px;padding:.6rem;color:#E2E8F0;line-height:1.75;border:1px solid rgba(0,112,173,.18)">
+<span class="ca">@Cacheable</span>(value=<span class="cs">"users"</span>,
+    key=<span class="cs">"#id"</span>, unless=<span class="cs">"#result==null"</span>)
+<span class="ck">public</span> <span class="cc">UserDto</span> getUser(Long id) { ... }
+
+spring.cache.redis.time-to-live: 5m
+<span class="cm_"># Never cache: passwords, tokens, PII</span>
+        </div>
+        <p style="font-size:.76rem;color:#4A5568;margin-top:.4rem;line-height:1.45">Cache at Middleware layer. <code style="background:#EBF5FB;padding:.03rem .2rem;border-radius:3px">@CacheEvict</code> on write. TTL ensures data freshness. Zero stale data in production.</p>
+      </div>
+    </div>
+    <div class="cm" style="margin-top:.7rem;padding:.6rem .85rem">
+      <div style="font-size:.62rem;font-weight:700;color:var(--cb);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.2rem">Resilience annotation stacking order (Middleware → System API)</div>
+      <div style="font-family:'Roboto Mono',monospace;font-size:.69rem;color:var(--cn);line-height:1.7">@RateLimiter → @Bulkhead → @CircuitBreaker → @Retry → @TimeLimiter → actual method call</div>
+    </div>
+  </div>
+  <div class="s-btm">
+    <div class="panel panel-lab"><div class="plabel">🔬 Day 17 Lab (12 min)</div><div class="ptext">Add @Bulkhead(name="systemApi", type=SEMAPHORE) to your orchestrator. Configure maxConcurrentCalls: 3. Use a CountDownLatch to fire 10 concurrent requests — verify 7 get BulkheadFullException. Add Redis cache with 2-min TTL to getUser. Confirm second call is served from cache (check logs).</div></div>
+    <div class="panel panel-note"><div class="plabel">📋 Trainer Notes</div><div class="ptext">Mid-level devs rarely think about Bulkhead patterns — they know Circuit Breakers from theory but not the thread isolation angle. The concurrent-request demo is very effective. Use a simple loop rather than a test framework — they can see the exceptions live in the console.</div></div>
+    <div class="panel panel-rub"><div class="plabel">📊 Exit Check (5 pts)</div><div class="ptext">✦ Bulkhead configured and rejects concurrent excess (2 pts) ✦ Resilience annotations in correct order (1 pt) ✦ Redis cache returns hit on second call (no downstream call) (2 pts)</div></div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 19: DAY 18 — TRANSACTIONS + DOMAIN EVENTS ══ -->
+<div class="slide s-dark" id="s18">
+  <div class="cap-strip"></div>
+  <div class="s-top">
+    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.7rem;flex-wrap:wrap">
+      <div class="daybadge"><span class="daybadge-d">Day 18</span><span class="daybadge-n">Week 3 · System API Advanced</span></div>
+      <span class="tag tg-w">@Transactional Boundaries · Domain Events · ApplicationEventPublisher</span>
+    </div>
+    <h2 style="font-size:2.2rem;font-weight:900;color:#fff;line-height:1.1">Transactions &amp; Domain Events — Correctness at the Core</h2>
+    <span class="dv-s" style="margin:.6rem 0 1rem;display:block"></span>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+      <div class="cb" style="font-size:.67rem">
+        <div style="font-size:.62rem;color:#475569;margin-bottom:.5rem">UserService — correct transaction boundaries + domain event</div>
+<span class="ca">@Service</span> <span class="ca">@RequiredArgsConstructor</span>
+<span class="ck">public class</span> <span class="cc">UserService</span> {
+  <span class="ck">private final</span> <span class="cc">UserRepository</span> repo;
+  <span class="ck">private final</span> <span class="cc">ApplicationEventPublisher</span> events;
+
+  <span class="ca">@Transactional</span>  <span class="cm_">// ← service layer only</span>
+  <span class="ck">public</span> <span class="cc">UserDto</span> deactivateUser(Long userId) {
+    <span class="ck">var</span> user = repo.findById(userId)
+        .orElseThrow(() <span class="ca">-&gt;</span> <span class="ck">new</span> <span class="cc">UserNotFoundException</span>(userId));
+
+    user.deactivate(); <span class="cm_">// domain method raises event internally</span>
+    repo.save(user);   <span class="cm_">// explicit save — don't rely on dirty check</span>
+
+    <span class="cm_">// Publish AFTER commit — not inside transaction!</span>
+    events.publishEvent(<span class="ck">new</span> <span class="cc">UserDeactivatedEvent</span>(userId));
+    <span class="ck">return</span> userMapper.toDto(user);
+  }
+
+  <span class="ca">@Transactional</span>(readOnly = <span class="ck">true</span>)  <span class="cm_">// ← 20-30% faster</span>
+  <span class="ck">public</span> Page&lt;UserDto&gt; findAll(<span class="cc">Pageable</span> p) {
+    <span class="ck">return</span> repo.findAll(p).map(userMapper::toDto);
+  }
+}
+      </div>
+      <div style="display:flex;flex-direction:column;gap:.65rem">
+        <div class="cd" style="border-left:3px solid var(--cs)">
+          <div style="font-size:.62rem;font-weight:700;color:var(--cs);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.25rem">📐 @Transactional Rules for Mid-Level Devs</div>
+          <ul style="font-size:.79rem;color:rgba(255,255,255,.65);line-height:1.85;list-style:none;padding:0">
+            <li>✦ Service layer <strong style="color:#fff">only</strong> — never controller, never repository</li>
+            <li>✦ <code style="color:#FDE68A">readOnly=true</code> on all query methods — performance + correctness</li>
+            <li>✦ Keep transactions short — <strong style="color:#fff">never</strong> make HTTP calls inside a transaction</li>
+            <li>✦ <code style="color:#FDE68A">propagation=REQUIRES_NEW</code> for audit logging that must survive rollback</li>
+          </ul>
+        </div>
+        <div class="cd" style="border-left:3px solid var(--cc)">
+          <div style="font-size:.62rem;font-weight:700;color:var(--cc);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.25rem">📢 @TransactionalEventListener</div>
+          <div style="font-family:'Roboto Mono',monospace;font-size:.67rem;color:#E2E8F0;line-height:1.75">
+<span class="ca">@Component</span>
+<span class="ck">public class</span> <span class="cc">UserDeactivatedHandler</span> {
+
+  <span class="ca">@TransactionalEventListener</span>
+  <span class="cm_">// ← fires AFTER commit (not before!)</span>
+  <span class="ck">public void</span> handle(<span class="cc">UserDeactivatedEvent</span> e) {
+    auditService.log(e.userId(), <span class="cs">"deactivated"</span>);
+    <span class="cm_">// Safe: even if audit fails, deactivation committed</span>
+  }
+}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="s-btm">
+    <div class="panel panel-lab"><div class="plabel">🔬 Day 18 Lab (12 min)</div><div class="ptext">Add a @TransactionalEventListener that logs to an audit_log table when a user is deactivated. Verify: deactivation saves user AND writes audit log in the same request. Then simulate an audit log failure — verify the deactivation still commits (REQUIRES_NEW). Check both rows in psql.</div></div>
+    <div class="panel panel-note"><div class="plabel">📋 Trainer Notes</div><div class="ptext">The "never make HTTP calls inside a transaction" rule is the most violated rule at mid-level. Demo: place a RestClient call inside a @Transactional method and add artificial latency — watch the DB connection pool exhaust under load. This memory sticks forever.</div></div>
+    <div class="panel panel-rub"><div class="plabel">📊 Exit Check (5 pts)</div><div class="ptext">✦ @Transactional only on service methods, not controller (2 pts) ✦ readOnly=true on all query methods (1 pt) ✦ @TransactionalEventListener fires after commit, not during (2 pts)</div></div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 20: DAY 19 — OBSERVABILITY ══ -->
+<div class="slide s-light" id="s19">
+  <div class="cap-strip"></div>
+  <div class="s-top">
+    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.7rem;flex-wrap:wrap">
+      <div class="daybadge"><span class="daybadge-d">Day 19</span><span class="daybadge-n">Week 3 · Observability</span></div>
+      <span class="tag tg-b">Micrometer · Zipkin · Structured JSON Logs</span>
+    </div>
+    <h2 style="font-size:2.2rem;font-weight:900;color:var(--cn);line-height:1.1">Observability — You Can't Fix What You Can't See</h2>
+    <span class="dv-b" style="margin:.6rem 0 1rem;display:block"></span>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.9rem">
+      <div class="cl" style="border-top:3px solid var(--cb)">
+        <div style="font-size:.62rem;font-weight:700;color:var(--cb);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem">📊 Metrics — Micrometer</div>
+        <div style="font-family:'Roboto Mono',monospace;font-size:.67rem;background:#001E2E;border-radius:7px;padding:.6rem;color:#E2E8F0;line-height:1.75;border:1px solid rgba(0,112,173,.18)">
+<span class="ca">@Timed</span>(name=<span class="cs">"users.get"</span>,
+    percentiles={0.5, 0.95, 0.99})
+<span class="ck">public</span> <span class="cc">UserDto</span> getUser(Long id) { ... }
+
+<span class="cm_">// Custom business metric</span>
+<span class="ck">private final</span> Counter deactivations =
+  Counter.builder(<span class="cs">"users.deactivated"</span>)
+    .register(meterRegistry);
+        </div>
+        <p style="font-size:.75rem;color:#4A5568;margin-top:.4rem;line-height:1.4">Auto-wires to Prometheus. Track: request latency (p50, p95, p99), error rates, cache hit ratios, circuit breaker state changes.</p>
+      </div>
+      <div class="cl" style="border-top:3px solid var(--cc)">
+        <div style="font-size:.62rem;font-weight:700;color:var(--cc);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem">🔍 Distributed Tracing — Zipkin</div>
+        <p style="font-size:.76rem;color:#4A5568;margin-bottom:.4rem;line-height:1.5">Spring Boot 3 auto-instruments via Micrometer Tracing. Every request gets a <code style="background:#EBF5FB;padding:.03rem .2rem;border-radius:3px">traceId</code> that propagates across BFF → Middleware → System API.</p>
+        <div style="background:#F4F6F9;border-radius:6px;padding:.5rem .7rem;font-size:.72rem;color:var(--cn);line-height:1.6">
+          <div><strong>traceId:</strong> one per inbound request</div>
+          <div><strong>spanId:</strong> one per service hop</div>
+          <div><strong>All log lines</strong> include traceId automatically</div>
+        </div>
+      </div>
+      <div class="cl" style="border-top:3px solid var(--cs)">
+        <div style="font-size:.62rem;font-weight:700;color:var(--cs);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem">📝 Structured JSON Logging</div>
+        <div style="font-family:'Roboto Mono',monospace;font-size:.65rem;background:#001E2E;border-radius:7px;padding:.6rem;color:#FDE68A;line-height:1.75;border:1px solid rgba(0,112,173,.18)">
+{
+  "ts":"2025-06-01T09:30:00Z",
+  "level":"INFO",
+  "traceId":"a1b2c3",
+  "spanId":"d4e5f6",
+  "service":"middleware",
+  "userId":42,
+  "msg":"User fetched from cache"
+}
+        </div>
+        <p style="font-size:.74rem;color:#4A5568;margin-top:.4rem;line-height:1.4"><strong>Never log:</strong> passwords, tokens, PII, card numbers. Use <code style="background:#EBF5FB;padding:.03rem .2rem;border-radius:3px">logstash-logback-encoder</code> for JSON format.</p>
+      </div>
+    </div>
+    <div class="cm" style="margin-top:.7rem;padding:.55rem .85rem">
+      <div style="display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap;font-size:.78rem">
+        <span style="font-weight:700;color:var(--cb)">Add to docker-compose.yml:</span>
+        <code style="background:#fff;padding:.08rem .35rem;border-radius:4px;color:var(--cn)">zipkin: image: openzipkin/zipkin  ports: ["9411:9411"]</code>
+        <span style="color:#4A5568">→ UI at</span>
+        <code style="background:#fff;padding:.08rem .35rem;border-radius:4px;color:var(--cn)">http://localhost:9411</code>
+      </div>
+    </div>
+  </div>
+  <div class="s-btm">
+    <div class="panel panel-lab"><div class="plabel">🔬 Day 19 Lab (12 min)</div><div class="ptext">Add Zipkin to docker-compose. Add @Timed to getUser and deactivateUser. Start all services. Call the BFF endpoint 10 times. Open Zipkin UI — find the slowest trace. Identify which span (BFF, Middleware, or System API) took the most time. Add a custom Counter for deactivation events.</div></div>
+    <div class="panel panel-note"><div class="plabel">📋 Trainer Notes</div><div class="ptext">The Zipkin waterfall view is usually a revelation for mid-level devs — they've never seen the full call graph visualised. Deliberately add a Thread.sleep(200) to the System API to create a clear slow span, then remove it after they've identified it. Memorable debugging exercise.</div></div>
+    <div class="panel panel-rub"><div class="plabel">📊 Exit Check (5 pts)</div><div class="ptext">✦ @Timed annotation on at least 2 service methods (1 pt) ✦ traceId appears in all 3 service log lines for same request (2 pts) ✦ Zipkin trace shows correct span structure BFF→MW→SysAPI (2 pts)</div></div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 21: DAY 20 — INTER-SERVICE COMMUNICATION ══ -->
+<div class="slide s-dark" id="s20">
+  <div class="cap-strip"></div>
+  <div class="s-top">
+    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.7rem;flex-wrap:wrap">
+      <div class="daybadge"><span class="daybadge-d">Day 20</span><span class="daybadge-n">Week 3 · Service Communication</span></div>
+      <span class="tag tg-w">RestClient · Error Propagation · Correlation IDs</span>
+    </div>
+    <h2 style="font-size:2.2rem;font-weight:900;color:#fff;line-height:1.1">Inter-Service Communication — Contracts &amp; Error Propagation</h2>
+    <span class="dv-s" style="margin:.6rem 0 1rem;display:block"></span>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+      <div class="cb" style="font-size:.67rem">
+        <div style="font-size:.62rem;color:#475569;margin-bottom:.5rem">MiddlewareClient.java — error-aware RestClient</div>
+<span class="ca">@Component</span> <span class="ca">@RequiredArgsConstructor</span>
+<span class="ck">public class</span> <span class="cc">MiddlewareClient</span> {
+  <span class="ck">private final</span> <span class="cc">RestClient</span> client;
+
+  <span class="ck">public</span> <span class="cc">UserDto</span> getUser(Long id) {
+    <span class="ck">return</span> client.get()
+        .uri(<span class="cs">"/api/v1/users/{id}"</span>, id)
+        .header(<span class="cs">"X-Correlation-Id"</span>,
+            correlationProvider.current())
+        .retrieve()
+        .onStatus(<span class="cc">HttpStatusCode</span>::is4xxClientError,
+            (req, res) <span class="ca">-&gt;</span> {
+              <span class="ck">throw new</span> <span class="cc">UserNotFoundException</span>(id);
+            })
+        .onStatus(<span class="cc">HttpStatusCode</span>::is5xxServerError,
+            (req, res) <span class="ca">-&gt;</span> {
+              <span class="ck">throw new</span> <span class="cc">DownstreamServiceException</span>(<span class="cs">"middleware"</span>);
+            })
+        .body(<span class="cc">UserDto</span>.class);
+  }
+}
+
+<span class="cm_">// Correlation-ID request interceptor</span>
+<span class="ca">@Bean</span>
+RestClient restClient(<span class="cc">RestClient.Builder</span> b) {
+  <span class="ck">return</span> b.requestInterceptor((req, body, ex) <span class="ca">-&gt;</span> {
+    req.getHeaders().set(<span class="cs">"X-Correlation-Id"</span>,
+        MDC.get(<span class="cs">"traceId"</span>));  <span class="cm_">// propagate trace</span>
+    <span class="ck">return</span> ex.execute(req, body);
+  }).build();
+}
+      </div>
+      <div style="display:flex;flex-direction:column;gap:.65rem">
+        <div class="cd" style="border-left:3px solid var(--cs)">
+          <div style="font-size:.62rem;font-weight:700;color:var(--cs);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.25rem">🔄 Error Translation Strategy</div>
+          <table style="width:100%;border-collapse:collapse;font-size:.76rem">
+            <tr style="border-bottom:1px solid rgba(255,255,255,.07)"><td style="padding:.22rem 0;color:rgba(255,255,255,.5);font-size:.68rem">Downstream returns</td><td style="padding:.22rem .45rem;color:rgba(255,255,255,.5);font-size:.68rem">Client exception</td></tr>
+            <tr style="border-bottom:1px solid rgba(255,255,255,.07)"><td style="padding:.22rem 0;color:var(--cs);font-weight:700">404</td><td style="padding:.22rem .45rem;color:rgba(255,255,255,.65)">UserNotFoundException → BFF returns 404</td></tr>
+            <tr style="border-bottom:1px solid rgba(255,255,255,.07)"><td style="padding:.22rem 0;color:#FDE68A;font-weight:700">503</td><td style="padding:.22rem .45rem;color:rgba(255,255,255,.65)">DownstreamServiceException → fallback or 503</td></tr>
+            <tr><td style="padding:.22rem 0;color:#F87171;font-weight:700">500</td><td style="padding:.22rem .45rem;color:rgba(255,255,255,.65)">Circuit opens after threshold</td></tr>
+          </table>
+        </div>
+        <div class="cd" style="border-left:3px solid var(--cc)">
+          <div style="font-size:.62rem;font-weight:700;color:var(--cc);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.25rem">🏷️ Correlation-ID Rules</div>
+          <ul style="font-size:.79rem;color:rgba(255,255,255,.65);line-height:1.8;list-style:none;padding:0">
+            <li>✦ Generated at BFF entry point if not present in request</li>
+            <li>✦ Stored in MDC for all log lines in that thread</li>
+            <li>✦ Forwarded via <code style="color:#FDE68A">X-Correlation-Id</code> header to downstream</li>
+            <li>✦ Every log line automatically includes it via Micrometer</li>
+          </ul>
+        </div>
+        <div class="cd">
+          <div style="font-size:.62rem;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.2rem">💡 Mid-Level Insight</div>
+          <p style="font-size:.79rem;color:rgba(255,255,255,.55);line-height:1.45">Don't let HTTP status codes leak raw internal errors to clients. Translate: System API 422 → BFF 422 with clean message. System API 500 → BFF 503 with generic "service unavailable". Client never sees internal stack traces.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="s-btm">
+    <div class="panel panel-lab"><div class="plabel">🔬 Day 20 Lab (12 min)</div><div class="ptext">Add X-Correlation-Id propagation via RestClient interceptor. Verify it appears in logs from all 3 services for a single request. Add onStatus handlers for 4xx and 5xx. Test: kill System API — verify BFF returns 503 (not 500) with a clean message, not a stack trace.</div></div>
+    <div class="panel panel-note"><div class="plabel">📋 Trainer Notes</div><div class="ptext">The correlation ID propagation is the single most useful debugging tool mid-level devs will ever add. Show the before (finding a bug in 3 log streams) vs after (grep for one traceId to get the complete picture). Time the difference — it's dramatic.</div></div>
+    <div class="panel panel-rub"><div class="plabel">📊 Exit Check (5 pts)</div><div class="ptext">✦ Same X-Correlation-Id in all 3 service logs for one request (2 pts) ✦ 4xx from System API becomes appropriate BFF client error (2 pts) ✦ 5xx returns 503 with clean message, no stack trace (1 pt)</div></div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 22: DAY 21 — WEEK 3 CODE REVIEW LAB ══ -->
+<div class="slide s-white" id="s21">
+  <div class="cap-strip"></div>
+  <div class="s-top">
+    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.7rem;flex-wrap:wrap">
+      <div class="daybadge"><span class="daybadge-d">Day 21</span><span class="daybadge-n">Week 3 · Code Review</span></div>
+      <span class="tag tg-r">Week 3 Assessment</span><span class="tag tg-d">Peer Code Review</span>
+    </div>
+    <h2 style="font-size:2.2rem;font-weight:900;color:var(--cn);line-height:1.1">Week 3 — Code Review + Full Stack Assessment</h2>
+    <span class="dv-b" style="margin:.6rem 0 1rem;display:block"></span>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.1rem">
+      <div class="cl">
+        <div style="font-size:.62rem;font-weight:700;color:var(--cb);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.45rem">🔍 Peer Code Review Protocol (25 min)</div>
+        <p style="font-size:.8rem;color:#4A5568;margin-bottom:.5rem;line-height:1.5">Each participant reviews their partner's Week 2 milestone code using this checklist:</p>
+        <div style="display:flex;flex-direction:column;gap:.25rem">
+          <div style="display:flex;align-items:center;gap:.5rem;font-size:.78rem"><div style="width:16px;height:16px;background:rgba(0,112,173,.08);border:1.5px solid var(--cb);border-radius:3px;flex-shrink:0"></div><span style="color:#4A5568">BFF controller has zero business logic (<strong>SRP</strong>)</span></div>
+          <div style="display:flex;align-items:center;gap:.5rem;font-size:.78rem"><div style="width:16px;height:16px;background:rgba(0,112,173,.08);border:1.5px solid var(--cb);border-radius:3px;flex-shrink:0"></div><span style="color:#4A5568">All @Transactional only on service methods (<strong>Day 18</strong>)</span></div>
+          <div style="display:flex;align-items:center;gap:.5rem;font-size:.78rem"><div style="width:16px;height:16px;background:rgba(0,112,173,.08);border:1.5px solid var(--cb);border-radius:3px;flex-shrink:0"></div><span style="color:#4A5568">readOnly=true on all query methods</span></div>
+          <div style="display:flex;align-items:center;gap:.5rem;font-size:.78rem"><div style="width:16px;height:16px;background:rgba(0,112,173,.08);border:1.5px solid var(--cb);border-radius:3px;flex-shrink:0"></div><span style="color:#4A5568">All methods &lt;20 lines, intent-revealing names</span></div>
+          <div style="display:flex;align-items:center;gap:.5rem;font-size:.78rem"><div style="width:16px;height:16px;background:rgba(0,112,173,.08);border:1.5px solid var(--cb);border-radius:3px;flex-shrink:0"></div><span style="color:#4A5568">No hardcoded credentials anywhere</span></div>
+          <div style="display:flex;align-items:center;gap:.5rem;font-size:.78rem"><div style="width:16px;height:16px;background:rgba(0,112,173,.08);border:1.5px solid var(--cb);border-radius:3px;flex-shrink:0"></div><span style="color:#4A5568">Circuit breaker configured with fallback</span></div>
+          <div style="display:flex;align-items:center;gap:.5rem;font-size:.78rem"><div style="width:16px;height:16px;background:rgba(0,112,173,.08);border:1.5px solid var(--cb);border-radius:3px;flex-shrink:0"></div><span style="color:#4A5568">traceId propagated through all layers</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="cl" style="margin-bottom:.7rem">
+          <div style="font-size:.62rem;font-weight:700;color:var(--cb);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.35rem">📝 Week 3 Written Assessment (20 min)</div>
+          <div style="display:flex;flex-direction:column;gap:.28rem">
+            <div style="background:#EBF5FB;border-radius:5px;padding:.38rem .6rem;font-size:.77rem;color:var(--cn)"><strong style="color:var(--cb)">Q1.</strong> What Resilience4j annotation ordering is correct when stacking CB + Retry?</div>
+            <div style="background:#EBF5FB;border-radius:5px;padding:.38rem .6rem;font-size:.77rem;color:var(--cn)"><strong style="color:var(--cb)">Q2.</strong> Why does @TransactionalEventListener fire after commit, not during?</div>
+            <div style="background:#EBF5FB;border-radius:5px;padding:.38rem .6rem;font-size:.77rem;color:var(--cn)"><strong style="color:var(--cb)">Q3.</strong> Name 3 things you should never log, and the OWASP category each violates.</div>
+            <div style="background:#EBF5FB;border-radius:5px;padding:.38rem .6rem;font-size:.77rem;color:var(--cn)"><strong style="color:var(--cb)">Q4.</strong> Why use readOnly=true on @Transactional service queries?</div>
+            <div style="background:rgba(0,61,91,.04);border-radius:5px;padding:.38rem .6rem;font-size:.74rem;color:#6B7280"><strong style="color:rgba(0,112,173,.5)">Q5–8.</strong> Short-answer: JWT TTL best practice, Bulkhead purpose, Correlation-ID flow, Zipkin span structure</div>
+          </div>
+        </div>
+        <div class="cl" style="background:rgba(0,61,91,.03);border-color:rgba(0,61,91,.1)">
+          <div style="font-size:.62rem;font-weight:700;color:var(--cb);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem">📊 Week 3 Grading</div>
+          <table style="width:100%;border-collapse:collapse;font-size:.76rem">
+            <tr style="border-bottom:1px solid rgba(0,61,91,.07)"><td style="padding:.2rem 0;color:#4A5568">Written assessment</td><td style="color:var(--cb);font-weight:700;text-align:right">40 pts</td></tr>
+            <tr style="border-bottom:1px solid rgba(0,61,91,.07)"><td style="padding:.2rem 0;color:#4A5568">Peer code review quality (written feedback)</td><td style="color:var(--cb);font-weight:700;text-align:right">35 pts</td></tr>
+            <tr style="border-bottom:1px solid rgba(0,61,91,.07)"><td style="padding:.2rem 0;color:#4A5568">Daily exit checks (7 × 5)</td><td style="color:var(--cb);font-weight:700;text-align:right">35 pts</td></tr>
+            <tr><td style="padding:.2rem 0;color:var(--cn);font-weight:700">Week 3 Total</td><td style="color:var(--cn);font-weight:700;text-align:right">110 pts</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="s-btm">
+    <div class="panel panel-lab"><div class="plabel">🔬 Day 21 Full-Hour Lab</div><div class="ptext">20 min written assessment (individual). 25 min peer code review — each person writes 5 inline comments on partner's PR using the checklist. Final 15 min: address one comment live — refactor and push a fix before end of session. Trainer verifies the fix is correct.</div></div>
+    <div class="panel panel-note"><div class="plabel">📋 Trainer Notes</div><div class="ptext">Reviewing others' code is a skill mid-level devs rarely get structured practice on. Grade the review quality, not just the code. A good review comment is: specific, explains WHY it's wrong, references the principle (e.g. "SRP: this belongs in System API not BFF because..."). Coach them on this.</div></div>
+    <div class="panel panel-rub"><div class="plabel">📊 Review Quality Criteria</div><div class="ptext">✦ Each comment is specific (not "this looks wrong") (2 pts each) ✦ Each comment references a principle (SOLID/OWASP/Clean Code) (1 pt each) ✦ At least one positive comment included (1 pt) ✦ Fix is implemented before session ends (2 pts)</div></div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 23: DAY 22 — OWASP TOP 10 ══ -->
+<div class="slide s-dark" id="s22">
+  <div class="cap-strip"></div>
+  <div class="s-top">
+    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.7rem;flex-wrap:wrap">
+      <div class="daybadge"><span class="daybadge-d">Day 22</span><span class="daybadge-n">Week 4 · Security</span></div>
+      <span class="tag tg-r">OWASP Top 10 — Mapped to Our Architecture</span>
+    </div>
+    <h2 style="font-size:2.2rem;font-weight:900;color:#fff;line-height:1.1">OWASP Top 10 — Mitigated by Architecture</h2>
+    <span class="dv-s" style="margin:.6rem 0 1rem;display:block"></span>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-bottom:.75rem">
+      <div class="cd" style="border-left:3px solid #F87171"><div style="display:flex;align-items:center;gap:.4rem;margin-bottom:.2rem"><span style="background:rgba(248,113,113,.15);color:#F87171;padding:.1rem .4rem;border-radius:3px;font-size:.62rem;font-weight:700">A01</span><span style="font-size:.78rem;font-weight:700;color:#fff">Broken Access Control</span></div><p style="font-size:.72rem;color:rgba(255,255,255,.55);line-height:1.45">BFF: @PreAuthorize on every endpoint. System API: no public port — network-isolated. Least-privilege DB user: SELECT/INSERT only.</p></div>
+      <div class="cd" style="border-left:3px solid var(--cs)"><div style="display:flex;align-items:center;gap:.4rem;margin-bottom:.2rem"><span style="background:rgba(65,182,230,.15);color:var(--cs);padding:.1rem .4rem;border-radius:3px;font-size:.62rem;font-weight:700">A02</span><span style="font-size:.78rem;font-weight:700;color:#fff">Crypto Failures</span></div><p style="font-size:.72rem;color:rgba(255,255,255,.55);line-height:1.45">HTTPS-only at BFF (TLS 1.3). DATABASE_URL in env secret. No PII in Redis. At-rest encryption at cloud level.</p></div>
+      <div class="cd" style="border-left:3px solid var(--cc)"><div style="display:flex;align-items:center;gap:.4rem;margin-bottom:.2rem"><span style="background:rgba(0,171,220,.15);color:var(--cc);padding:.1rem .4rem;border-radius:3px;font-size:.62rem;font-weight:700">A03</span><span style="font-size:.78rem;font-weight:700;color:#fff">Injection</span></div><p style="font-size:.72rem;color:rgba(255,255,255,.55);line-height:1.45">JPA parameterised queries only. @Valid + Bean Validation at BFF entry. @SafeHtml on text inputs. Never string-built SQL.</p></div>
+      <div class="cd" style="border-left:3px solid var(--cb)"><div style="display:flex;align-items:center;gap:.4rem;margin-bottom:.2rem"><span style="background:rgba(0,112,173,.2);color:var(--cs);padding:.1rem .4rem;border-radius:3px;font-size:.62rem;font-weight:700">A05</span><span style="font-size:.78rem;font-weight:700;color:#fff">Misconfiguration</span></div><p style="font-size:.72rem;color:rgba(255,255,255,.55);line-height:1.45">CORS strictly configured. Actuator secured. Containers run as non-root. No debug endpoints or stack traces in prod responses.</p></div>
+      <div class="cd" style="border-left:3px solid #FDE68A"><div style="display:flex;align-items:center;gap:.4rem;margin-bottom:.2rem"><span style="background:rgba(253,230,138,.1);color:#FDE68A;padding:.1rem .4rem;border-radius:3px;font-size:.62rem;font-weight:700">A07</span><span style="font-size:.78rem;font-weight:700;color:#fff">Auth Failures</span></div><p style="font-size:.72rem;color:rgba(255,255,255,.55);line-height:1.45">JWT RS256 with 15-min TTL. Stateless sessions. Spring Security 6 filter chain. Service-to-service JWT with short TTL.</p></div>
+      <div class="cd" style="border-left:3px solid #C084FC"><div style="display:flex;align-items:center;gap:.4rem;margin-bottom:.2rem"><span style="background:rgba(192,132,252,.1);color:#C084FC;padding:.1rem .4rem;border-radius:3px;font-size:.62rem;font-weight:700">A09</span><span style="font-size:.78rem;font-weight:700;color:#fff">Logging Failures</span></div><p style="font-size:.72rem;color:rgba(255,255,255,.55);line-height:1.45">Structured JSON logs. Correlation IDs. Never log passwords, tokens, PII. ProblemDetail error format — no stack traces to clients.</p></div>
+    </div>
+    <div class="cd" style="border-color:rgba(65,182,230,.2);padding:.55rem .9rem">
+      <p style="font-size:.78rem;color:rgba(255,255,255,.6);line-height:1.5"><span style="color:var(--cs);font-weight:700">Defence-in-Depth:</span> Each layer validates independently. A BFF breach doesn't automatically compromise System API — network isolation, input validation, and least-privilege DB access form independent perimeters. The architecture itself is the security control.</p>
+    </div>
+  </div>
+  <div class="s-btm">
+    <div class="panel panel-lab"><div class="plabel">🔬 Day 22 Lab (12 min)</div><div class="ptext">Audit your own codebase against this OWASP map. Find and fix 3 gaps minimum. Common ones found by mid-level devs: A03 (findById(id + " OR 1=1") — test if JPA actually parameterises), A05 (Actuator /env exposed publicly), A09 (200 response body contains full stack trace).</div></div>
+    <div class="panel panel-note"><div class="plabel">📋 Trainer Notes</div><div class="ptext">The most effective demo: show them how to extract the full stack trace from a Spring error response (before ProblemDetail). Then show what an attacker can learn from it (class names, framework versions, internal paths). The shift from abstract to concrete makes OWASP A09 land immediately.</div></div>
+    <div class="panel panel-rub"><div class="plabel">📊 Exit Check (5 pts)</div><div class="ptext">✦ Finds and names 3 OWASP issues in their own code (3 pts) ✦ At least one fix implemented before session ends (1 pt) ✦ Can explain defence-in-depth across 3 layers (1 pt)</div></div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 24: DAY 23 — TESTING STRATEGY ══ -->
+<div class="slide s-light" id="s23">
+  <div class="cap-strip"></div>
+  <div class="s-top">
+    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.7rem;flex-wrap:wrap">
+      <div class="daybadge"><span class="daybadge-d">Day 23</span><span class="daybadge-n">Week 4 · Testing</span></div>
+      <span class="tag tg-g">Unit · Integration · Contract · Testcontainers</span>
+    </div>
+    <h2 style="font-size:2.2rem;font-weight:900;color:var(--cn);line-height:1.1">Testing Strategy — Right Tests at the Right Level</h2>
+    <span class="dv-b" style="margin:.6rem 0 1rem;display:block"></span>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.9rem;margin-bottom:.8rem">
+      <div class="cl" style="border-top:3px solid #16a34a">
+        <div style="font-size:.62rem;font-weight:700;color:#16a34a;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.25rem">🔬 Unit Tests — Domain Layer</div>
+        <div style="font-family:'Roboto Mono',monospace;font-size:.66rem;background:#001E2E;border-radius:7px;padding:.6rem;color:#E2E8F0;line-height:1.75;border:1px solid rgba(0,112,173,.18)">
+<span class="ca">@ExtendWith</span>(MockitoExtension.class)
+<span class="ck">class</span> <span class="cc">UserServiceTest</span> {
+  <span class="ca">@Mock</span> <span class="cc">UserRepository</span> repo;
+  <span class="ca">@InjectMocks</span> <span class="cc">UserService</span> svc;
+
+  <span class="ca">@Test</span>
+  <span class="ck">void</span> deactivate_alreadyInactive_throws() {
+    <span class="cm_">// No DB. No Spring context. Fast.</span>
+    <span class="ck">var</span> user = inactiveUser();
+    when(repo.findById(1L)).thenReturn(Optional.of(user));
+    assertThatThrownBy(() <span class="ca">-&gt;</span> svc.deactivateUser(1L))
+      .isInstanceOf(<span class="cc">UserAlreadyInactiveException</span>.class);
+  }
+}
+        </div>
+      </div>
+      <div class="cl" style="border-top:3px solid var(--cb)">
+        <div style="font-size:.62rem;font-weight:700;color:var(--cb);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.25rem">🔗 Integration — Testcontainers</div>
+        <div style="font-family:'Roboto Mono',monospace;font-size:.66rem;background:#001E2E;border-radius:7px;padding:.6rem;color:#E2E8F0;line-height:1.75;border:1px solid rgba(0,112,173,.18)">
+<span class="ca">@SpringBootTest</span>
+<span class="ca">@Testcontainers</span>
+<span class="ck">class</span> <span class="cc">UserControllerIT</span> {
+
+  <span class="ca">@Container</span>
+  <span class="ck">static</span> <span class="cc">PostgreSQLContainer</span>&lt;?&gt; pg =
+    <span class="ck">new</span> <span class="cc">PostgreSQLContainer</span>&lt;&gt;(<span class="cs">"postgres:16"</span>)
+      .withDatabaseName(<span class="cs">"test"</span>);
+
+  <span class="cm_">// Real DB. Flyway migrations run.</span>
+  <span class="cm_">// Full confidence on data layer.</span>
+}
+        </div>
+      </div>
+      <div class="cl" style="border-top:3px solid var(--cc)">
+        <div style="font-size:.62rem;font-weight:700;color:var(--cc);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.25rem">📜 Contract Tests</div>
+        <p style="font-size:.76rem;color:#4A5568;margin-bottom:.4rem;line-height:1.45">Spring Cloud Contract. Middleware is the consumer — defines expected request/response. System API is the provider — tests verify the contract is honoured. Breaks in CI before they reach staging.</p>
+        <ul style="font-size:.75rem;color:#4A5568;line-height:1.75;list-style:none;padding:0">
+          <li>✦ Consumer test: mock System API with contract</li>
+          <li>✦ Provider test: verifies real System API matches</li>
+          <li>✦ Fails build if shape changes</li>
+        </ul>
+      </div>
+    </div>
+    <div class="cm" style="padding:.55rem .85rem">
+      <div style="display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap;font-size:.77rem">
+        <span style="font-weight:700;color:var(--cb)">Testing Pyramid:</span>
+        <div style="display:flex;align-items:center;gap:.4rem;flex:1;flex-wrap:wrap">
+          <div style="flex:3;background:#F0FDF4;border:1px solid #22c55e;border-radius:5px;padding:.25rem .55rem;text-align:center;font-size:.72rem;font-weight:700;color:#16a34a">Unit Tests — many, fast, domain</div>
+          <div style="flex:2;background:#EFF6FF;border:1px solid var(--cb);border-radius:5px;padding:.25rem .55rem;text-align:center;font-size:.72rem;font-weight:700;color:var(--cb)">Integration — fewer, real DB</div>
+          <div style="flex:1;background:#ECFEFF;border:1px solid var(--cc);border-radius:5px;padding:.25rem .55rem;text-align:center;font-size:.72rem;font-weight:700;color:var(--cc)">E2E — few</div>
+        </div>
+        <span style="color:#4A5568">Target: ≥ 80% coverage on domain services</span>
+      </div>
+    </div>
+  </div>
+  <div class="s-btm">
+    <div class="panel panel-lab"><div class="plabel">🔬 Day 23 Lab (12 min)</div><div class="ptext">Write 3 unit tests for UserService using Mockito: happy path, not found, and already inactive. Add one Testcontainers IT test that calls the real POST /api/v1/users endpoint against a real PostgreSQL container. Run with: mvn test. Verify green. Check coverage report — aim for 80% on service class.</div></div>
+    <div class="panel panel-note"><div class="plabel">📋 Trainer Notes</div><div class="ptext">Mid-level devs often write integration tests for everything because "it tests the real thing." Emphasise the cost: a Testcontainers IT test takes 8–15s to start. 50 of them means 12 min CI times. Unit tests run in milliseconds. Both have their place — use unit for logic, integration for data layer.</div></div>
+    <div class="panel panel-rub"><div class="plabel">📊 Exit Check (5 pts)</div><div class="ptext">✦ 3 unit tests pass with Mockito mocks (no Spring context) (2 pts) ✦ Testcontainers IT test starts a real Postgres and passes (2 pts) ✦ Domain service code coverage ≥ 80% reported (1 pt)</div></div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 25: DAY 24 — CI/CD PIPELINE ══ -->
+<div class="slide s-navy" id="s24">
+  <div class="cap-strip"></div>
+  <div class="s-top">
+    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.7rem;flex-wrap:wrap">
+      <div class="daybadge"><span class="daybadge-d">Day 24</span><span class="daybadge-n">Week 4 · CI/CD</span></div>
+      <span class="tag tg-w">GitHub Actions · SonarQube · Trivy · K8s Deploy</span>
+    </div>
+    <h2 style="font-size:2.2rem;font-weight:900;color:#fff;line-height:1.1">CI/CD — Code to Production Pipeline</h2>
+    <span class="dv-s" style="margin:.6rem 0 1rem;display:block"></span>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+      <div style="display:flex;flex-direction:column;gap:.7rem">
+        <div class="cd" style="border-left:3px solid var(--cs)">
+          <div style="font-size:.62rem;font-weight:700;color:var(--cs);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem">🔄 Pipeline Stages</div>
+          <div style="display:flex;flex-direction:column;gap:.28rem">
+            <div style="display:flex;align-items:center;gap:.55rem"><div style="width:22px;height:22px;background:var(--cb);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:700;color:#fff;flex-shrink:0">1</div><div style="font-size:.78rem;color:rgba(255,255,255,.75)"><strong style="color:#fff">Test</strong> — mvn verify: unit + Testcontainers IT</div></div>
+            <div style="display:flex;align-items:center;gap:.55rem"><div style="width:22px;height:22px;background:var(--cb);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:700;color:#fff;flex-shrink:0">2</div><div style="font-size:.78rem;color:rgba(255,255,255,.75)"><strong style="color:#fff">Analyse</strong> — SonarQube: quality gate, security hotspots, ≥80% coverage</div></div>
+            <div style="display:flex;align-items:center;gap:.55rem"><div style="width:22px;height:22px;background:var(--cb);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:700;color:#fff;flex-shrink:0">3</div><div style="font-size:.78rem;color:rgba(255,255,255,.75)"><strong style="color:#fff">Build</strong> — docker build, tag with git SHA, push to ECR</div></div>
+            <div style="display:flex;align-items:center;gap:.55rem"><div style="width:22px;height:22px;background:var(--cb);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:700;color:#fff;flex-shrink:0">4</div><div style="font-size:.78rem;color:rgba(255,255,255,.75)"><strong style="color:#fff">Scan</strong> — Trivy scans image for known CVEs → fail on CRITICAL</div></div>
+            <div style="display:flex;align-items:center;gap:.55rem"><div style="width:22px;height:22px;background:var(--cb);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:700;color:#fff;flex-shrink:0">5</div><div style="font-size:.78rem;color:rgba(255,255,255,.75)"><strong style="color:#fff">Deploy Staging</strong> — rolling update. Smoke test runs.</div></div>
+            <div style="display:flex;align-items:center;gap:.55rem"><div style="width:22px;height:22px;background:#16a34a;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:700;color:#fff;flex-shrink:0">6</div><div style="font-size:.78rem;color:rgba(255,255,255,.75)"><strong style="color:#6EE7B7">Deploy Prod</strong> — manual approval gate. Blue-green rollout.</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="cb" style="font-size:.66rem">
+        <div style="font-size:.6rem;color:#475569;margin-bottom:.5rem">.github/workflows/bff.yml</div>
+<span style="color:#41B6E6">name</span>: BFF · Test → Build → Deploy
+
+<span style="color:#41B6E6">on</span>:
+  push: {branches: [main, develop]}
+
+<span style="color:#41B6E6">jobs</span>:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: {java-version: '<span style="color:#FDE68A">21</span>'}
+      - run: <span style="color:#6EE7B7">./mvnw verify</span>
+      - run: <span style="color:#6EE7B7">./mvnw sonar:sonar</span>
+        env: {SONAR_TOKEN: <span style="color:#F87171">${{secrets.SONAR_TOKEN}}</span>}
+
+  build:
+    needs: test
+    steps:
+      - run: |
+          docker build -t bff:<span style="color:#FDE68A">${{github.sha}}</span> .
+          trivy image --exit-code 1
+                     --severity CRITICAL
+                     bff:<span style="color:#FDE68A">${{github.sha}}</span>
+          docker push bff:<span style="color:#FDE68A">${{github.sha}}</span>
+
+  deploy-staging:
+    needs: build
+    environment: staging
+    steps:
+      - run: kubectl set image deployment/bff
+               bff=bff:<span style="color:#FDE68A">${{github.sha}}</span>
+
+  deploy-prod:
+    needs: deploy-staging
+    environment: production  <span style="color:#475569"># manual approval gate</span>
+    steps:
+      - run: kubectl set image deployment/bff
+               bff=bff:<span style="color:#FDE68A">${{github.sha}}</span>
+      </div>
+    </div>
+  </div>
+  <div class="s-btm">
+    <div class="panel panel-lab"><div class="plabel">🔬 Day 24 Lab (12 min)</div><div class="ptext">Add a GitHub Actions workflow for BFF with stages 1–3 (test, SonarQube stub, docker build). Push to a feature branch. Verify the workflow runs green. Add Trivy scan step — it should pass if you're using eclipse-temurin:21-jre-alpine. Break it deliberately by using an old base image — see Trivy block the pipeline.</div></div>
+    <div class="panel panel-note"><div class="plabel">📋 Trainer Notes</div><div class="ptext">The Trivy image scan demo is powerful — use a deliberately old image (openjdk:11-jre) which will show multiple CRITICAL CVEs. Then switch to eclipse-temurin:21-jre-alpine and show a clean scan. This is why multi-stage Dockerfiles with minimal JRE images matter in practice.</div></div>
+    <div class="panel panel-rub"><div class="plabel">📊 Exit Check (5 pts)</div><div class="ptext">✦ GitHub Actions workflow runs all 3 stages on push (2 pts) ✦ Trivy scan step present, fails on CRITICAL CVEs (2 pts) ✦ Secrets used via GitHub Secrets, not hardcoded in YAML (1 pt)</div></div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 26: DAY 25 — PERFORMANCE TUNING ══ -->
+<div class="slide s-white" id="s25">
+  <div class="cap-strip"></div>
+  <div class="s-top">
+    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.7rem;flex-wrap:wrap">
+      <div class="daybadge"><span class="daybadge-d">Day 25</span><span class="daybadge-n">Week 4 · Performance</span></div>
+      <span class="tag tg-b">HikariCP · N+1 · JVM Tuning · Virtual Threads</span>
+    </div>
+    <h2 style="font-size:2.2rem;font-weight:900;color:var(--cn);line-height:1.1">Performance — Finding and Fixing Real Bottlenecks</h2>
+    <span class="dv-b" style="margin:.6rem 0 1rem;display:block"></span>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:.85rem;margin-bottom:.8rem">
+      <div class="cl" style="border-top:3px solid var(--cb)">
+        <div style="font-size:.62rem;font-weight:700;color:var(--cb);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.25rem">🔌 HikariCP Sizing</div>
+        <div style="font-family:'Roboto Mono',monospace;font-size:.66rem;background:#F4F6F9;border-radius:6px;padding:.5rem;color:var(--cn);line-height:1.7">
+hikari:<br>
+&nbsp;&nbsp;maximum-pool-size: 20<br>
+&nbsp;&nbsp;<span style="color:#6B7280"># Formula:</span><br>
+&nbsp;&nbsp;<span style="color:#6B7280"># (cores × 2) + spindles</span><br>
+&nbsp;&nbsp;connection-timeout: 30s<br>
+&nbsp;&nbsp;idle-timeout: 600s
+        </div>
+        <p style="font-size:.72rem;color:#4A5568;margin-top:.4rem;line-height:1.4">Too many connections hurt. PostgreSQL has a hard limit. Size to your CPU, not to max concurrency.</p>
+      </div>
+      <div class="cl" style="border-top:3px solid var(--cc)">
+        <div style="font-size:.62rem;font-weight:700;color:var(--cc);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.25rem">🐛 N+1 — Fix It Fast</div>
+        <div style="font-family:'Roboto Mono',monospace;font-size:.66rem;background:#F4F6F9;border-radius:6px;padding:.5rem;color:var(--cn);line-height:1.7">
+<span style="color:#dc2626">// ❌ N+1 — 101 queries</span><br>
+users.forEach(u -><br>
+&nbsp;&nbsp;u.getOrders().size());<br><br>
+<span style="color:#16a34a">// ✅ EntityGraph — 1 query</span><br>
+@EntityGraph(attributePaths<br>
+&nbsp;&nbsp;= {"orders"})<br>
+List&lt;User&gt; findAllWithOrders();
+        </div>
+      </div>
+      <div class="cl" style="border-top:3px solid var(--cs)">
+        <div style="font-size:.62rem;font-weight:700;color:var(--cs);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.25rem">⚡ readOnly = true</div>
+        <p style="font-size:.75rem;color:#4A5568;margin-bottom:.3rem;line-height:1.4">Tells Hibernate to skip dirty checking on all entities in the session. 20–30% speed improvement on read-heavy endpoints with zero code changes beyond adding the flag.</p>
+        <div style="font-family:'Roboto Mono',monospace;font-size:.67rem;background:#F4F6F9;border-radius:6px;padding:.45rem;color:var(--cn);line-height:1.6">
+@Transactional(readOnly = <span style="color:#16a34a">true</span>)<br>
+public Page&lt;UserDto&gt; listUsers(...) {}
+        </div>
+      </div>
+      <div class="cl" style="border-top:3px solid var(--cb)">
+        <div style="font-size:.62rem;font-weight:700;color:var(--cb);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.25rem">🧵 Virtual Threads JVM</div>
+        <div style="font-family:'Roboto Mono',monospace;font-size:.66rem;background:#F4F6F9;border-radius:6px;padding:.5rem;color:var(--cn);line-height:1.7">
+<span style="color:#6B7280"># application.yml</span><br>
+spring.threads<br>
+&nbsp;&nbsp;.virtual.enabled: true<br><br>
+<span style="color:#6B7280"># Docker ENTRYPOINT</span><br>
+java -XX:+UseVirtualThreads<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-jar app.jar
+        </div>
+        <p style="font-size:.72rem;color:#4A5568;margin-top:.35rem;line-height:1.4">Enables virtual threads for all Tomcat request threads. Zero code changes needed.</p>
+      </div>
+    </div>
+    <div class="cm" style="padding:.55rem .85rem">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;font-size:.77rem">
+        <div><span style="font-weight:700;color:var(--cb)">Profile first:</span><span style="color:#4A5568;margin-left:.3rem">Use async-profiler or JFR before optimising. Never guess. Measure → identify → fix → measure again.</span></div>
+        <div><span style="font-weight:700;color:var(--cb)">Pagination always:</span><span style="color:#4A5568;margin-left:.3rem">Every list endpoint returns Page&lt;T&gt;. An unbounded collection endpoint is a performance time bomb waiting to go off in production.</span></div>
+        <div><span style="font-weight:700;color:var(--cb)">Indices matter:</span><span style="color:#4A5568;margin-left:.3rem">Every column used in WHERE or JOIN should have an index. Add via Flyway migrations. Check with EXPLAIN ANALYZE in psql.</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="s-btm">
+    <div class="panel panel-lab"><div class="plabel">🔬 Day 25 Lab (12 min)</div><div class="ptext">① Enable show-sql=true temporarily. Call a list endpoint that lazy-loads a collection — count the queries in logs (N+1). ② Fix with @EntityGraph — confirm 1 query. ③ Add readOnly=true to the query method. ④ Enable virtual threads. Run Apache Bench (ab -n 1000 -c 50 http://localhost:8080/api/v1/users) — compare RPS before/after.</div></div>
+    <div class="panel panel-note"><div class="plabel">📋 Trainer Notes</div><div class="ptext">The N+1 demo is the single most impactful performance moment for mid-level devs. The before/after query count in logs (e.g. 51 queries → 1 query) creates a permanent reflex to check for eager/lazy loading on all collection associations. Follow with the RPS benchmark — numbers make it real.</div></div>
+    <div class="panel panel-rub"><div class="plabel">📊 Exit Check (5 pts)</div><div class="ptext">✦ N+1 identified and fixed with @EntityGraph (2 pts) ✦ readOnly=true on all query service methods (1 pt) ✦ Virtual threads enabled in application.yml (1 pt) ✦ Benchmark shows measurable RPS improvement after fixes (1 pt)</div></div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 27: DAY 26 — CODE REVIEW STANDARDS ══ -->
+<div class="slide s-dark" id="s26">
+  <div class="cap-strip"></div>
+  <div class="s-top">
+    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.7rem;flex-wrap:wrap">
+      <div class="daybadge"><span class="daybadge-d">Day 26</span><span class="daybadge-n">Week 4 · Code Quality</span></div>
+      <span class="tag tg-w">Capgemini Code Review Standards · SonarQube · PR Protocol</span>
+    </div>
+    <h2 style="font-size:2.2rem;font-weight:900;color:#fff;line-height:1.1">Code Review — The Capgemini Standard</h2>
+    <span class="dv-s" style="margin:.6rem 0 1rem;display:block"></span>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+      <div style="display:flex;flex-direction:column;gap:.7rem">
+        <div class="cd" style="border-left:3px solid var(--cs)">
+          <div style="font-size:.62rem;font-weight:700;color:var(--cs);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem">✅ Non-Negotiable PR Checklist</div>
+          <div style="display:flex;flex-direction:column;gap:.25rem">
+            <div style="display:flex;align-items:center;gap:.5rem;font-size:.78rem;color:rgba(255,255,255,.75)"><span style="color:var(--cs)">☑</span> All tests pass (unit + IT)</div>
+            <div style="display:flex;align-items:center;gap:.5rem;font-size:.78rem;color:rgba(255,255,255,.75)"><span style="color:var(--cs)">☑</span> SonarQube quality gate GREEN — 0 new blockers</div>
+            <div style="display:flex;align-items:center;gap:.5rem;font-size:.78rem;color:rgba(255,255,255,.75)"><span style="color:var(--cs)">☑</span> No hardcoded secrets, URLs, or magic numbers</div>
+            <div style="display:flex;align-items:center;gap:.5rem;font-size:.78rem;color:rgba(255,255,255,.75)"><span style="color:var(--cs)">☑</span> Each method ≤ 20 lines, intent-revealing name</div>
+            <div style="display:flex;align-items:center;gap:.5rem;font-size:.78rem;color:rgba(255,255,255,.75)"><span style="color:var(--cs)">☑</span> Constructor injection only — no @Autowired on fields</div>
+            <div style="display:flex;align-items:center;gap:.5rem;font-size:.78rem;color:rgba(255,255,255,.75)"><span style="color:var(--cs)">☑</span> No business logic in BFF controller</div>
+            <div style="display:flex;align-items:center;gap:.5rem;font-size:.78rem;color:rgba(255,255,255,.75)"><span style="color:var(--cs)">☑</span> @Transactional on service layer only</div>
+            <div style="display:flex;align-items:center;gap:.5rem;font-size:.78rem;color:rgba(255,255,255,.75)"><span style="color:var(--cs)">☑</span> OWASP A03: no raw SQL string concatenation</div>
+            <div style="display:flex;align-items:center;gap:.5rem;font-size:.78rem;color:rgba(255,255,255,.75)"><span style="color:var(--cs)">☑</span> Correlation-ID propagated in all RestClient calls</div>
+          </div>
+        </div>
+        <div class="cd" style="border-left:3px solid var(--cc)">
+          <div style="font-size:.62rem;font-weight:700;color:var(--cc);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem">💬 How to Write a Good Review Comment</div>
+          <div style="display:flex;flex-direction:column;gap:.3rem">
+            <div style="background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.18);border-radius:6px;padding:.4rem .6rem;font-size:.74rem;color:rgba(255,255,255,.7)"><span style="color:#F87171;font-weight:700">❌ Weak:</span> "This looks wrong"</div>
+            <div style="background:rgba(110,231,183,.08);border:1px solid rgba(110,231,183,.18);border-radius:6px;padding:.4rem .6rem;font-size:.74rem;color:rgba(255,255,255,.7)"><span style="color:#6EE7B7;font-weight:700">✅ Strong:</span> "SRP violation — this email validation belongs in the Email value object, not in UserService. The domain object should be self-validating. See Day 11 compact constructor pattern."</div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:.7rem">
+        <div class="cd">
+          <div style="font-size:.62rem;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem">📊 SonarQube Quality Gates</div>
+          <table style="width:100%;border-collapse:collapse;font-size:.77rem">
+            <tr style="border-bottom:1px solid rgba(255,255,255,.07)"><td style="padding:.24rem 0;color:rgba(255,255,255,.5)">Coverage on new code</td><td style="color:#6EE7B7;font-weight:700;text-align:right">≥ 80%</td></tr>
+            <tr style="border-bottom:1px solid rgba(255,255,255,.07)"><td style="padding:.24rem 0;color:rgba(255,255,255,.5)">New Blocker / Critical issues</td><td style="color:#F87171;font-weight:700;text-align:right">0</td></tr>
+            <tr style="border-bottom:1px solid rgba(255,255,255,.07)"><td style="padding:.24rem 0;color:rgba(255,255,255,.5)">New security vulnerabilities</td><td style="color:#F87171;font-weight:700;text-align:right">0</td></tr>
+            <tr style="border-bottom:1px solid rgba(255,255,255,.07)"><td style="padding:.24rem 0;color:rgba(255,255,255,.5)">Code duplication on new code</td><td style="color:#FDE68A;font-weight:700;text-align:right">≤ 3%</td></tr>
+            <tr><td style="padding:.24rem 0;color:rgba(255,255,255,.5)">Technical debt ratio</td><td style="color:#FDE68A;font-weight:700;text-align:right">≤ 5%</td></tr>
+          </table>
+        </div>
+        <div class="cd">
+          <div style="font-size:.62rem;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem">🔢 Review Comment Types</div>
+          <div style="display:flex;flex-direction:column;gap:.28rem">
+            <div style="display:flex;align-items:center;gap:.5rem;font-size:.77rem"><span style="background:#F87171;color:#fff;padding:.1rem .35rem;border-radius:3px;font-size:.6rem;font-weight:700;flex-shrink:0">BLOCKER</span><span style="color:rgba(255,255,255,.65)">Security issue or broken functionality — must fix before merge</span></div>
+            <div style="display:flex;align-items:center;gap:.5rem;font-size:.77rem"><span style="background:#FDE68A;color:#000;padding:.1rem .35rem;border-radius:3px;font-size:.6rem;font-weight:700;flex-shrink:0">MAJOR</span><span style="color:rgba(255,255,255,.65)">SOLID / Clean Code violation — should fix this sprint</span></div>
+            <div style="display:flex;align-items:center;gap:.5rem;font-size:.77rem"><span style="background:var(--cs);color:#fff;padding:.1rem .35rem;border-radius:3px;font-size:.6rem;font-weight:700;flex-shrink:0">MINOR</span><span style="color:rgba(255,255,255,.65)">Naming / style — fix when in the area, no blocker</span></div>
+            <div style="display:flex;align-items:center;gap:.5rem;font-size:.77rem"><span style="background:#6EE7B7;color:#000;padding:.1rem .35rem;border-radius:3px;font-size:.6rem;font-weight:700;flex-shrink:0">PRAISE</span><span style="color:rgba(255,255,255,.65)">Good pattern — reinforce it publicly</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="s-btm">
+    <div class="panel panel-lab"><div class="plabel">🔬 Day 26 Lab (12 min)</div><div class="ptext">Each participant submits their current code as a PR. Partner does a formal review using the checklist and comment types (BLOCKER/MAJOR/MINOR/PRAISE). Must include at least: 1 BLOCKER or MAJOR, 1 MINOR, 1 PRAISE. Author must respond to each comment — agree/disagree with reasoning. Fix all BLOCKERs before Capstone.</div></div>
+    <div class="panel panel-note"><div class="plabel">📋 Trainer Notes</div><div class="ptext">Mid-level devs often either under-review (just a "+1") or over-review (nitpick every line). The BLOCKER/MAJOR/MINOR/PRAISE taxonomy teaches proportionality. Requiring a PRAISE comment forces them to look for good patterns — which trains them to write more of them. This is a Capgemini delivery team norm.</div></div>
+    <div class="panel panel-rub"><div class="plabel">📊 Exit Check (5 pts)</div><div class="ptext">✦ Review contains at least 1 BLOCKER/MAJOR with principle reference (2 pts) ✦ Review contains at least 1 PRAISE with explanation (1 pt) ✦ Author has responded to every comment with reasoning (1 pt) ✦ All BLOCKERs resolved before end of session (1 pt)</div></div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 28: DAYS 27-28 — CAPSTONE ══ -->
+<div class="slide s-blue" id="s27">
+  <div class="cap-strip"></div>
+  <div class="s-top">
+    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.7rem;flex-wrap:wrap">
+      <div class="daybadge"><span class="daybadge-d">Days 27–28</span><span class="daybadge-n">Week 4 · Capstone Project</span></div>
+      <span class="tag tg-w">Full System Build · 2-Day Sprint</span>
+    </div>
+    <h2 style="font-size:2.2rem;font-weight:900;color:#fff;line-height:1.1">Capstone — Build a Capgemini-Grade API</h2>
+    <span class="dv-w" style="margin:.6rem 0 1rem;display:block"></span>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.1rem">
+      <div style="display:flex;flex-direction:column;gap:.7rem">
+        <div class="cd" style="background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2)">
+          <div style="font-size:.65rem;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.4rem">🎯 Project Brief — Customer Order API</div>
+          <p style="font-size:.82rem;color:rgba(255,255,255,.8);line-height:1.55;margin-bottom:.5rem">Build a production-ready Customer Order management system using the full 3-layer architecture. Customers can be created, updated, deactivated. Orders can be placed, viewed, and cancelled.</p>
+          <div style="background:rgba(255,255,255,.07);border-radius:7px;padding:.5rem .7rem">
+            <div style="font-size:.6rem;font-weight:700;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.25rem">Domain entities required</div>
+            <div style="display:flex;gap:.4rem;flex-wrap:wrap">
+              <span class="tag tg-w">Customer</span><span class="tag tg-w">Order</span><span class="tag tg-w">OrderItem</span><span class="tag tg-w">Product</span><span class="tag tg-w">CustomerStatus</span><span class="tag tg-w">OrderStatus</span>
+            </div>
+          </div>
+        </div>
+        <div class="cd" style="background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2)">
+          <div style="font-size:.65rem;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.35rem">📐 Mandatory Requirements</div>
+          <ul style="font-size:.79rem;color:rgba(255,255,255,.78);line-height:1.85;list-style:none;padding:0">
+            <li>✦ BFF: JWT auth, @Valid, response shaping, ProblemDetail errors</li>
+            <li>✦ Middleware: Virtual thread fan-out, circuit breaker with fallback</li>
+            <li>✦ System API: DDD entities + value objects + domain events</li>
+            <li>✦ PostgreSQL: Flyway V1–V3, parameterised queries, readOnly=true</li>
+            <li>✦ Docker Compose: all 4 services, bridge net, .env secrets</li>
+            <li>✦ Tests: ≥ 80% coverage on domain service layer</li>
+            <li>✦ CI: GitHub Actions workflow passes all stages</li>
+          </ul>
+        </div>
+      </div>
+      <div class="cd" style="background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2)">
+        <div style="font-size:.65rem;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.4rem">📊 Capstone Rubric (100 pts)</div>
+        <table style="width:100%;border-collapse:collapse;font-size:.78rem">
+          <tr style="border-bottom:1px solid rgba(255,255,255,.1)"><td style="padding:.26rem 0;color:rgba(255,255,255,.8)">Architecture — correct layer concerns, DDD</td><td style="color:#6EE7B7;font-weight:700;text-align:right">25 pts</td></tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,.1)"><td style="padding:.26rem 0;color:rgba(255,255,255,.8)">Code quality — SOLID + Clean Code throughout</td><td style="color:#6EE7B7;font-weight:700;text-align:right">20 pts</td></tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,.1)"><td style="padding:.26rem 0;color:rgba(255,255,255,.8)">Security — OWASP A01, A03, A05, A07, A09</td><td style="color:#6EE7B7;font-weight:700;text-align:right">20 pts</td></tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,.1)"><td style="padding:.26rem 0;color:rgba(255,255,255,.8)">Testing — unit + Testcontainers IT, ≥80% coverage</td><td style="color:#6EE7B7;font-weight:700;text-align:right">20 pts</td></tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,.1)"><td style="padding:.26rem 0;color:rgba(255,255,255,.8)">Infra — Docker Compose + CI pipeline green</td><td style="color:#6EE7B7;font-weight:700;text-align:right">10 pts</td></tr>
+          <tr><td style="padding:.26rem 0;color:rgba(255,255,255,.8)">Observability — Zipkin traces + @Timed metrics</td><td style="color:#6EE7B7;font-weight:700;text-align:right">5 pts</td></tr>
+          <tr style="border-top:1px solid rgba(255,255,255,.15)"><td style="padding:.3rem 0;color:#fff;font-weight:700">Total</td><td style="color:#fff;font-weight:700;text-align:right">100 pts</td></tr>
+        </table>
+        <div style="margin-top:.7rem;background:rgba(255,255,255,.06);border-radius:7px;padding:.5rem .7rem">
+          <div style="font-size:.6rem;font-weight:700;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.2rem">Timeline</div>
+          <div style="font-size:.76rem;color:rgba(255,255,255,.7);line-height:1.65">
+            <div><strong style="color:#fff">Day 27 AM:</strong> Architecture design review with trainer — sign off before coding</div>
+            <div><strong style="color:#fff">Day 27 PM:</strong> Domain layer + System API + Flyway migrations</div>
+            <div><strong style="color:#fff">Day 28 AM:</strong> Middleware + BFF + security + tests</div>
+            <div><strong style="color:#fff">Day 28 PM:</strong> Docker Compose + CI pipeline. Code freeze 16:00.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="s-btm">
+    <div class="panel panel-lab"><div class="plabel">🔬 Days 27–28 — Full Sprint</div><div class="ptext">Individual build. Trainer available for 15-min architecture consultations (book a slot). Code submitted via PR to training repo by 16:00 Day 28. Automated CI pipeline must pass. Trainer reviews overnight and leaves inline comments. Scores returned by 08:00 Day 29.</div></div>
+    <div class="panel panel-note"><div class="plabel">📋 Trainer Notes</div><div class="ptext">The architecture sign-off on Day 27 AM is critical — catch wrong layer assignments before they build 6 hours on a broken foundation. Most common mid-level capstone mistake: business logic leaking into BFF (checking if an order can be cancelled in the controller). Catch it at design time.</div></div>
+    <div class="panel panel-rub"><div class="plabel">📊 Architecture Sign-Off Criteria</div><div class="ptext">✦ Each entity assigned to correct layer (1 min review) ✦ At least one value object identified (e.g. Money, Email) ✦ Domain event identified for key state transition (e.g. OrderPlaced) ✦ Circuit breaker call graph drawn before coding starts</div></div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 29: DAY 29 — DEMO DAY ══ -->
+<div class="slide s-white" id="s28">
+  <div class="cap-strip"></div>
+  <div class="s-top">
+    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.7rem;flex-wrap:wrap">
+      <div class="daybadge"><span class="daybadge-d">Day 29</span><span class="daybadge-n">Week 4 · Demo Day</span></div>
+      <span class="tag tg-r">Capstone Presentations</span><span class="tag tg-d">Panel Assessment</span>
+    </div>
+    <h2 style="font-size:2.2rem;font-weight:900;color:var(--cn);line-height:1.1">Demo Day — Present Your Architecture</h2>
+    <span class="dv-b" style="margin:.6rem 0 1rem;display:block"></span>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.1rem">
+      <div>
+        <div class="cl" style="margin-bottom:.75rem">
+          <div style="font-size:.62rem;font-weight:700;color:var(--cb);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.4rem">🎤 Presentation Format — 20 min per person</div>
+          <ol style="font-size:.82rem;color:#4A5568;line-height:2;padding-left:1.2rem">
+            <li><strong style="color:var(--cn)">Architecture walkthrough (5 min)</strong> — draw the 3 layers, explain each boundary, name the patterns used</li>
+            <li><strong style="color:var(--cn)">Live demo (8 min)</strong> — <code style="background:#EBF5FB;padding:.03rem .22rem;border-radius:3px">docker compose up</code> from scratch. Call BFF. Show JWT reject. Trip the circuit breaker. Show Zipkin trace.</li>
+            <li><strong style="color:var(--cn)">Code walkthrough (5 min)</strong> — best SOLID example, cleanest service method, most elegant domain model</li>
+            <li><strong style="color:var(--cn)">Q&amp;A (2 min)</strong> — panel questions</li>
+          </ol>
+        </div>
+        <div class="cl">
+          <div style="font-size:.62rem;font-weight:700;color:var(--cb);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.35rem">👥 Assessment Panel</div>
+          <table class="tbl" style="font-size:.77rem">
+            <thead><tr><th>Panellist</th><th>Focus</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Lead Trainer</strong></td><td>Architecture, SOLID, layer correctness</td></tr>
+              <tr><td><strong>Security Lead</strong></td><td>OWASP compliance, JWT implementation</td></tr>
+              <tr><td><strong>Senior Dev</strong></td><td>Clean Code, testability, naming</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div>
+        <div class="cl" style="margin-bottom:.75rem">
+          <div style="font-size:.62rem;font-weight:700;color:var(--cb);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.35rem">🔍 Peer Review During Demos</div>
+          <p style="font-size:.8rem;color:#4A5568;margin-bottom:.4rem;line-height:1.5">While each person presents, the audience completes this silent checklist for their code:</p>
+          <ul style="font-size:.78rem;color:#4A5568;line-height:1.85;list-style:none;padding:0">
+            <li>☐ Did BFF call any business logic? (SRP violation if yes)</li>
+            <li>☐ Was DATABASE_URL hardcoded anywhere in the demo?</li>
+            <li>☐ Did the circuit breaker actually open during the demo?</li>
+            <li>☐ Did the error response contain a stack trace?</li>
+            <li>☐ Was the Zipkin trace complete across all 3 services?</li>
+          </ul>
+        </div>
+        <div class="cl" style="background:rgba(0,61,91,.03);border-color:rgba(0,61,91,.1)">
+          <div style="font-size:.62rem;font-weight:700;color:var(--cb);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem">🏅 Grading Thresholds</div>
+          <div style="display:flex;gap:.6rem;flex-wrap:wrap">
+            <div style="background:#F0FDF4;border:1px solid #22c55e;border-radius:8px;padding:.6rem .85rem;text-align:center;flex:1"><div style="font-size:.6rem;font-weight:700;color:#16a34a;text-transform:uppercase">Pass</div><div style="font-size:1.4rem;font-weight:900;color:#16a34a">70+</div><div style="font-size:.7rem;color:#4A5568">Capgemini Certificate</div></div>
+            <div style="background:#FFFBEB;border:1px solid #d97706;border-radius:8px;padding:.6rem .85rem;text-align:center;flex:1"><div style="font-size:.6rem;font-weight:700;color:#d97706;text-transform:uppercase">Merit</div><div style="font-size:1.4rem;font-weight:900;color:#d97706">85+</div><div style="font-size:.7rem;color:#4A5568">Senior Dev ready</div></div>
+            <div style="background:#EFF6FF;border:1px solid var(--cb);border-radius:8px;padding:.6rem .85rem;text-align:center;flex:1"><div style="font-size:.6rem;font-weight:700;color:var(--cb);text-transform:uppercase">Distinction</div><div style="font-size:1.4rem;font-weight:900;color:var(--cb)">95+</div><div style="font-size:.7rem;color:#4A5568">Architecture track</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="s-btm">
+    <div class="panel panel-lab"><div class="plabel">🔬 Day 29 Full-Hour</div><div class="ptext">20-min presentation slots. All participants present. Audience completes the peer review checklist silently for each presenter. After all presentations, each person receives 2 pieces of written peer feedback (submitted anonymously on index cards). Trainer collates panel scores overnight.</div></div>
+    <div class="panel panel-note"><div class="plabel">📋 Trainer Notes</div><div class="ptext">The most common mid-level presenter mistake: demoing happy path only. Push every presenter: "Now show me what happens when the token is missing." "Now kill System API mid-demo." The circuit breaker fallback demo is the most impressive moment of the day — coach them to include it.</div></div>
+    <div class="panel panel-rub"><div class="plabel">📊 Presentation Scoring</div><div class="ptext">✦ Architecture walkthrough: correct layer naming + responsibility (5 pts) ✦ Live demo: JWT, circuit breaker, Zipkin all shown (8 pts) ✦ Code walkthrough: identifies best SOLID application with explanation (5 pts) ✦ Q&A: answers at least 1 panel question correctly (2 pts)</div></div>
+  </div>
+</div>
+
+<!-- ══ SLIDE 30: DAY 30 — GRADUATION + NEXT STEPS ══ -->
+<div class="slide s-dark" id="s29">
+  <div class="cap-strip"></div>
+  <div class="s-top" style="display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:1.1rem">
+    <div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 40%,rgba(0,112,173,.12) 0%,transparent 58%);pointer-events:none"></div>
+    <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:1rem;max-width:950px">
+      <div style="display:flex;align-items:center;gap:.7rem;background:rgba(0,112,173,.18);border:1px solid rgba(65,182,230,.25);border-radius:8px;padding:.5rem 1.2rem">
+        <svg width="120" height="20" viewBox="0 0 120 20"><circle cx="10" cy="10" r="10" fill="#0070AD"/><text x="10" y="14.5" text-anchor="middle" font-family="Roboto" font-size="10" font-weight="900" fill="white">C</text><text x="28" y="14.5" font-family="Roboto" font-size="12" font-weight="700" fill="white">Capgemini</text></svg>
+        <div style="width:1px;height:16px;background:rgba(255,255,255,.2)"></div>
+        <span style="font-size:.65rem;font-weight:500;color:rgba(255,255,255,.55);letter-spacing:.07em">CGI-JMS-30 · MID-LEVEL TRACK · PROGRAMME COMPLETION</span>
+      </div>
+      <div>
+        <div style="font-size:.68rem;font-weight:500;color:var(--cs);text-transform:uppercase;letter-spacing:.18em;margin-bottom:.5rem">Day 30 · Graduation</div>
+        <h1 style="font-size:3.2rem;font-weight:900;line-height:1.05;color:#fff">30 Days. One Architecture.<br><span style="color:var(--cs)">Now Ship It.</span></h1>
+        <span class="dv-w" style="margin:.8rem auto 0;display:block"></span>
+      </div>
+      <p style="font-size:.92rem;color:rgba(255,255,255,.55);max-width:640px;line-height:1.7">You've built a production-grade distributed Java system from a blank project to a fully tested, containerised, observable, and secure microservices architecture. These patterns run on live Capgemini client engagements right now.</p>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:.65rem;width:100%">
+        <div style="background:rgba(0,112,173,.18);border:1px solid rgba(65,182,230,.22);border-radius:10px;padding:.75rem;text-align:center"><div style="font-size:1.3rem;margin-bottom:.2rem">🏛️</div><div style="font-size:.78rem;font-weight:800;color:#fff">Architecture</div><div style="font-size:.65rem;color:rgba(255,255,255,.4);margin-top:.1rem">3-layer, DDD</div></div>
+        <div style="background:rgba(0,112,173,.18);border:1px solid rgba(65,182,230,.22);border-radius:10px;padding:.75rem;text-align:center"><div style="font-size:1.3rem;margin-bottom:.2rem">🐳</div><div style="font-size:.78rem;font-weight:800;color:#fff">Containers</div><div style="font-size:.65rem;color:rgba(255,255,255,.4);margin-top:.1rem">Docker + CI</div></div>
+        <div style="background:rgba(0,112,173,.18);border:1px solid rgba(65,182,230,.22);border-radius:10px;padding:.75rem;text-align:center"><div style="font-size:1.3rem;margin-bottom:.2rem">🔒</div><div style="font-size:.78rem;font-weight:800;color:#fff">Security</div><div style="font-size:.65rem;color:rgba(255,255,255,.4);margin-top:.1rem">OWASP Top 10</div></div>
+        <div style="background:rgba(0,112,173,.18);border:1px solid rgba(65,182,230,.22);border-radius:10px;padding:.75rem;text-align:center"><div style="font-size:1.3rem;margin-bottom:.2rem">🧪</div><div style="font-size:.78rem;font-weight:800;color:#fff">Testing</div><div style="font-size:.65rem;color:rgba(255,255,255,.4);margin-top:.1rem">80%+ coverage</div></div>
+        <div style="background:rgba(0,112,173,.18);border:1px solid rgba(65,182,230,.22);border-radius:10px;padding:.75rem;text-align:center"><div style="font-size:1.3rem;margin-bottom:.2rem">📊</div><div style="font-size:.78rem;font-weight:800;color:#fff">Observability</div><div style="font-size:.65rem;color:rgba(255,255,255,.4);margin-top:.1rem">Zipkin + Metrics</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem;width:100%">
+        <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:.8rem;text-align:left">
+          <div style="font-size:.6rem;font-weight:700;color:var(--cs);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem">📚 Next Learning Path</div>
+          <ul style="font-size:.75rem;color:rgba(255,255,255,.6);line-height:1.8;list-style:none;padding:0"><li>→ Apache Kafka — Event-Driven Architecture</li><li>→ Kubernetes (CKA certification)</li><li>→ Spring AI + LLM Integration</li></ul>
+        </div>
+        <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:.8rem;text-align:left">
+          <div style="font-size:.6rem;font-weight:700;color:var(--cs);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem">🏆 Certifications</div>
+          <ul style="font-size:.75rem;color:rgba(255,255,255,.6);line-height:1.8;list-style:none;padding:0"><li>→ Oracle Java 21 Developer Certified</li><li>→ Spring Professional Certification</li><li>→ AWS / Azure Solutions Architect</li></ul>
+        </div>
+        <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:.8rem;text-align:left">
+          <div style="font-size:.6rem;font-weight:700;color:var(--cs);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem">☁ Capgemini Resources</div>
+          <ul style="font-size:.75rem;color:rgba(255,255,255,.6);line-height:1.8;list-style:none;padding:0"><li>→ MyLearning — Java Microservices Track</li><li>→ Tech Excellence Community</li><li>→ Innovation Lab Project Applications</li></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="s-btm">
+    <div class="panel panel-lab"><div class="plabel">🔬 Day 30 — Retrospective Lab</div><div class="ptext">Each participant completes a 1-page written retrospective: ① The one architectural insight that changed how you think about code ② The one Clean Code rule you'll apply immediately on Monday ③ One thing you'd teach someone else from this programme. Trainer collects for programme improvement and personal development records.</div></div>
+    <div class="panel panel-note"><div class="plabel">📋 Trainer Notes</div><div class="ptext">Certificate distribution: digital certificate via Capgemini MyLearning with programme code CGI-JMS-30. Return final grades before 09:00. Arrange brief 1:1 with each participant: strengths, one growth area, recommended next step. Distinction achievers: nominate for Architecture Community of Practice.</div></div>
+    <div class="panel panel-rub"><div class="plabel">📊 Final Programme Score</div><div class="ptext">Week 1: 105 pts · Week 2: 100 pts · Week 3: 110 pts · Daily exits (30 × 5): 150 pts · Capstone: 100 pts · Total: 565 pts. Pass: 395+ · Merit: 480+ · Distinction: 537+. Scores normalised to 100 for certificate grade.</div></div>
+  </div>
+</div>
+
+</div><!-- /#pres -->
+
+<div id="indicator"></div>
+<div id="pg"></div>
+<div id="nhint">← → Space to navigate</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const slides = document.querySelectorAll('.slide');
+  const indicator = document.getElementById('indicator');
+  const pg = document.getElementById('pg');
+  let cur = 0, busy = false;
+
+  function buildDots() {
+    indicator.innerHTML = '';
+    slides.forEach((_, i) => {
+      const d = document.createElement('div');
+      d.className = 'dot' + (i === cur ? ' on' : '');
+      indicator.appendChild(d);
+    });
+    pg.textContent = (cur + 1) + ' / ' + slides.length;
+  }
+
+  function go(next, dir) {
+    if (busy || next === cur || next < 0 || next >= slides.length) return;
+    busy = true;
+    const out = slides[cur], inn = slides[next], w = window.innerWidth;
+    inn.style.transform = `translateX(${dir > 0 ? w : -w}px)`;
+    inn.style.display = 'flex';
+    anime({ targets: out, translateX: dir > 0 ? -w : w, duration: 380,
+      easing: 'cubicBezier(.4,0,.2,1)',
+      complete: () => { out.style.display = 'none'; out.style.transform = 'translateX(0)'; }
+    });
+    anime({ targets: inn, translateX: 0, duration: 380,
+      easing: 'cubicBezier(.4,0,.2,1)',
+      complete: () => { busy = false; }
+    });
+    cur = next; buildDots();
+  }
+
+  slides.forEach((s, i) => {
+    s.style.display = i === 0 ? 'flex' : 'none';
+    s.style.transform = 'translateX(0)';
+  });
+  buildDots();
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') { go(cur + 1, 1); e.preventDefault(); }
+    if (e.key === 'ArrowLeft') { go(cur - 1, -1); e.preventDefault(); }
+  });
+
+  document.getElementById('pres').addEventListener('click', e => {
+    e.clientX >= window.innerWidth / 2 ? go(cur + 1, 1) : go(cur - 1, -1);
+  });
+});
+</script>
+</body>
+</html>

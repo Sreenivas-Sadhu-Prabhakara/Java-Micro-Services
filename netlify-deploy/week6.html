@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capgemini — Week 6 — Days 26–30: Observability & Deploy</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        /* ── Capgemini Brand Palette ── */
+                        'cg-blue':       '#0070AD',   /* Primary Capgemini Blue */
+                        'cg-blue-dark':  '#005A8C',   /* Darker shade */
+                        'cg-blue-deep':  '#003D5C',   /* Deepest navy */
+                        'cg-cyan':       '#12ABDB',   /* Bright accent cyan */
+                        'cg-cyan-light': '#7DD3E8',   /* Light cyan */
+                        'cg-navy':       '#0D1B2A',   /* Slide dark bg */
+                        'cg-navy-mid':   '#1B2D45',   /* Cards on dark */
+                        'cg-navy-light': '#243B5A',   /* Borders on dark */
+                        'cg-teal':       '#00B388',   /* Success / green accent */
+                        'cg-teal-dark':  '#008C6A',
+                        'cg-yellow':     '#FFB819',   /* Warning / highlight */
+                        'cg-red':        '#E4002B',   /* Error / alert */
+                        'cg-gray':       '#F4F6F9',   /* Light bg */
+                        'cg-gray-mid':   '#E2E7EE',
+                        'cg-slate':      '#64748B',
+                    },
+                    fontFamily: {
+                        sans:    ['Inter', 'system-ui', 'sans-serif'],
+                        heading: ['Outfit', 'sans-serif'],
+                        mono:    ['Fira Code', 'monospace'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <!-- Anime.js CDN -->
+
+    <style>
+        /* ====================== SCROLL PAGE BASE ====================== */
+        *, *::before, *::after { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            overflow-y: auto;
+            background: #0D1B2A;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            color: #E2E8F0;
+        }
+
+        /* ── Page wrapper ── */
+        #page-wrapper {
+            width: 100%;
+        }
+
+        /* ── Each "slide" becomes a stacked section ── */
+        .slide {
+            width: 100%;
+            min-height: 100vh;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            padding: 4rem 5% 3rem 5%;
+            box-sizing: border-box;
+            overflow: visible;
+        }
+
+        /* ── Slide header stays at top, never shrinks ── */
+        .slide-header {
+            flex-shrink: 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ── Content area is no longer scrollable — flows naturally ── */
+        .content-area {
+            flex: 1;
+            min-height: 0;
+            overflow: visible;
+            padding-right: 0;
+            margin-top: 0.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Remove old scrollbar styles — not needed for content-area */
+        .content-area::-webkit-scrollbar { display: none; }
+
+        /* ── Divider between slides ── */
+        .slide + .slide {
+            border-top: 2px solid rgba(0, 112, 173, 0.18);
+        }
+
+        /* ====================== SLIDE THEMES ====================== */
+        .slide-dark {
+            background: linear-gradient(135deg, #0D1B2A 0%, #0F2847 100%);
+            color: #E2E8F0;
+        }
+        .slide-dark::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at 20% 50%, rgba(0,112,173,0.12) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(18,171,219,0.08) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .slide-dark .slide-header,
+        .slide-dark .content-area,
+        .slide-dark .max-w-5xl { position: relative; z-index: 1; }
+
+        .slide-light {
+            background: linear-gradient(135deg, #F4F6F9 0%, #EEF2F8 100%);
+            color: #1E293B;
+        }
+        .slide-light::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(0,112,173,0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .slide-white {
+            background: #FFFFFF;
+            color: #1E293B;
+        }
+        .slide-white::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 80% 20%, rgba(0,112,173,0.03) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ====================== PATTERNS ====================== */
+        .bg-dots {
+            background-image: radial-gradient(circle, rgba(0,112,173,0.06) 1px, transparent 1px);
+            background-size: 28px 28px;
+        }
+        .bg-grid {
+            background-image:
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 44px 44px;
+        }
+        .bg-grid-light {
+            background-image:
+                linear-gradient(rgba(0,112,173,0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,112,173,0.04) 1px, transparent 1px);
+            background-size: 44px 44px;
+        }
+
+        /* ====================== TYPOGRAPHY ====================== */
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            line-height: 1.1;
+            margin: 0 0 0.75rem 0;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        h2 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            line-height: 1.2;
+            margin: 0 0 0.5rem 0;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        h3 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin: 0 0 0.3rem 0;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        p {
+            line-height: 1.7;
+            margin: 0 0 0.75rem 0;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        /* ====================== COMPONENTS ====================== */
+        .accent-line { height: 4px; width: 80px; background: linear-gradient(90deg,#0070AD,#12ABDB); border-radius: 2px; }
+
+        .outcome-card {
+            background: rgba(0,112,173,0.06);
+            border: 1px solid rgba(0,112,173,0.15);
+            border-left: 4px solid #0070AD;
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            margin-bottom: 0.75rem;
+            box-shadow: 0 2px 8px rgba(0,112,173,0.08);
+            transition: all 0.3s ease;
+        }
+        .outcome-card:hover {
+            background: rgba(0,112,173,0.1);
+            border-color: rgba(0,112,173,0.25);
+            box-shadow: 0 8px 24px rgba(0,112,173,0.2);
+            transform: translateX(4px);
+        }
+        .slide-light .outcome-card, .slide-white .outcome-card {
+            background: #FFFFFF;
+            border: 1px solid #E2E7EE;
+            border-left: 4px solid #0070AD;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        }
+        .slide-light .outcome-card:hover, .slide-white .outcome-card:hover {
+            box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+            border-color: #0070AD;
+            background: #F8FAFC;
+        }
+
+        .section-label { font-size: 0.7rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.08em; margin-bottom: 0.35rem; }
+        .slide-dark .section-label { color: #7DD3E8; }
+        .slide-light .section-label, .slide-white .section-label { color: #0070AD; }
+
+        .badge-in {
+            background: rgba(18,171,219,0.12);
+            color: #12ABDB;
+            border: 1px solid rgba(18,171,219,0.3);
+            padding: 0.15rem 0.65rem;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            display: inline-block;
+        }
+        .badge-out {
+            background: rgba(0,179,136,0.1);
+            color: #00B388;
+            border: 1px solid rgba(0,179,136,0.25);
+            padding: 0.15rem 0.65rem;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            display: inline-block;
+        }
+        .badge-day {
+            background: linear-gradient(135deg, #0070AD, #12ABDB);
+            color: #fff;
+            padding: 0.2rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            display: inline-block;
+            box-shadow: 0 4px 12px rgba(0,112,173,0.2);
+        }
+        .badge-phase {
+            background: rgba(0,112,173,0.1);
+            color: #0070AD;
+            border: 1px solid rgba(0,112,173,0.2);
+            padding: 0.15rem 0.65rem;
+            border-radius: 999px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            display: inline-block;
+        }
+
+        .check-item { display: flex; align-items: flex-start; gap: 0.5rem; margin-bottom: 0.5rem; }
+        .check-icon { color: #00B388; font-weight: bold; flex-shrink: 0; margin-top: 2px; }
+
+        /* ====================== CODE BLOCKS ====================== */
+        pre {
+            background: #0D1B2A;
+            padding: 1rem 1.1rem;
+            border-radius: 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.72rem;
+            overflow-x: auto;
+            overflow-y: visible;
+            border: 1px solid #1B2D45;
+            color: #CBD5E1;
+            line-height: 1.6;
+            margin: 0.5rem 0;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            user-select: text;
+            -webkit-user-select: text;
+            cursor: text;
+        }
+        pre:hover {
+            border-color: #0070AD;
+            box-shadow: 0 6px 24px rgba(0,112,173,0.2);
+        }
+        .slide-light pre, .slide-white pre {
+            background: #1B2D45;
+            border-color: #243B5A;
+            color: #E2E8F0;
+        }
+        pre::-webkit-scrollbar { height: 5px; }
+        pre::-webkit-scrollbar-track { background: rgba(0,0,0,0.15); border-radius: 3px; }
+        pre::-webkit-scrollbar-thumb { background: rgba(0,112,173,0.5); border-radius: 3px; }
+        pre::-webkit-scrollbar-thumb:hover { background: rgba(0,112,173,0.8); }
+
+        .code-copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: #0070AD;
+            border: 1px solid #12ABDB;
+            color: white;
+            padding: 0.3rem 0.7rem;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.2s ease;
+            z-index: 10;
+        }
+        pre:hover .code-copy-btn { opacity: 1; }
+        .code-copy-btn:hover { background: #12ABDB; color: #0D1B2A; }
+        .code-copy-btn.copied { background: #00B388; border-color: #00B388; opacity: 1; }
+
+        .scqa-box {
+            border-radius: 12px;
+            padding: 1.15rem 1.4rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+        .scqa-box:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,112,173,0.25);
+        }
+
+        /* ====================== LISTS ====================== */
+        .sl ul { list-style: none; padding-left: 0; }
+        .sl ul li {
+            font-size: 0.82rem; line-height: 1.6; margin-bottom: 0.45rem;
+            padding-left: 1.3rem; position: relative;
+        }
+        .sl ul li::before { content: '▸'; position: absolute; left: 0; color: #12ABDB; font-weight: bold; }
+        .slide-dark .sl ul li { color: #CBD5E1; }
+        .slide-light .sl ul li, .slide-white .sl ul li { color: #334155; }
+
+        .sl ol {
+            list-style: none;
+            padding-left: 0;
+            counter-reset: activity-counter;
+        }
+        .sl ol li {
+            font-size: 0.82rem; line-height: 1.6; margin-bottom: 0.55rem;
+            padding-left: 2rem; position: relative;
+            counter-increment: activity-counter;
+        }
+        .sl ol li::before {
+            content: counter(activity-counter);
+            position: absolute;
+            left: 0;
+            top: 0.05rem;
+            width: 1.35rem; height: 1.35rem;
+            background: linear-gradient(135deg, #0070AD, #12ABDB);
+            color: #fff;
+            font-size: 0.65rem;
+            font-weight: 800;
+            font-family: 'Outfit', sans-serif;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+            line-height: 1;
+        }
+        .slide-dark .sl ol li { color: #CBD5E1; }
+        .slide-light .sl ol li, .slide-white .sl ol li { color: #1E293B; }
+
+        /* ====================== INLINE CODE ====================== */
+        :not(pre) > code {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.78em;
+            padding: 0.1em 0.38em;
+            border-radius: 4px;
+            background: #0D1B2A;
+            color: #12ABDB;
+            border: 1px solid rgba(18,171,219,0.25);
+            word-break: break-word;
+        }
+        .slide-light :not(pre) > code,
+        .slide-white :not(pre) > code {
+            background: #EEF4FB;
+            color: #005A8C;
+            border: 1px solid rgba(0,112,173,0.2);
+        }
+
+        /* ====================== LIGHT/WHITE SLIDE TEXT ====================== */
+        .slide-light p, .slide-white p { color: #1E293B; }
+        .slide-light h2, .slide-white h2 { color: #0D1B2A; }
+        .slide-light h3, .slide-white h3 { color: #0D1B2A; }
+        .slide-light .outcome-card .check-item span,
+        .slide-white .outcome-card .check-item span { color: #1E293B; }
+        .slide-light .outcome-card .check-item strong,
+        .slide-white .outcome-card .check-item strong { color: #003D5C; }
+        .slide-light .text-sm, .slide-white .text-sm { color: #1E293B; }
+        .slide-light .text-sm strong, .slide-white .text-sm strong { color: #003D5C; }
+        .slide-light a, .slide-white a { color: #0070AD; }
+        .slide-light .check-icon, .slide-white .check-icon { color: #00875A; }
+        .slide-light .section-label, .slide-white .section-label { color: #005A8C; font-weight: 700; }
+
+        /* ====================== DARK SLIDE TEXT VISIBILITY ====================== */
+        .slide-dark .badge-phase { color: #7DD3E8; background: rgba(18,171,219,0.15); border-color: rgba(18,171,219,0.35); }
+        .slide-dark ol, .slide-dark ul { color: #CBD5E1; }
+        .slide-dark ol li, .slide-dark ul li { color: #CBD5E1; }
+        .slide-dark ol li strong, .slide-dark ul li strong { color: #E2E8F0; }
+        .slide-dark p { color: #CBD5E1; }
+        .slide-dark p strong { color: #E2E8F0; }
+        .slide-dark .text-sm { color: #CBD5E1; }
+        .slide-dark .text-sm strong { color: #E2E8F0; }
+        .slide-dark .outcome-card .check-item strong { color: #7DD3E8; }
+        .slide-dark .outcome-card .check-item span { color: #CBD5E1; }
+        /* ── Light slide list text ── */
+        .slide-light ol, .slide-light ul { color: #1E293B; }
+        .slide-light ol li, .slide-light ul li { color: #1E293B; }
+        .slide-light ol li strong, .slide-light ul li strong { color: #003D5C; }
+        .slide-light p { color: #1E293B; }
+        .slide-light p strong { color: #003D5C; }
+        .slide-light .text-sm strong { color: #003D5C; }
+
+        /* ====================== OVERFLOW / WRAPPING ====================== */
+        .content-area .grid, .content-area .grid > * { min-width: 0; }
+        .content-area { word-wrap: break-word; overflow-wrap: break-word; }
+        .content-area pre { max-width: 100%; overflow-x: auto; white-space: pre-wrap; word-break: break-word; }
+
+        /* ====================== TOP BAR ====================== */
+        .cg-topbar {
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #0070AD 0%, #12ABDB 50%, #00B388 100%);
+            z-index: 10;
+        }
+
+        /* Day circle */
+        .day-circle {
+            width: 56px; height: 56px; border-radius: 50%;
+            background: linear-gradient(135deg, #0070AD, #12ABDB);
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-family: 'Outfit'; font-weight: 800; font-size: 0.85rem;
+            flex-shrink: 0;
+            box-shadow: 0 6px 20px rgba(0,112,173,0.3);
+            min-width: 56px;
+        }
+
+        /* ====================== WEEK NAV BAR ====================== */
+        #week-nav {
+            position: sticky;
+            top: 0;
+            z-index: 999;
+            background: rgba(13,27,42,0.97);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0,112,173,0.25);
+            padding: 0.5rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+
+        /* ── "Back to top" floating button ── */
+        #back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0070AD, #12ABDB);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 16px rgba(0,112,173,0.4);
+            z-index: 500;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+        #back-to-top.visible { opacity: 1; transform: translateY(0); }
+        #back-to-top:hover { background: linear-gradient(135deg, #12ABDB, #00B388); box-shadow: 0 6px 24px rgba(0,112,173,0.5); }
+
+        /* ── Slide "anchor" heading for the section nav ── */
+        .slide-anchor {
+            display: block;
+            position: relative;
+            top: -80px;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        /* ====================== RESPONSIVE ====================== */
+        @media (max-width: 768px) {
+            .slide { padding: 3.5rem 4% 2.5rem 4%; }
+            .grid.grid-cols-2 { grid-template-columns: 1fr !important; }
+            .grid.grid-cols-3 { grid-template-columns: 1fr !important; }
+            pre { font-size: 0.68rem; }
+        }
+
+        /* ====================== PRINT / PDF ====================== */
+        @media print {
+            @page { size: A4 portrait; margin: 1.5cm; }
+            body { overflow: visible !important; background: white !important; color: #1E293B !important; }
+            #week-nav, #back-to-top, .no-print { display: none !important; }
+            .slide {
+                padding: 1.5rem 1.5rem 1rem 1.5rem !important;
+                page-break-after: always !important;
+                break-inside: avoid !important;
+                min-height: 0 !important;
+                overflow: visible !important;
+            }
+            .slide::before { display: none !important; }
+            .slide-dark { background-color: #0D1B2A !important; color: #E2E8F0 !important; }
+            .slide-light { background-color: #F4F6F9 !important; color: #1E293B !important; }
+            .slide-white { background-color: #FFFFFF !important; color: #1E293B !important; }
+            .slide-dark h2, .slide-dark h3, .slide-dark p { color: #E2E8F0 !important; }
+            .slide-light h2, .slide-light h3, .slide-light p { color: #1E293B !important; }
+            pre { overflow: visible !important; max-width: 100% !important; font-size: 0.6rem !important; white-space: pre-wrap !important; break-inside: avoid !important; box-shadow: none !important; }
+            .code-copy-btn { display: none !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; animation: none !important; transition: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="page-wrapper">
+
+<!-- ========================================================================== -->
+
+<!-- ====== WEEK NAVIGATION BAR ====== -->
+<div id="week-nav">
+    <a href="index.html" style="text-decoration:none;display:inline-block;padding:0.45rem 0.9rem;border-radius:8px;border:1px solid transparent;font-size:0.72rem;font-family:Outfit,sans-serif;font-weight:700;text-align:center;line-height:1.3;transition:all 0.2s;background:linear-gradient(135deg,#0070AD,#12ABDB);color:white;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">🏠 Master</a>
+      <a href="week1.html" style="text-decoration:none;display:inline-block;padding:0.45rem 0.9rem;border-radius:8px;border:1px solid transparent;font-size:0.72rem;font-family:Outfit,sans-serif;font-weight:700;text-align:center;line-height:1.3;transition:all 0.2s;background:rgba(0,112,173,0.08);border-color:rgba(0,112,173,0.2);color:rgba(255,255,255,0.7);" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">Week 1<br><span style='font-size:0.6rem'>Days 1–5</span></a>
+      <a href="week2.html" style="text-decoration:none;display:inline-block;padding:0.45rem 0.9rem;border-radius:8px;border:1px solid transparent;font-size:0.72rem;font-family:Outfit,sans-serif;font-weight:700;text-align:center;line-height:1.3;transition:all 0.2s;background:rgba(0,112,173,0.08);border-color:rgba(0,112,173,0.2);color:rgba(255,255,255,0.7);" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">Week 2<br><span style='font-size:0.6rem'>Days 6–10</span></a>
+      <a href="week3.html" style="text-decoration:none;display:inline-block;padding:0.45rem 0.9rem;border-radius:8px;border:1px solid transparent;font-size:0.72rem;font-family:Outfit,sans-serif;font-weight:700;text-align:center;line-height:1.3;transition:all 0.2s;background:rgba(0,112,173,0.08);border-color:rgba(0,112,173,0.2);color:rgba(255,255,255,0.7);" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">Week 3<br><span style='font-size:0.6rem'>Days 11–15</span></a>
+      <a href="week4.html" style="text-decoration:none;display:inline-block;padding:0.45rem 0.9rem;border-radius:8px;border:1px solid transparent;font-size:0.72rem;font-family:Outfit,sans-serif;font-weight:700;text-align:center;line-height:1.3;transition:all 0.2s;background:rgba(0,112,173,0.08);border-color:rgba(0,112,173,0.2);color:rgba(255,255,255,0.7);" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">Week 4<br><span style='font-size:0.6rem'>Days 16–20</span></a>
+      <a href="week5.html" style="text-decoration:none;display:inline-block;padding:0.45rem 0.9rem;border-radius:8px;border:1px solid transparent;font-size:0.72rem;font-family:Outfit,sans-serif;font-weight:700;text-align:center;line-height:1.3;transition:all 0.2s;background:rgba(0,112,173,0.08);border-color:rgba(0,112,173,0.2);color:rgba(255,255,255,0.7);" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">Week 5<br><span style='font-size:0.6rem'>Days 21–25</span></a>
+      <a href="week6.html" style="text-decoration:none;display:inline-block;padding:0.45rem 0.9rem;border-radius:8px;border:1px solid transparent;font-size:0.72rem;font-family:Outfit,sans-serif;font-weight:700;text-align:center;line-height:1.3;transition:all 0.2s;background:rgba(0,179,136,0.25);border-color:#00B388;color:#00B388;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">Week 6<br><span style='font-size:0.6rem'>Days 26–30</span></a>
+    <div style="margin-left:auto;color:rgba(255,255,255,0.3);font-size:0.65rem;font-family:Fira Code,monospace;">Java Microservices 30-Day Program</div>
+</div>
+<!-- Add top padding to account for nav bar -->
+
+<!-- SLIDE 30 — DAY 26                                                           -->
+<!-- ========================================================================== -->
+<div class="slide slide-dark bg-grid flex-col sl">
+    <div class="cg-topbar"></div>
+    <div class="mt-2 flex items-center gap-4">
+        <div class="day-circle">D26</div>
+        <div>
+            <div class="flex items-center gap-2 mb-1">
+                <span class="badge-day">DAY 26</span>
+                <span class="badge-phase">Phase 7 — CI/CD & Deployment</span>
+            </div>
+            <h2 class="text-3xl text-white m-0">Kubernetes Manifests — Deployments, Services & ConfigMaps</h2>
+        </div>
+    </div>
+    <div class="accent-line mt-3 mb-3"></div>
+    <div class="content-area">
+        <div class="mb-4">
+            <div class="section-label">📥 Input</div>
+            <div class="flex gap-2 flex-wrap mt-1">
+                <span class="badge-in">Day 25 — CI pipeline producing Docker images to registry</span>
+                <span class="badge-in">Running only in Docker Compose, no orchestration</span>
+            </div>
+        </div>
+        <div class="grid grid-cols-2 gap-5">
+            <div>
+                <div class="section-label">🔧 Activities</div>
+                <ol>
+                    <li><strong>Setup local K8s</strong> — Install Minikube or kind. Create namespace <code>microservices-dev</code>. Configure kubectl context. Enable ingress addon.</li>
+                    <li><strong>Deployment manifests</strong> — Create <code>k8s/</code> directory. Write Deployment for each service: replicas, resource limits (CPU/memory), image pull policy, env vars from ConfigMap/Secret.</li>
+                    <li><strong>Service manifests</strong> — ClusterIP Service for internal communication. NodePort/Ingress for BFF Gateway external access. Service DNS: <code>order-service.microservices-dev.svc.cluster.local</code>.</li>
+                    <li><strong>ConfigMaps & Secrets</strong> — ConfigMap for Spring profiles, feature flags, service URLs. Secrets for DB passwords, JWT keys, API tokens. Mount as env vars or volumes.</li>
+                    <li><strong>Health probes in K8s</strong> — Map Spring Boot actuator probes to K8s: <code>livenessProbe</code> → <code>/actuator/health/liveness</code>, <code>readinessProbe</code> → <code>/actuator/health/readiness</code>, <code>startupProbe</code>.</li>
+                    <li><strong>Resource quotas</strong> — Set requests and limits: <code>requests: {cpu: 250m, memory: 512Mi}</code>, <code>limits: {cpu: 1000m, memory: 1Gi}</code>. Prevent resource starvation.</li>
+                    <li><strong>Deploy & verify</strong> — <code>kubectl apply -k k8s/</code>. Verify pods running, services reachable, health probes passing, inter-service communication working.</li>
+                </ol>
+                <div class="section-label mt-4">📐 Principles</div>
+                <ul>
+                    <li><strong>Declarative infrastructure</strong> — Desired state in YAML, K8s reconciles. GitOps ready.</li>
+                    <li><strong>12-Factor III</strong> — Store config in environment, not in code. ConfigMaps/Secrets enable this.</li>
+                    <li><strong>Resource governance</strong> — Limits prevent noisy neighbors. Requests ensure scheduling fairness.</li>
+                </ul>
+            </div>
+            <div>
+                <div class="section-label">💻 Deployment Manifest</div>
+                <pre><code>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-service
+  namespace: microservices-dev
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: order-service
+  template:
+    metadata:
+      labels:
+        app: order-service
+        version: v1
+    spec:
+      containers:
+        - name: order-service
+          image: ghcr.io/team/order-service:latest
+          ports:
+            - containerPort: 8081
+          envFrom:
+            - configMapRef:
+                name: app-config
+            - secretRef:
+                name: db-credentials
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8081
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8081
+            initialDelaySeconds: 15
+            periodSeconds: 5</code></pre>
+                <div class="section-label mt-3">💻 ConfigMap & Service</div>
+                <pre><code>apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  SPRING_PROFILES_ACTIVE: "k8s"
+  ORDER_SERVICE_URL: "http://order-service:8081"
+  INVENTORY_SERVICE_URL:
+    "http://inventory-service:8082"
+  KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-service
+spec:
+  selector:
+    app: order-service
+  ports:
+    - port: 8081
+      targetPort: 8081
+  type: ClusterIP</code></pre>
+            </div>
+        </div>
+        <div class="mt-4 mb-2 flex items-center justify-between">
+            <div class="section-label">✅ Exact Outcomes (Day 26)</div>
+        </div>
+        <div class="grid grid-cols-3 gap-3 mb-3">
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>K8s manifests</strong> — Deployment, Service, ConfigMap, Secret for every microservice</span></div></div>
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Pods running</strong> — All services deployed to local K8s, 2 replicas each</span></div></div>
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Probes mapped</strong> — Liveness/readiness/startup probes using actuator endpoints</span></div></div>
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Config externalized</strong> — All config via ConfigMaps/Secrets, zero hardcoded values</span></div></div>
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Service discovery</strong> — Services communicate via K8s DNS names</span></div></div>
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Resource limits</strong> — CPU/memory requests and limits set on all containers</span></div></div>
+        </div>
+        <div class="mt-4 mb-2 flex items-center justify-between">
+            <div class="section-label">📤 Output</div>
+            <span class="badge-out">Kubernetes deployment — all services on K8s with probes, config, resource governance</span>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================================== -->
+<!-- SLIDE 31 — DAY 27                                                           -->
+<!-- ========================================================================== -->
+<div class="slide slide-dark bg-grid flex-col sl">
+    <div class="cg-topbar"></div>
+    <div class="mt-2 flex items-center gap-4">
+        <div class="day-circle">D27</div>
+        <div>
+            <div class="flex items-center gap-2 mb-1">
+                <span class="badge-day">DAY 27</span>
+                <span class="badge-phase">Phase 7 — CI/CD & Deployment</span>
+            </div>
+            <h2 class="text-3xl text-white m-0">Helm Charts, GitOps & CD Pipeline</h2>
+        </div>
+    </div>
+    <div class="accent-line mt-3 mb-3"></div>
+    <div class="content-area">
+        <div class="mb-4">
+            <div class="section-label">📥 Input</div>
+            <div class="flex gap-2 flex-wrap mt-1">
+                <span class="badge-in">Day 26 — Raw K8s manifests deployed manually with kubectl</span>
+                <span class="badge-in">No templating, no environment promotion, no automated CD</span>
+            </div>
+        </div>
+        <div class="grid grid-cols-2 gap-5">
+            <div>
+                <div class="section-label">🔧 Activities</div>
+                <ol>
+                    <li><strong>Create Helm chart</strong> — <code>helm create microservices</code>. Templatize Deployments, Services, ConfigMaps. Use <code>values.yaml</code> for image tags, replica counts, resource limits per environment.</li>
+                    <li><strong>Values per environment</strong> — <code>values-dev.yaml</code> (1 replica, debug logs), <code>values-staging.yaml</code> (2 replicas, info logs), <code>values-prod.yaml</code> (3 replicas, warn logs, HPA enabled).</li>
+                    <li><strong>Helm dependencies</strong> — Package PostgreSQL, Redis, Kafka as chart dependencies. Pin versions. Use <code>condition</code> flags to toggle infrastructure in dev vs prod (prod uses managed services).</li>
+                    <li><strong>CD pipeline with GitHub Actions</strong> — On merge to main → build images → update Helm values with new image tag → <code>helm upgrade --install</code> to staging. Manual approval gate for prod.</li>
+                    <li><strong>GitOps with ArgoCD (intro)</strong> — Install ArgoCD in K8s. Point to Git repo containing Helm charts. ArgoCD syncs desired state from Git to cluster automatically.</li>
+                    <li><strong>Rollback strategy</strong> — Helm rollback: <code>helm rollback microservices 1</code>. Keep 5 revision history. Blue-green and canary deployment concepts discussed.</li>
+                    <li><strong>Helm test hooks</strong> — Create test pod that runs smoke tests after deployment. <code>helm test microservices</code> verifies health endpoints and basic API calls post-deploy.</li>
+                </ol>
+                <div class="section-label mt-4">📐 Principles</div>
+                <ul>
+                    <li><strong>GitOps</strong> — Git is the single source of truth. All changes through PRs. Cluster state = Git state.</li>
+                    <li><strong>Environment parity</strong> — Same chart, different values. Dev ≈ staging ≈ prod topology.</li>
+                    <li><strong>Immutable deployments</strong> — Never patch running containers. Always deploy new image + config.</li>
+                </ul>
+            </div>
+            <div>
+                <div class="section-label">💻 Helm values.yaml</div>
+                <pre><code># values.yaml (defaults)
+global:
+  imageRegistry: ghcr.io/team
+
+orderService:
+  replicaCount: 1
+  image:
+    repository: order-service
+    tag: latest
+  resources:
+    requests: { cpu: 250m, memory: 512Mi }
+    limits:   { cpu: 1000m, memory: 1Gi }
+  env:
+    SPRING_PROFILES_ACTIVE: default
+
+inventoryService:
+  replicaCount: 1
+  image:
+    repository: inventory-service
+    tag: latest
+
+bffGateway:
+  replicaCount: 1
+  image:
+    repository: bff-gateway
+    tag: latest
+
+# Infrastructure toggles
+postgresql:
+  enabled: true    # false in prod (use RDS)
+redis:
+  enabled: true
+kafka:
+  enabled: true</code></pre>
+                <div class="section-label mt-3">💻 CD Workflow</div>
+                <pre><code>  deploy-staging:
+    needs: docker
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v3
+
+      - name: Configure Kubeconfig
+        run: echo "$KUBECONFIG_DATA" |
+          base64 -d &gt; kubeconfig
+        env:
+          KUBECONFIG_DATA: ${{ secrets.KUBE }}
+
+      - name: Deploy to Staging
+        run: |
+          helm upgrade --install \
+            microservices ./helm/microservices \
+            -f helm/values-staging.yaml \
+            --set global.imageTag=${{ github
+              .sha }} \
+            --namespace staging \
+            --wait --timeout 5m
+
+      - name: Smoke Test
+        run: helm test microservices
+          -n staging</code></pre>
+            </div>
+        </div>
+        <div class="mt-4 mb-2 flex items-center justify-between">
+            <div class="section-label">✅ Exact Outcomes (Day 27)</div>
+        </div>
+        <div class="grid grid-cols-3 gap-3 mb-3">
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Helm chart</strong> — Templatized K8s manifests with per-environment values files</span></div></div>
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>CD pipeline</strong> — Merge to main auto-deploys to staging, manual gate for prod</span></div></div>
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>ArgoCD intro</strong> — GitOps controller installed, syncing from Git repo</span></div></div>
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Rollback tested</strong> — Helm rollback to previous revision verified working</span></div></div>
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Smoke tests</strong> — Helm test hooks verify deployment health post-deploy</span></div></div>
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Env promotion</strong> — dev → staging → prod path with same chart, different values</span></div></div>
+        </div>
+        <div class="mt-4 mb-2 flex items-center justify-between">
+            <div class="section-label">📤 Output</div>
+            <span class="badge-out">Helm + GitOps CD — templated charts, environment promotion, ArgoCD sync, rollback capability</span>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================================== -->
+<!-- SLIDE 32 — DAY 28                                                           -->
+<!-- ========================================================================== -->
+<div class="slide slide-dark bg-grid flex-col sl">
+    <div class="cg-topbar"></div>
+    <div class="mt-2 flex items-center gap-4">
+        <div class="day-circle">D28</div>
+        <div>
+            <div class="flex items-center gap-2 mb-1">
+                <span class="badge-day">DAY 28</span>
+                <span class="badge-phase">Phase 8 — Production Readiness</span>
+            </div>
+            <h2 class="text-3xl text-white m-0">Performance Testing — k6 Load Tests & Optimization</h2>
+        </div>
+    </div>
+    <div class="accent-line mt-3 mb-3"></div>
+    <div class="content-area">
+        <div class="mb-4">
+            <div class="section-label">📥 Input</div>
+            <div class="flex gap-2 flex-wrap mt-1">
+                <span class="badge-in">Day 27 — Full CI/CD pipeline deploying to K8s</span>
+                <span class="badge-in">No performance baselines, unknown capacity limits</span>
+            </div>
+        </div>
+        <div class="grid grid-cols-2 gap-5">
+            <div>
+                <div class="section-label">🔧 Activities</div>
+                <ol>
+                    <li><strong>Install k6 & write test scripts</strong> — JavaScript-based load test scenarios. Test order creation flow: authenticate → create order → verify response. Parameterize with test data from CSV.</li>
+                    <li><strong>Smoke test (1 VU)</strong> — Single virtual user, verify correctness under no load. Establish baseline response times and validate test script logic.</li>
+                    <li><strong>Load test (50 VUs, 5 min)</strong> — Simulate normal traffic. Measure p50/p95/p99 latency, throughput (RPS), error rate. Set SLA thresholds: p99 &lt; 500ms, error rate &lt; 1%.</li>
+                    <li><strong>Stress test (ramp to 200 VUs)</strong> — Find breaking point. Ramp up gradually: 10 → 50 → 100 → 200 VUs. Monitor where latency spikes and errors increase. Identify bottleneck.</li>
+                    <li><strong>Bottleneck analysis</strong> — Correlate k6 results with Grafana dashboards. Check: connection pool exhaustion? Thread starvation? GC pauses? DB query slow? Kafka consumer lag?</li>
+                    <li><strong>Optimization cycle</strong> — Add database indices, tune connection pool sizes (<code>hikari.maximum-pool-size</code>), enable response compression, add Redis cache for hot paths. Re-test.</li>
+                    <li><strong>Performance CI gate</strong> — Add k6 to CI pipeline. Run smoke test on every PR. Run full load test nightly. Fail if SLA thresholds breached. Track trends over time.</li>
+                </ol>
+                <div class="section-label mt-4">📐 Principles</div>
+                <ul>
+                    <li><strong>Test early, test often</strong> — Performance is a feature. Regressions caught by automated load tests in CI.</li>
+                    <li><strong>Little's Law</strong> — L = λW (concurrency = throughput × latency). Understand system capacity mathematically.</li>
+                    <li><strong>Amdahl's Law</strong> — Optimize the bottleneck first. Profiling before guessing.</li>
+                </ul>
+            </div>
+            <div>
+                <div class="section-label">💻 k6 Load Test Script</div>
+                <pre><code>import http from 'k6/http';
+import { check, sleep } from 'k6';
+import { Rate, Trend } from 'k6/metrics';
+
+const errorRate = new Rate('errors');
+const orderLatency = new Trend('order_latency');
+
+export const options = {
+  stages: [
+    { duration: '1m', target: 10  },
+    { duration: '3m', target: 50  },
+    { duration: '2m', target: 100 },
+    { duration: '1m', target: 0   },
+  ],
+  thresholds: {
+    http_req_duration: ['p(99)&lt;500'],
+    errors: ['rate&lt;0.01'],
+  },
+};
+
+const BASE = 'http://bff-gateway:8080';
+
+export default function () {
+  // 1. Authenticate
+  const auth = http.post(
+    `${BASE}/auth/token`,
+    JSON.stringify({
+      username: 'testuser',
+      password: 'testpass' }),
+    { headers:
+      { 'Content-Type': 'application/json' }}
+  );
+  const token = auth.json('access_token');
+
+  // 2. Create Order
+  const start = Date.now();
+  const res = http.post(
+    `${BASE}/api/v1/orders`,
+    JSON.stringify({
+      customerId: 'cust-001',
+      items: [{ sku: 'SKU-100', qty: 2 }]
+    }),
+    { headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+    }}
+  );
+  orderLatency.add(Date.now() - start);
+
+  check(res, {
+    'status 201': (r) =&gt; r.status === 201,
+    'has orderId': (r) =&gt;
+      r.json('orderId') !== undefined,
+  }) || errorRate.add(1);
+
+  sleep(1);
+}</code></pre>
+                <div class="section-label mt-3">💻 HikariCP Tuning</div>
+                <pre><code># application-perf.yml
+spring:
+  datasource:
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 5000
+      idle-timeout: 300000
+      max-lifetime: 600000
+      leak-detection-threshold: 30000
+
+server:
+  tomcat:
+    max-threads: 200
+    accept-count: 100
+  compression:
+    enabled: true
+    mime-types: application/json
+    min-response-size: 1024</code></pre>
+            </div>
+        </div>
+        <div class="mt-4 mb-2 flex items-center justify-between">
+            <div class="section-label">✅ Exact Outcomes (Day 28)</div>
+        </div>
+        <div class="grid grid-cols-3 gap-3 mb-3">
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>k6 test suite</strong> — Smoke, load, stress test scripts with SLA thresholds</span></div></div>
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Baselines established</strong> — p50/p95/p99 latency, max RPS, error rate documented</span></div></div>
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Bottleneck identified</strong> — Stress test reveals breaking point, root cause analyzed</span></div></div>
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Optimizations applied</strong> — Connection pools, indices, caching tuned, re-tested</span></div></div>
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>SLA passing</strong> — p99 &lt; 500ms, error rate &lt; 1% under 50 VU load</span></div></div>
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Perf in CI</strong> — k6 smoke test runs on every PR, nightly full load test</span></div></div>
+        </div>
+        <div class="mt-4 mb-2 flex items-center justify-between">
+            <div class="section-label">📤 Output</div>
+            <span class="badge-out">Performance tested system — k6 load tests, baselines, optimizations, SLA gates in CI</span>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================================== -->
+<!-- SLIDE 33 — DAY 29                                                           -->
+<!-- ========================================================================== -->
+<div class="slide slide-dark bg-grid flex-col sl">
+    <div class="cg-topbar"></div>
+    <div class="mt-2 flex items-center gap-4">
+        <div class="day-circle">D29</div>
+        <div>
+            <div class="flex items-center gap-2 mb-1">
+                <span class="badge-day">DAY 29</span>
+                <span class="badge-phase">Phase 8 — Production Readiness</span>
+            </div>
+            <h2 class="text-3xl text-white m-0">Contract Testing, E2E Testing & Quality Assurance</h2>
+        </div>
+    </div>
+    <div class="accent-line mt-3 mb-3"></div>
+    <div class="content-area">
+        <div class="mb-4">
+            <div class="section-label">📥 Input</div>
+            <div class="flex gap-2 flex-wrap mt-1">
+                <span class="badge-in">Day 28 — Performance tested, SLA baselines established</span>
+                <span class="badge-in">No contract tests between services, no full E2E suite</span>
+            </div>
+        </div>
+        <div class="grid grid-cols-2 gap-5">
+            <div>
+                <div class="section-label">🔧 Activities</div>
+                <ol>
+                    <li><strong>Spring Cloud Contract — Provider side</strong> — Write contracts in Groovy DSL for order-service API. Auto-generate tests that verify provider meets contract. Auto-generate WireMock stubs for consumers.</li>
+                    <li><strong>Consumer-Driven Contracts</strong> — Middleware declares what it expects from order-service. Provider verifies it can fulfill. Break a contract → CI fails before deployment.</li>
+                    <li><strong>Pact alternative (overview)</strong> — Compare Spring Cloud Contract vs Pact. Pact for polyglot environments. Pact Broker for contract sharing. Choose based on team structure.</li>
+                    <li><strong>Testcontainers E2E</strong> — Full integration test: spin up all services + Kafka + Postgres + Redis in Testcontainers. Create order → verify event flow → check inventory → assert final state.</li>
+                    <li><strong>Test pyramid validation</strong> — Count tests: ~200 unit tests (fast, isolated), ~50 integration tests (Spring context), ~10 contract tests (API boundaries), ~5 E2E tests (full flow). Verify ratio is healthy.</li>
+                    <li><strong>Mutation testing</strong> — Run PITest to verify test quality. If mutating code doesn't fail tests → tests are weak. Target > 70% mutation score on domain logic.</li>
+                    <li><strong>Test reporting</strong> — Aggregate JaCoCo + contract + E2E + mutation reports. Single quality dashboard. All green = production-ready confidence.</li>
+                </ol>
+                <div class="section-label mt-4">📐 Principles</div>
+                <ul>
+                    <li><strong>Test Pyramid</strong> — Many unit tests, fewer integration, fewest E2E. Fast feedback at the base.</li>
+                    <li><strong>Consumer-Driven Contracts</strong> — APIs evolve safely. Breaking changes caught at build time, not runtime.</li>
+                    <li><strong>Mutation testing</strong> — Tests that don't catch bugs are false confidence. Mutants measure test effectiveness.</li>
+                </ul>
+            </div>
+            <div>
+                <div class="section-label">💻 Spring Cloud Contract (Groovy DSL)</div>
+                <pre><code>// order-service/src/test/resources/
+//   contracts/shouldCreateOrder.groovy
+Contract.make {
+    description "should create a new order"
+    request {
+        method POST()
+        url "/api/v1/orders"
+        headers {
+            contentType(applicationJson())
+        }
+        body([
+            customerId: "cust-001",
+            items: [[sku: "SKU-100", qty: 2]]
+        ])
+    }
+    response {
+        status CREATED()
+        headers {
+            contentType(applicationJson())
+        }
+        body([
+            orderId: $(anyUuid()),
+            status: "CREATED",
+            customerId: "cust-001"
+        ])
+    }
+}</code></pre>
+                <div class="section-label mt-3">💻 Testcontainers E2E</div>
+                <pre><code>@SpringBootTest
+@Testcontainers
+class OrderFlowE2ETest {
+
+    @Container
+    static PostgreSQLContainer&lt;?&gt; pg =
+        new PostgreSQLContainer&lt;&gt;("postgres:16");
+
+    @Container
+    static KafkaContainer kafka =
+        new KafkaContainer(
+            DockerImageName.parse(
+                "confluentinc/cp-kafka:7.6.0"));
+
+    @Container
+    static GenericContainer&lt;?&gt; redis =
+        new GenericContainer&lt;&gt;("redis:7")
+            .withExposedPorts(6379);
+
+    @Test
+    void fullOrderFlow_shouldSucceed() {
+        // 1. POST /api/v1/orders
+        var order = restClient.post()
+            .uri("/api/v1/orders")
+            .body(createOrderCmd())
+            .retrieve()
+            .body(OrderDto.class);
+
+        assertThat(order.status())
+            .isEqualTo("CREATED");
+
+        // 2. Wait for async Kafka flow
+        await().atMost(Duration.ofSeconds(10))
+            .untilAsserted(() -&gt; {
+                var updated = restClient.get()
+                    .uri("/api/v1/orders/{id}",
+                        order.orderId())
+                    .retrieve()
+                    .body(OrderDto.class);
+                assertThat(updated.status())
+                    .isEqualTo("CONFIRMED");
+            });
+    }
+}</code></pre>
+            </div>
+        </div>
+        <div class="mt-4 mb-2 flex items-center justify-between">
+            <div class="section-label">✅ Exact Outcomes (Day 29)</div>
+        </div>
+        <div class="grid grid-cols-3 gap-3 mb-3">
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Contract tests</strong> — Spring Cloud Contract verifying API boundaries between services</span></div></div>
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>WireMock stubs</strong> — Auto-generated stubs used by consumer tests</span></div></div>
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>E2E suite</strong> — Full order flow tested with Testcontainers (all infra)</span></div></div>
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Test pyramid</strong> — ~200 unit + ~50 integration + ~10 contract + ~5 E2E verified</span></div></div>
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Mutation score</strong> — PITest > 70% on domain logic, weak tests identified and fixed</span></div></div>
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Quality dashboard</strong> — Unified report: coverage + contracts + mutations + E2E all green</span></div></div>
+        </div>
+        <div class="mt-4 mb-2 flex items-center justify-between">
+            <div class="section-label">📤 Output</div>
+            <span class="badge-out">Comprehensive QA — contract tests, E2E Testcontainers suite, mutation testing, test pyramid validated</span>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================================== -->
+<!-- SLIDE 34 — DAY 30                                                           -->
+<!-- ========================================================================== -->
+<div class="slide slide-dark bg-grid flex-col sl">
+    <div class="cg-topbar"></div>
+    <div class="mt-2 flex items-center gap-4">
+        <div class="day-circle">D30</div>
+        <div>
+            <div class="flex items-center gap-2 mb-1">
+                <span class="badge-day">DAY 30</span>
+                <span class="badge-phase">Phase 8 — Capstone</span>
+            </div>
+            <h2 class="text-3xl text-white m-0">Production Launch Checklist, Architecture Review & Capstone Demo</h2>
+        </div>
+    </div>
+    <div class="accent-line mt-3 mb-3"></div>
+    <div class="content-area">
+        <div class="mb-4">
+            <div class="section-label">📥 Input</div>
+            <div class="flex gap-2 flex-wrap mt-1">
+                <span class="badge-in">Days 1–29 — Complete microservices platform built, tested, deployed</span>
+                <span class="badge-in">Ready for final review, documentation, and team presentation</span>
+            </div>
+        </div>
+        <div class="grid grid-cols-2 gap-5">
+            <div>
+                <div class="section-label">🔧 Activities</div>
+                <ol>
+                    <li><strong>Production readiness checklist</strong> — Walk through: ✅ Health probes configured ✅ Graceful shutdown ✅ Resource limits set ✅ Secrets externalized ✅ Log aggregation ✅ Metrics + alerts ✅ Distributed tracing ✅ Rate limiting ✅ Security scan clean ✅ Performance tested.</li>
+                    <li><strong>Architecture Decision Records (ADRs)</strong> — Document key decisions: Why hexagonal? Why Kafka over RabbitMQ? Why orchestrated saga? Format: Context → Decision → Consequences. Store in <code>docs/adr/</code>.</li>
+                    <li><strong>API documentation review</strong> — OpenAPI spec complete for all services. Postman collection with examples. README.md with getting started, architecture diagram, service map.</li>
+                    <li><strong>Runbook finalization</strong> — On-call runbook: how to diagnose common issues, escalation matrix, rollback procedures, Kafka consumer lag resolution, circuit breaker reset.</li>
+                    <li><strong>Capstone demo preparation</strong> — Live demo flow: create order (happy path) → show trace in Zipkin → show logs in Kibana → show metrics in Grafana → simulate failure → show circuit breaker → show saga compensation → show recovery.</li>
+                    <li><strong>Team presentation</strong> — Each team member presents one phase. Q&A session. Architecture review: what would change at 10x scale? What would you do differently? Lessons learned.</li>
+                    <li><strong>Certification assessment</strong> — Code review of the full codebase. Verify: clean architecture, test coverage, security posture, observability, CI/CD completeness. Score against Capgemini engineering excellence rubric.</li>
+                </ol>
+                <div class="section-label mt-4">📐 Principles</div>
+                <ul>
+                    <li><strong>Production is Day 1</strong> — Launch is the beginning, not the end. Operability > features on day one.</li>
+                    <li><strong>Document decisions, not just code</strong> — ADRs capture the "why" that code cannot express.</li>
+                    <li><strong>Continuous improvement</strong> — Retrospective: what worked, what didn't, what to improve next sprint.</li>
+                </ul>
+            </div>
+            <div>
+                <div class="section-label">💻 Production Readiness Scorecard</div>
+                <pre><code>┌──────────────────────────────┬────────┐
+│ Category                     │ Status │
+├──────────────────────────────┼────────┤
+│ Hexagonal Architecture       │   ✅   │
+│ Multi-module Maven           │   ✅   │
+│ Docker Multi-Stage Builds    │   ✅   │
+│ PostgreSQL + Flyway          │   ✅   │
+│ REST APIs + OpenAPI          │   ✅   │
+│ Bean Validation + OWASP      │   ✅   │
+│ OpenFeign + Resilience4j     │   ✅   │
+│ Spring Cloud Gateway         │   ✅   │
+│ OAuth2 / JWT Security        │   ✅   │
+│ Rate Limiting + CORS         │   ✅   │
+│ ELK Logging                  │   ✅   │
+│ Prometheus + Grafana          │   ✅   │
+│ Distributed Tracing          │   ✅   │
+│ Health Probes                │   ✅   │
+│ Kafka Event-Driven           │   ✅   │
+│ Saga Pattern                 │   ✅   │
+│ CI/CD Pipeline               │   ✅   │
+│ Kubernetes + Helm            │   ✅   │
+│ Performance Testing          │   ✅   │
+│ Contract + E2E Tests         │   ✅   │
+├──────────────────────────────┼────────┤
+│ OVERALL READINESS            │ 20/20  │
+└──────────────────────────────┴────────┘</code></pre>
+                <div class="section-label mt-3">💻 ADR Template</div>
+                <pre><code># ADR-001: Hexagonal Architecture
+## Status: Accepted
+## Context
+We need a service architecture that
+isolates business logic from infrastructure
+to enable testability, portability, and
+independent evolution of adapters.
+
+## Decision
+Adopt Hexagonal (Ports &amp; Adapters) for
+all microservices. Domain logic in core
+module. REST/Kafka/DB as adapters.
+
+## Consequences
++ Business logic testable without Spring
++ Swappable adapters (REST → gRPC)
++ Enforced by ArchUnit in CI
+- Steeper learning curve initially
+- More packages/classes than layered</code></pre>
+                <div class="section-label mt-3">💻 Demo Flow Script</div>
+                <pre><code># 1. Create order (happy path)
+curl -X POST $BFF/api/v1/orders \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{"customerId":"C1","items":[...]}'
+
+# 2. Show trace → Zipkin UI (port 9411)
+# 3. Show logs  → Kibana  (port 5601)
+# 4. Show metrics → Grafana (port 3000)
+
+# 5. Simulate inventory failure
+curl -X POST $BFF/api/v1/orders \
+  -d '{"items":[{"sku":"OUT-OF-STOCK"}]}'
+# → Circuit breaker opens
+# → Saga compensates → order cancelled
+
+# 6. Show recovery after cooldown</code></pre>
+            </div>
+        </div>
+        <div class="mt-4 mb-2 flex items-center justify-between">
+            <div class="section-label">✅ Exact Outcomes (Day 30)</div>
+        </div>
+        <div class="grid grid-cols-3 gap-3 mb-3">
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Checklist 20/20</strong> — All production readiness items verified and passing</span></div></div>
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>ADRs written</strong> — Key architecture decisions documented with rationale</span></div></div>
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Capstone demo</strong> — Live walkthrough: happy path + failure + recovery in &lt; 15 min</span></div></div>
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Full documentation</strong> — OpenAPI, Postman, README, runbooks, architecture diagrams</span></div></div>
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Team presentation</strong> — Each member presents a phase, Q&A completed</span></div></div>
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>🎓 Certification</strong> — Code reviewed, scored against engineering excellence rubric</span></div></div>
+        </div>
+        <div class="mt-4 mb-2 flex items-center justify-between">
+            <div class="section-label">📤 Output</div>
+            <span class="badge-out">🎓 TRAINING COMPLETE — Production-ready microservices platform, fully documented, demo'd, and certified</span>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================================== -->
+</div><!-- end page-wrapper -->
+
+<button id="back-to-top" title="Back to top" aria-label="Back to top">↑</button>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // ── Code copy buttons ──
+    document.querySelectorAll('pre').forEach((pre, idx) => {
+        if (getComputedStyle(pre).position === 'static') pre.style.position = 'relative';
+        const btn = document.createElement('button');
+        btn.className = 'code-copy-btn';
+        btn.textContent = 'COPY';
+        btn.type = 'button';
+        pre.insertBefore(btn, pre.firstChild);
+        btn.addEventListener('click', async (e) => {
+            e.preventDefault(); e.stopPropagation();
+            const code = pre.querySelector('code');
+            const text = (code ? code.innerText : pre.innerText) || '';
+            if (!text) return;
+            try {
+                await navigator.clipboard.writeText(text);
+                btn.textContent = '✓ COPIED'; btn.classList.add('copied');
+            } catch {
+                const ta = document.createElement('textarea');
+                ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+                document.body.appendChild(ta); ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                btn.textContent = '✓ COPIED'; btn.classList.add('copied');
+            }
+            setTimeout(() => { btn.textContent = 'COPY'; btn.classList.remove('copied'); }, 2500);
+        });
+    });
+
+    // ── Auto-wrap slide headers (elements before .content-area) ──
+    document.querySelectorAll('.slide').forEach(slide => {
+        const ca = slide.querySelector('.content-area');
+        if (!ca) return;
+        const nodes = [];
+        let node = slide.firstElementChild;
+        while (node && node !== ca) { nodes.push(node); node = node.nextElementSibling; }
+        if (nodes.length > 0) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'slide-header';
+            slide.insertBefore(wrapper, nodes[0]);
+            nodes.forEach(n => wrapper.appendChild(n));
+        }
+    });
+
+    // ── Back-to-top button ──
+    const btn = document.getElementById('back-to-top');
+    window.addEventListener('scroll', () => {
+        btn.classList.toggle('visible', window.scrollY > 400);
+    });
+    btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+});
+</script>
+
+</body>
+</html>

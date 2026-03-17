@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Modern Java Microservices Architecture</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            crimson: '#9B1C1C',
+            orchid: '#7C3AED',
+            marina: '#0F172A',
+            marinaSoft: '#1E293B'
+          },
+          fontFamily: {
+            heading: ['Outfit', 'sans-serif'],
+            body: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Anime.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+
+  <style>
+    body { margin: 0; overflow: hidden; font-family: Inter; }
+    .slide {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      display: none;
+      padding: 3rem;
+    }
+    .slide-dark { background: #0F172A; color: white; }
+    .slide-light { background: #F3F4F6; color: #111827; }
+    .slide-white { background: white; color: #111827; }
+
+    #slide-indicator {
+      position: fixed;
+      bottom: 20px;
+      width: 100%;
+      text-align: center;
+      font-size: 24px;
+    }
+
+    .dot {
+      margin: 0 5px;
+      opacity: 0.3;
+    }
+
+    .dot.active {
+      opacity: 1;
+      color: #9B1C1C;
+    }
+
+    @media print {
+      body { overflow: visible; }
+      .slide {
+        display: flex !important;
+        page-break-after: always;
+        break-inside: avoid;
+        transform: none !important;
+      }
+      .no-print { display: none !important; }
+      * { print-color-adjust: exact; }
+    }
+  </style>
+</head>
+
+<body>
+
+<div id="presentation-container">
+
+  <!-- Slide 1 -->
+  <div class="slide slide-dark flex flex-col justify-center">
+    <h1 class="text-5xl font-heading mb-6">Modern Java Microservices</h1>
+    <p class="text-3xl">Building Scalable Distributed Systems (Java 21 + Docker + Clean Architecture)</p>
+  </div>
+
+  <!-- Slide 2 (SCQA) -->
+  <div class="slide slide-light flex flex-col justify-center">
+    <h2 class="text-5xl font-heading mb-6">Situation → Complication → Question → Answer</h2>
+    <ul class="text-2xl space-y-4">
+      <li><b>Situation:</b> Enterprises demand scalable digital systems</li>
+      <li><b>Complication:</b> Monoliths fail under scale + complexity</li>
+      <li><b>Question:</b> How do we design scalable, maintainable systems?</li>
+      <li><b>Answer:</b> Layered Microservices with BFF + Middleware + System APIs</li>
+    </ul>
+  </div>
+
+  <!-- Slide 3 -->
+  <div class="slide slide-white flex flex-col justify-center">
+    <h2 class="text-5xl font-heading mb-6">The Core Answer (Minto Pyramid)</h2>
+    <p class="text-3xl">A 3-Layer Microservices Architecture Enables:</p>
+    <ul class="text-2xl mt-6 space-y-3">
+      <li>Scalability (independent services)</li>
+      <li>Flexibility (BFF-driven UX)</li>
+      <li>Resilience (distributed isolation)</li>
+      <li>Maintainability (SOLID + Clean Code)</li>
+    </ul>
+  </div>
+
+  <!-- Slide 4 Diagram -->
+  <div class="slide slide-dark flex flex-col justify-center items-center">
+    <h2 class="text-5xl font-heading mb-6">Architecture Overview</h2>
+    <svg width="800" height="400">
+      <!-- BFF -->
+      <rect x="50" y="150" width="150" height="80" fill="#9B1C1C"/>
+      <text x="75" y="195" fill="white">BFF</text>
+
+      <!-- Middleware -->
+      <rect x="300" y="150" width="150" height="80" fill="#7C3AED"/>
+      <text x="315" y="195" fill="white">Middleware</text>
+
+      <!-- System API -->
+      <rect x="550" y="150" width="150" height="80" fill="#1E293B"/>
+      <text x="565" y="195" fill="white">System API</text>
+
+      <!-- DB -->
+      <ellipse cx="700" cy="300" rx="60" ry="30" fill="#10B981"/>
+      <text x="660" y="305" fill="white">PostgreSQL</text>
+
+      <!-- Arrows -->
+      <line x1="200" y1="190" x2="300" y2="190" stroke="white"/>
+      <line x1="450" y1="190" x2="550" y2="190" stroke="white"/>
+      <line x1="650" y1="230" x2="700" y2="270" stroke="white"/>
+    </svg>
+  </div>
+
+  <!-- Slide 5 -->
+  <div class="slide slide-light flex flex-col justify-center">
+    <h2 class="text-5xl font-heading mb-6">Layer 1: Backend for Frontend (BFF)</h2>
+    <ul class="text-2xl space-y-3">
+      <li>Tailored APIs for UI/Client</li>
+      <li>Reduces frontend complexity</li>
+      <li>Aggregates multiple services</li>
+      <li>Improves performance</li>
+    </ul>
+  </div>
+
+  <!-- Slide 6 -->
+  <div class="slide slide-white flex flex-col justify-center">
+    <h2 class="text-5xl font-heading mb-6">Layer 2: Middleware</h2>
+    <ul class="text-2xl space-y-3">
+      <li>Business logic orchestration</li>
+      <li>Service composition</li>
+      <li>Validation + rules engine</li>
+      <li>Decouples frontend from backend</li>
+    </ul>
+  </div>
+
+  <!-- Slide 7 -->
+  <div class="slide slide-dark flex flex-col justify-center">
+    <h2 class="text-5xl font-heading mb-6">Layer 3: System APIs</h2>
+    <ul class="text-2xl space-y-3">
+      <li>Direct database access</li>
+      <li>CRUD operations</li>
+      <li>JPA + PostgreSQL</li>
+      <li>Reusable across services</li>
+    </ul>
+  </div>
+
+  <!-- Slide 8 -->
+  <div class="slide slide-light flex flex-col justify-center">
+    <h2 class="text-5xl font-heading mb-6">Database Layer</h2>
+    <ul class="text-2xl space-y-3">
+      <li>PostgreSQL via JPA</li>
+      <li>Environment-based connection</li>
+      <li>Cloud-ready configuration</li>
+      <li>Transaction management</li>
+    </ul>
+  </div>
+
+  <!-- Slide 9 -->
+  <div class="slide slide-white flex flex-col justify-center">
+    <h2 class="text-5xl font-heading mb-6">Dockerized Deployment</h2>
+    <ul class="text-2xl space-y-3">
+      <li>3 containers → BFF, Middleware, System API</li>
+      <li>Independent scaling</li>
+      <li>Cloud-native ready</li>
+      <li>Environment variables for DB</li>
+    </ul>
+  </div>
+
+  <!-- Slide 10 -->
+  <div class="slide slide-dark flex flex-col justify-center">
+    <h2 class="text-5xl font-heading mb-6">Java 21 + Engineering Principles</h2>
+    <ul class="text-2xl space-y-3">
+      <li>SOLID design principles</li>
+      <li>Clean Code practices</li>
+      <li>OWASP security built-in</li>
+      <li>Modern Java features</li>
+    </ul>
+  </div>
+
+</div>
+
+<div id="slide-indicator" class="no-print"></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const slides = document.querySelectorAll('.slide');
+  const indicator = document.getElementById('slide-indicator');
+  let currentSlide = 0;
+  let isAnimating = false;
+
+  function updateIndicator() {
+    indicator.innerHTML = '';
+    slides.forEach((_, i) => {
+      const dot = document.createElement('span');
+      dot.className = 'dot' + (i === currentSlide ? ' active' : '');
+      dot.innerText = '●';
+      indicator.appendChild(dot);
+    });
+  }
+
+  function showSlide(index, direction = 1) {
+    if (isAnimating || index < 0 || index >= slides.length) return;
+    isAnimating = true;
+
+    const current = slides[currentSlide];
+    const next = slides[index];
+
+    next.style.display = 'flex';
+    next.style.transform = `translateX(${direction * 100}%)`;
+
+    anime.timeline({
+      complete: () => {
+        current.style.display = 'none';
+        current.style.transform = 'translateX(0)';
+        next.style.transform = 'translateX(0)';
+        currentSlide = index;
+        updateIndicator();
+        isAnimating = false;
+      }
+    })
+    .add({
+      targets: current,
+      translateX: [-0, -direction * 100 + '%'],
+      duration: 500,
+      easing: 'easeInOutQuad'
+    }, 0)
+    .add({
+      targets: next,
+      translateX: [direction * 100 + '%', '0%'],
+      duration: 500,
+      easing: 'easeInOutQuad'
+    }, 0);
+  }
+
+  slides.forEach((slide, i) => {
+    slide.style.display = i === 0 ? 'flex' : 'none';
+  });
+
+  updateIndicator();
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') {
+      showSlide(currentSlide + 1, 1);
+    }
+    if (e.key === 'ArrowLeft') {
+      showSlide(currentSlide - 1, -1);
+    }
+  });
+
+  document.getElementById('presentation-container').addEventListener('click', (e) => {
+    const x = e.clientX;
+    if (x < window.innerWidth / 2) {
+      showSlide(currentSlide - 1, -1);
+    } else {
+      showSlide(currentSlide + 1, 1);
+    }
+  });
+});
+</script>
+
+</body>
+</html>

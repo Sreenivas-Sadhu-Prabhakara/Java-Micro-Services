@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capgemini — Java Microservices: 30-Day Program · Master Index</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0D1B2A 0%, #0F2847 100%);
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            color: #E2E8F0;
+        }
+
+        /* ─── Top gradient bar ─── */
+        .cg-topbar {
+            height: 5px;
+            background: linear-gradient(90deg, #0070AD 0%, #12ABDB 50%, #00B388 100%);
+        }
+
+        /* ─── Background grid ─── */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 44px 44px;
+            pointer-events: none;
+            z-index: 0;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(circle at 15% 40%, rgba(0,112,173,0.12) 0%, transparent 50%),
+                radial-gradient(circle at 85% 80%, rgba(18,171,219,0.08) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ─── Hero section ─── */
+        .hero {
+            padding: 4rem 0 2.5rem;
+            text-align: center;
+        }
+
+        .hero .logo-bar {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(0,112,173,0.1);
+            border: 1px solid rgba(0,112,173,0.2);
+            border-radius: 12px;
+            padding: 0.6rem 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .hero h1 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            line-height: 1.1;
+            margin: 0 0 1rem;
+            color: #FFFFFF;
+        }
+
+        .hero h1 span { color: #12ABDB; }
+
+        .accent-line {
+            height: 4px;
+            width: 80px;
+            background: linear-gradient(90deg, #0070AD, #12ABDB);
+            border-radius: 2px;
+            margin: 0 auto 1.5rem;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: #94A3B8;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            line-height: 1.7;
+        }
+
+        /* ─── Stats row ─── */
+        .stats-row {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 3rem;
+        }
+
+        .stat-pill {
+            background: rgba(13,27,42,0.7);
+            border: 1px solid rgba(0,112,173,0.2);
+            border-radius: 10px;
+            padding: 0.75rem 1.5rem;
+            text-align: center;
+            min-width: 130px;
+        }
+
+        .stat-pill .value {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 2rem;
+            line-height: 1;
+        }
+
+        .stat-pill .label {
+            font-size: 0.7rem;
+            color: #64748B;
+            margin-top: 0.2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* ─── Section heading ─── */
+        .section-heading {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #12ABDB;
+            margin-bottom: 1rem;
+        }
+
+        /* ─── Week cards grid ─── */
+        .weeks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 4rem;
+        }
+
+        .week-card {
+            background: rgba(27,45,69,0.7);
+            border: 1px solid rgba(0,112,173,0.15);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+
+        .week-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(0,112,173,0.05) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .week-card:hover {
+            transform: translateY(-6px) scale(1.01);
+            border-color: rgba(0,112,173,0.4);
+            box-shadow: 0 20px 60px rgba(0,112,173,0.2), 0 8px 24px rgba(0,0,0,0.3);
+        }
+
+        .week-card-header {
+            padding: 1.5rem 1.5rem 1rem;
+            border-bottom: 1px solid rgba(0,112,173,0.1);
+        }
+
+        .week-card-header .phase-badge {
+            display: inline-block;
+            padding: 0.2rem 0.7rem;
+            border-radius: 999px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 0.75rem;
+        }
+
+        .week-card-header h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin: 0 0 0.3rem;
+            line-height: 1.2;
+        }
+
+        .week-card-header .days-range {
+            font-size: 0.8rem;
+            font-family: 'Fira Code', monospace;
+            color: #64748B;
+        }
+
+        .week-card-body {
+            padding: 1rem 1.5rem;
+            flex: 1;
+        }
+
+        .week-card-body p {
+            font-size: 0.82rem;
+            color: #94A3B8;
+            line-height: 1.6;
+            margin: 0 0 0.75rem;
+        }
+
+        .day-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+
+        .day-chip {
+            background: rgba(0,112,173,0.12);
+            border: 1px solid rgba(0,112,173,0.2);
+            border-radius: 6px;
+            padding: 0.2rem 0.55rem;
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: #7DD3E8;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .week-card-footer {
+            padding: 0.85rem 1.5rem;
+            border-top: 1px solid rgba(0,112,173,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(0,112,173,0.04);
+        }
+
+        .week-card-footer .outcome-tag {
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 0.2rem 0.65rem;
+            border-radius: 999px;
+        }
+
+        .week-card-footer .open-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+            color: #12ABDB;
+            text-decoration: none;
+            transition: gap 0.2s;
+        }
+
+        .week-card:hover .open-btn { gap: 0.6rem; }
+
+        /* ─── Phase color themes ─── */
+        .phase-1 .phase-badge { background: rgba(0,112,173,0.2); color: #12ABDB; border: 1px solid rgba(18,171,219,0.3); }
+        .phase-1 .week-card-header { border-bottom-color: rgba(18,171,219,0.15); }
+        .phase-1:hover { border-color: rgba(18,171,219,0.5); }
+        .phase-1 .outcome-tag { background: rgba(18,171,219,0.1); color: #12ABDB; border: 1px solid rgba(18,171,219,0.25); }
+
+        .phase-2 .phase-badge { background: rgba(0,179,136,0.15); color: #00B388; border: 1px solid rgba(0,179,136,0.3); }
+        .phase-2:hover { border-color: rgba(0,179,136,0.4); box-shadow: 0 20px 60px rgba(0,179,136,0.15), 0 8px 24px rgba(0,0,0,0.3); }
+        .phase-2 .outcome-tag { background: rgba(0,179,136,0.1); color: #00B388; border: 1px solid rgba(0,179,136,0.25); }
+
+        .phase-3 .phase-badge { background: rgba(255,184,25,0.12); color: #FFB819; border: 1px solid rgba(255,184,25,0.25); }
+        .phase-3:hover { border-color: rgba(255,184,25,0.4); box-shadow: 0 20px 60px rgba(255,184,25,0.1), 0 8px 24px rgba(0,0,0,0.3); }
+        .phase-3 .outcome-tag { background: rgba(255,184,25,0.1); color: #FFB819; border: 1px solid rgba(255,184,25,0.25); }
+
+        .phase-4 .phase-badge { background: rgba(228,0,43,0.12); color: #F87171; border: 1px solid rgba(228,0,43,0.2); }
+        .phase-4:hover { border-color: rgba(228,0,43,0.35); box-shadow: 0 20px 60px rgba(228,0,43,0.1), 0 8px 24px rgba(0,0,0,0.3); }
+        .phase-4 .outcome-tag { background: rgba(228,0,43,0.08); color: #F87171; border: 1px solid rgba(228,0,43,0.2); }
+
+        .phase-5 .phase-badge { background: rgba(139,92,246,0.15); color: #A78BFA; border: 1px solid rgba(139,92,246,0.3); }
+        .phase-5:hover { border-color: rgba(139,92,246,0.4); box-shadow: 0 20px 60px rgba(139,92,246,0.12), 0 8px 24px rgba(0,0,0,0.3); }
+        .phase-5 .outcome-tag { background: rgba(139,92,246,0.1); color: #A78BFA; border: 1px solid rgba(139,92,246,0.25); }
+
+        .phase-6 .phase-badge { background: rgba(16,185,129,0.15); color: #34D399; border: 1px solid rgba(16,185,129,0.3); }
+        .phase-6:hover { border-color: rgba(16,185,129,0.4); box-shadow: 0 20px 60px rgba(16,185,129,0.12), 0 8px 24px rgba(0,0,0,0.3); }
+        .phase-6 .outcome-tag { background: rgba(16,185,129,0.1); color: #34D399; border: 1px solid rgba(16,185,129,0.25); }
+
+        /* ─── Progress journey ─── */
+        .journey-section {
+            margin-bottom: 4rem;
+        }
+
+        .journey-rail {
+            display: flex;
+            align-items: stretch;
+            gap: 0;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+
+        .journey-step {
+            flex: 1;
+            min-width: 140px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .journey-step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            right: -50%;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(0,112,173,0.4), rgba(0,112,173,0.1));
+            z-index: 0;
+        }
+
+        .journey-node {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 0.8rem;
+            color: white;
+            position: relative;
+            z-index: 1;
+            flex-shrink: 0;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+            margin-bottom: 0.6rem;
+        }
+
+        .journey-label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-align: center;
+            color: #94A3B8;
+            line-height: 1.3;
+        }
+
+        .journey-sublabel {
+            font-size: 0.62rem;
+            text-align: center;
+            color: #475569;
+            margin-top: 0.2rem;
+            font-family: 'Fira Code', monospace;
+        }
+
+        /* ─── Quick-links row ─── */
+        .quick-links {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 4rem;
+        }
+
+        .quick-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.55rem 1.1rem;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            font-family: 'Outfit', sans-serif;
+            text-decoration: none;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .quick-link:hover { transform: translateY(-2px); }
+
+        .ql-primary {
+            background: linear-gradient(135deg, #0070AD, #12ABDB);
+            color: white;
+            box-shadow: 0 4px 16px rgba(0,112,173,0.3);
+        }
+
+        .ql-secondary {
+            background: rgba(0,112,173,0.1);
+            border-color: rgba(0,112,173,0.2);
+            color: #12ABDB;
+        }
+
+        .ql-secondary:hover {
+            background: rgba(0,112,173,0.2);
+            border-color: rgba(0,112,173,0.4);
+        }
+
+        /* ─── Architecture mini-map ─── */
+        .arch-section {
+            background: rgba(27,45,69,0.5);
+            border: 1px solid rgba(0,112,173,0.12);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 4rem;
+            backdrop-filter: blur(10px);
+        }
+
+        /* ─── Footer ─── */
+        footer {
+            border-top: 1px solid rgba(0,112,173,0.12);
+            padding: 1.5rem 0;
+            text-align: center;
+            color: #334155;
+            font-size: 0.75rem;
+        }
+
+        @media print { .no-print { display: none !important; } }
+    </style>
+</head>
+<body>
+<div class="cg-topbar"></div>
+
+<div class="container">
+
+    <!-- ══════════════════════════════════════════
+         HERO
+    ══════════════════════════════════════════ -->
+    <div class="hero">
+        <div class="logo-bar">
+            <svg width="140" height="28" viewBox="0 0 140 28" fill="none">
+                <text x="70" y="20" text-anchor="middle" fill="#12ABDB" font-family="Outfit" font-weight="800" font-size="14" letter-spacing="2.5">CAPGEMINI</text>
+            </svg>
+            <span style="width:1px;height:20px;background:rgba(18,171,219,0.3)"></span>
+            <span style="font-size:0.72rem;color:#64748B;font-family:Fira Code,monospace;">Training Program</span>
+        </div>
+
+        <h1>Java Microservices<br><span>30-Day Master Index</span></h1>
+        <div class="accent-line"></div>
+        <p>A production-grade greenfield program — 6 weeks, 30 days, one slide per day. Build a 3-layer distributed microservices system from scratch using Java 21, Spring Boot 3.2, Docker, and cloud-native patterns.</p>
+
+        <!-- Stats -->
+        <div class="stats-row">
+            <div class="stat-pill">
+                <div class="value" style="color:#12ABDB">30</div>
+                <div class="label">Training Days</div>
+            </div>
+            <div class="stat-pill">
+                <div class="value" style="color:#00B388">6</div>
+                <div class="label">Phases / Weeks</div>
+            </div>
+            <div class="stat-pill">
+                <div class="value" style="color:#FFB819">3</div>
+                <div class="label">Microservices</div>
+            </div>
+            <div class="stat-pill">
+                <div class="value" style="color:#A78BFA">1:1</div>
+                <div class="label">Slide per Day</div>
+            </div>
+            <div class="stat-pill">
+                <div class="value" style="color:#F87171">6</div>
+                <div class="label">Week Files</div>
+            </div>
+        </div>
+
+        <!-- Quick-launch buttons -->
+        <div class="quick-links">
+            <a class="quick-link ql-primary" href="week1.html">▶ Start Week 1 — Days 1–5</a>
+            <a class="quick-link ql-secondary" href="week2.html">Week 2 — Days 6–10</a>
+            <a class="quick-link ql-secondary" href="week3.html">Week 3 — Days 11–15</a>
+            <a class="quick-link ql-secondary" href="week4.html">Week 4 — Days 16–20</a>
+            <a class="quick-link ql-secondary" href="week5.html">Week 5 — Days 21–25</a>
+            <a class="quick-link ql-secondary" href="week6.html">Week 6 — Days 26–30</a>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         LEARNING JOURNEY RAIL
+    ══════════════════════════════════════════ -->
+    <div class="journey-section">
+        <p class="section-heading">📍 30-Day Learning Journey</p>
+        <div class="journey-rail">
+            <div class="journey-step">
+                <div class="journey-node" style="background:linear-gradient(135deg,#0070AD,#12ABDB)">W1</div>
+                <div class="journey-label">Foundation</div>
+                <div class="journey-sublabel">Days 1–5</div>
+            </div>
+            <div class="journey-step">
+                <div class="journey-node" style="background:linear-gradient(135deg,#00875A,#00B388)">W2</div>
+                <div class="journey-label">System API</div>
+                <div class="journey-sublabel">Days 6–10</div>
+            </div>
+            <div class="journey-step">
+                <div class="journey-node" style="background:linear-gradient(135deg,#C87000,#FFB819)">W3</div>
+                <div class="journey-label">Middleware</div>
+                <div class="journey-sublabel">Days 11–15</div>
+            </div>
+            <div class="journey-step">
+                <div class="journey-node" style="background:linear-gradient(135deg,#B91C1C,#F87171)">W4</div>
+                <div class="journey-label">BFF Gateway</div>
+                <div class="journey-sublabel">Days 16–20</div>
+            </div>
+            <div class="journey-step">
+                <div class="journey-node" style="background:linear-gradient(135deg,#5B21B6,#A78BFA)">W5</div>
+                <div class="journey-label">Performance</div>
+                <div class="journey-sublabel">Days 21–25</div>
+            </div>
+            <div class="journey-step">
+                <div class="journey-node" style="background:linear-gradient(135deg,#047857,#34D399)">W6</div>
+                <div class="journey-label">Observability</div>
+                <div class="journey-sublabel">Days 26–30</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         WEEK CARDS GRID
+    ══════════════════════════════════════════ -->
+    <p class="section-heading">📂 Weekly Modules — Click to Open</p>
+    <div class="weeks-grid">
+
+        <!-- Week 1 -->
+        <a class="week-card phase-1" href="week1.html">
+            <div class="week-card-header">
+                <div class="phase-badge">Phase 1 — Foundation</div>
+                <h2>Week 1: Setup, Structure &amp; Docker</h2>
+                <div class="days-range">Days 1–5 · 9 slides (overview + 5 daily)</div>
+            </div>
+            <div class="week-card-body">
+                <p>JDK 21 &amp; toolchain setup, multi-module Maven, Spring Boot 3.2 scaffold, Hexagonal Architecture, Docker multi-stage builds, Docker Compose with full service networking.</p>
+                <div class="day-chips">
+                    <span class="day-chip">D1: Dev Environment &amp; JDK 21</span>
+                    <span class="day-chip">D2: Spring Boot Scaffold</span>
+                    <span class="day-chip">D3: Hexagonal Architecture</span>
+                    <span class="day-chip">D4: Docker Multi-Stage</span>
+                    <span class="day-chip">D5: Docker Compose</span>
+                </div>
+            </div>
+            <div class="week-card-footer">
+                <span class="outcome-tag">3 Running Containers</span>
+                <span class="open-btn">Open Week 1 →</span>
+            </div>
+        </a>
+
+        <!-- Week 2 -->
+        <a class="week-card phase-2" href="week2.html">
+            <div class="week-card-header">
+                <div class="phase-badge">Phase 2 — System API</div>
+                <h2>Week 2: System API (Layer 3)</h2>
+                <div class="days-range">Days 6–10 · 5 slides</div>
+            </div>
+            <div class="week-card-body">
+                <p>PostgreSQL container, JPA entities with relationships, Flyway schema migrations, Spring Data repositories with custom queries, Bean Validation, OWASP hardening, CRUD REST endpoints, Swagger UI, Testcontainers.</p>
+                <div class="day-chips">
+                    <span class="day-chip">D6: PostgreSQL &amp; JPA Entities</span>
+                    <span class="day-chip">D7: Flyway Migrations</span>
+                    <span class="day-chip">D8: CRUD Repositories</span>
+                    <span class="day-chip">D9: Validation &amp; OWASP</span>
+                    <span class="day-chip">D10: OpenAPI &amp; Tests</span>
+                </div>
+            </div>
+            <div class="week-card-footer">
+                <span class="outcome-tag" style="background:rgba(0,179,136,0.1);color:#00B388;border:1px solid rgba(0,179,136,0.25);">Layer 3 Complete</span>
+                <span class="open-btn" style="color:#00B388;">Open Week 2 →</span>
+            </div>
+        </a>
+
+        <!-- Week 3 -->
+        <a class="week-card phase-3" href="week3.html">
+            <div class="week-card-header">
+                <div class="phase-badge">Phase 3 — Middleware</div>
+                <h2>Week 3: Middleware (Layer 2)</h2>
+                <div class="days-range">Days 11–15 · 5 slides</div>
+            </div>
+            <div class="week-card-body">
+                <p>OpenFeign declarative HTTP clients, service composition &amp; business orchestration, parallel CompletableFuture calls, Resilience4j circuit breakers, retries &amp; bulkheads, WireMock tests, MapStruct DTO mapping.</p>
+                <div class="day-chips">
+                    <span class="day-chip">D11: OpenFeign Clients</span>
+                    <span class="day-chip">D12: Service Composition</span>
+                    <span class="day-chip">D13: Resilience4j</span>
+                    <span class="day-chip">D14: Error Handling &amp; Tests</span>
+                    <span class="day-chip">D15: Swagger &amp; MapStruct</span>
+                </div>
+            </div>
+            <div class="week-card-footer">
+                <span class="outcome-tag">Fault-Tolerant MW</span>
+                <span class="open-btn" style="color:#FFB819;">Open Week 3 →</span>
+            </div>
+        </a>
+
+        <!-- Week 4 -->
+        <a class="week-card phase-4" href="week4.html">
+            <div class="week-card-header">
+                <div class="phase-badge">Phase 4 — BFF Gateway</div>
+                <h2>Week 4: BFF &amp; Gateway (Layer 1)</h2>
+                <div class="days-range">Days 16–20 · 5 slides</div>
+            </div>
+            <div class="week-card-body">
+                <p>Spring Cloud Gateway routing &amp; filters, OAuth2/JWT security with Keycloak, rate limiting (token bucket), CORS/CSRF protection, response aggregation, full end-to-end integration testing across all 3 layers.</p>
+                <div class="day-chips">
+                    <span class="day-chip">D16: Gateway Routing</span>
+                    <span class="day-chip">D17: OAuth2 / JWT</span>
+                    <span class="day-chip">D18: Rate Limiting</span>
+                    <span class="day-chip">D19: BFF Aggregation</span>
+                    <span class="day-chip">D20: E2E Integration Test</span>
+                </div>
+            </div>
+            <div class="week-card-footer">
+                <span class="outcome-tag" style="background:rgba(228,0,43,0.08);color:#F87171;border:1px solid rgba(228,0,43,0.2);">Secured Full Stack</span>
+                <span class="open-btn" style="color:#F87171;">Open Week 4 →</span>
+            </div>
+        </a>
+
+        <!-- Week 5 -->
+        <a class="week-card phase-5" href="week5.html">
+            <div class="week-card-header">
+                <div class="phase-badge">Phase 5 — Performance</div>
+                <h2>Week 5: Performance Engineering</h2>
+                <div class="days-range">Days 21–25 · 5 slides</div>
+            </div>
+            <div class="week-card-body">
+                <p>Virtual Threads (Project Loom), JVM Flight Recorder profiling, HikariCP connection pool tuning, N+1 query detection &amp; fix, Spring Cache abstraction, Gatling load testing with HTML reports.</p>
+                <div class="day-chips">
+                    <span class="day-chip">D21: Virtual Threads</span>
+                    <span class="day-chip">D22: JVM Profiling</span>
+                    <span class="day-chip">D23: HikariCP Tuning</span>
+                    <span class="day-chip">D24: Caching Strategies</span>
+                    <span class="day-chip">D25: Gatling Load Tests</span>
+                </div>
+            </div>
+            <div class="week-card-footer">
+                <span class="outcome-tag" style="background:rgba(139,92,246,0.1);color:#A78BFA;border:1px solid rgba(139,92,246,0.25);">10× Throughput</span>
+                <span class="open-btn" style="color:#A78BFA;">Open Week 5 →</span>
+            </div>
+        </a>
+
+        <!-- Week 6 -->
+        <a class="week-card phase-6" href="week6.html">
+            <div class="week-card-header">
+                <div class="phase-badge">Phase 6 — Observability &amp; Deploy</div>
+                <h2>Week 6: Observability &amp; Production</h2>
+                <div class="days-range">Days 26–30 · 5 slides</div>
+            </div>
+            <div class="week-card-body">
+                <p>OpenTelemetry distributed tracing, Jaeger for trace visualization, Prometheus metrics, Grafana dashboards, security audit &amp; final OWASP review, production readiness checklist, capstone demo &amp; certification.</p>
+                <div class="day-chips">
+                    <span class="day-chip">D26: OpenTelemetry</span>
+                    <span class="day-chip">D27: Jaeger Tracing</span>
+                    <span class="day-chip">D28: Prometheus &amp; Grafana</span>
+                    <span class="day-chip">D29: Security Audit</span>
+                    <span class="day-chip">D30: Capstone &amp; Cert</span>
+                </div>
+            </div>
+            <div class="week-card-footer">
+                <span class="outcome-tag" style="background:rgba(16,185,129,0.1);color:#34D399;border:1px solid rgba(16,185,129,0.3);">🎓 Production Ready</span>
+                <span class="open-btn" style="color:#34D399;">Open Week 6 →</span>
+            </div>
+        </a>
+
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         ARCHITECTURE MINI-MAP
+    ══════════════════════════════════════════ -->
+    <div class="arch-section">
+        <p class="section-heading" style="margin-bottom:1.25rem;">🏗️ Target Architecture — What You'll Build</p>
+        <svg width="100%" viewBox="0 0 1060 170" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Client -->
+            <rect x="5" y="55" width="95" height="60" rx="8" fill="rgba(27,45,69,0.9)" stroke="#334155" stroke-width="1.5"/>
+            <text x="52" y="81" text-anchor="middle" fill="#CBD5E1" font-family="Outfit" font-size="11" font-weight="700">Client</text>
+            <text x="52" y="96" text-anchor="middle" fill="#64748B" font-family="Inter" font-size="8">Web / Mobile</text>
+            <line x1="100" y1="85" x2="150" y2="85" stroke="#0070AD" stroke-width="2" marker-end="url(#arr-idx-b)"/>
+            <text x="125" y="79" text-anchor="middle" fill="#0070AD" font-family="Fira Code" font-size="7">HTTPS</text>
+            <!-- BFF -->
+            <rect x="150" y="20" width="160" height="130" rx="10" fill="rgba(0,112,173,0.3)" stroke="#0070AD" stroke-width="1.5"/>
+            <text x="230" y="42" text-anchor="middle" fill="#7DD3E8" font-family="Fira Code" font-size="8">🐳 BFF Gateway</text>
+            <text x="230" y="62" text-anchor="middle" fill="white" font-family="Outfit" font-size="13" font-weight="700">Layer 1</text>
+            <text x="230" y="79" text-anchor="middle" fill="#7DD3E8" font-family="Inter" font-size="8">JWT · Rate Limit</text>
+            <text x="230" y="94" text-anchor="middle" fill="#7DD3E8" font-family="Inter" font-size="8">CORS · Routing</text>
+            <text x="230" y="110" text-anchor="middle" fill="#7DD3E8" font-family="Inter" font-size="8">Aggregation</text>
+            <text x="230" y="140" text-anchor="middle" fill="#94A3B8" font-family="Fira Code" font-size="7">Port 8080 (public)</text>
+            <line x1="310" y1="85" x2="360" y2="85" stroke="#12ABDB" stroke-width="2" marker-end="url(#arr-idx-c)"/>
+            <text x="335" y="79" text-anchor="middle" fill="#12ABDB" font-family="Fira Code" font-size="7">REST</text>
+            <!-- Middleware -->
+            <rect x="360" y="20" width="160" height="130" rx="10" fill="rgba(27,45,69,0.8)" stroke="#1B2D45" stroke-width="1.5"/>
+            <text x="440" y="42" text-anchor="middle" fill="#94A3B8" font-family="Fira Code" font-size="8">🐳 Middleware</text>
+            <text x="440" y="62" text-anchor="middle" fill="white" font-family="Outfit" font-size="13" font-weight="700">Layer 2</text>
+            <text x="440" y="79" text-anchor="middle" fill="#12ABDB" font-family="Inter" font-size="8">OpenFeign · R4j</text>
+            <text x="440" y="94" text-anchor="middle" fill="#12ABDB" font-family="Inter" font-size="8">Orchestration</text>
+            <text x="440" y="110" text-anchor="middle" fill="#12ABDB" font-family="Inter" font-size="8">Virtual Threads</text>
+            <text x="440" y="140" text-anchor="middle" fill="#64748B" font-family="Fira Code" font-size="7">Port 8082 (internal)</text>
+            <line x1="520" y1="85" x2="570" y2="85" stroke="#00B388" stroke-width="2" marker-end="url(#arr-idx-t)"/>
+            <text x="545" y="79" text-anchor="middle" fill="#00B388" font-family="Fira Code" font-size="7">REST</text>
+            <!-- System API -->
+            <rect x="570" y="30" width="155" height="110" rx="10" fill="rgba(0,61,92,0.8)" stroke="#003D5C" stroke-width="1.5"/>
+            <text x="647" y="52" text-anchor="middle" fill="#94A3B8" font-family="Fira Code" font-size="8">🐳 System API</text>
+            <text x="647" y="69" text-anchor="middle" fill="white" font-family="Outfit" font-size="13" font-weight="700">Layer 3</text>
+            <text x="647" y="86" text-anchor="middle" fill="#FFB819" font-family="Inter" font-size="8">JPA · Flyway</text>
+            <text x="647" y="101" text-anchor="middle" fill="#FFB819" font-family="Inter" font-size="8">CRUD · OpenAPI</text>
+            <text x="647" y="130" text-anchor="middle" fill="#64748B" font-family="Fira Code" font-size="7">Port 8081 (internal)</text>
+            <line x1="725" y1="85" x2="775" y2="85" stroke="#64748B" stroke-width="2" marker-end="url(#arr-idx-g)"/>
+            <text x="750" y="79" text-anchor="middle" fill="#64748B" font-family="Fira Code" font-size="7">JDBC</text>
+            <!-- PostgreSQL -->
+            <path d="M775 70 C775 58 840 58 840 70 L840 110 C840 122 775 122 775 110 Z" fill="#336791"/>
+            <ellipse cx="807" cy="70" rx="32" ry="10" fill="#4A8DBD"/>
+            <text x="807" y="96" text-anchor="middle" fill="white" font-family="Outfit" font-size="10" font-weight="700">PostgreSQL</text>
+            <!-- Observability bar -->
+            <rect x="150" y="158" width="570" height="10" rx="3" fill="rgba(27,45,69,0.8)" stroke="#FFB819" stroke-width="1"/>
+            <text x="435" y="167" text-anchor="middle" fill="#D97706" font-family="Outfit" font-size="7" font-weight="700">OpenTelemetry · Jaeger · Prometheus · Grafana</text>
+            <!-- Additional info boxes -->
+            <rect x="880" y="20" width="170" height="130" rx="10" fill="rgba(13,27,42,0.8)" stroke="rgba(0,112,173,0.2)" stroke-width="1.5"/>
+            <text x="965" y="42" text-anchor="middle" fill="#12ABDB" font-family="Outfit" font-size="10" font-weight="700">🛡️ Cross-Cutting</text>
+            <text x="965" y="60" text-anchor="middle" fill="#94A3B8" font-family="Inter" font-size="8">OWASP Top 10</text>
+            <text x="965" y="76" text-anchor="middle" fill="#94A3B8" font-family="Inter" font-size="8">12-Factor App</text>
+            <text x="965" y="92" text-anchor="middle" fill="#94A3B8" font-family="Inter" font-size="8">SOLID Principles</text>
+            <text x="965" y="108" text-anchor="middle" fill="#94A3B8" font-family="Inter" font-size="8">Clean Architecture</text>
+            <text x="965" y="124" text-anchor="middle" fill="#94A3B8" font-family="Inter" font-size="8">Hexagonal / Ports &amp; Adapters</text>
+            <text x="965" y="140" text-anchor="middle" fill="#64748B" font-family="Inter" font-size="7">Java 21 · Spring Boot 3.2</text>
+            <!-- Arrow markers -->
+            <defs>
+                <marker id="arr-idx-b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#0070AD"/></marker>
+                <marker id="arr-idx-c" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#12ABDB"/></marker>
+                <marker id="arr-idx-t" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#00B388"/></marker>
+                <marker id="arr-idx-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#64748B"/></marker>
+            </defs>
+        </svg>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         TECHNOLOGY TAGS
+    ══════════════════════════════════════════ -->
+    <div style="text-align:center; margin-bottom: 3.5rem;">
+        <p class="section-heading">🔧 Technology Stack</p>
+        <div style="display:flex;flex-wrap:wrap;gap:0.5rem;justify-content:center;">
+            <span style="background:rgba(0,112,173,0.12);border:1px solid rgba(0,112,173,0.2);color:#7DD3E8;padding:0.3rem 0.8rem;border-radius:999px;font-size:0.72rem;font-weight:600;">Java 21</span>
+            <span style="background:rgba(0,112,173,0.12);border:1px solid rgba(0,112,173,0.2);color:#7DD3E8;padding:0.3rem 0.8rem;border-radius:999px;font-size:0.72rem;font-weight:600;">Spring Boot 3.2</span>
+            <span style="background:rgba(0,112,173,0.12);border:1px solid rgba(0,112,173,0.2);color:#7DD3E8;padding:0.3rem 0.8rem;border-radius:999px;font-size:0.72rem;font-weight:600;">Spring Cloud Gateway</span>
+            <span style="background:rgba(0,112,173,0.12);border:1px solid rgba(0,112,173,0.2);color:#7DD3E8;padding:0.3rem 0.8rem;border-radius:999px;font-size:0.72rem;font-weight:600;">OpenFeign</span>
+            <span style="background:rgba(0,112,173,0.12);border:1px solid rgba(0,112,173,0.2);color:#7DD3E8;padding:0.3rem 0.8rem;border-radius:999px;font-size:0.72rem;font-weight:600;">Resilience4j</span>
+            <span style="background:rgba(0,112,173,0.12);border:1px solid rgba(0,112,173,0.2);color:#7DD3E8;padding:0.3rem 0.8rem;border-radius:999px;font-size:0.72rem;font-weight:600;">Spring Data JPA</span>
+            <span style="background:rgba(0,112,173,0.12);border:1px solid rgba(0,112,173,0.2);color:#7DD3E8;padding:0.3rem 0.8rem;border-radius:999px;font-size:0.72rem;font-weight:600;">Hibernate / Flyway</span>
+            <span style="background:rgba(0,112,173,0.12);border:1px solid rgba(0,112,173,0.2);color:#7DD3E8;padding:0.3rem 0.8rem;border-radius:999px;font-size:0.72rem;font-weight:600;">PostgreSQL 16</span>
+            <span style="background:rgba(0,112,173,0.12);border:1px solid rgba(0,112,173,0.2);color:#7DD3E8;padding:0.3rem 0.8rem;border-radius:999px;font-size:0.72rem;font-weight:600;">Docker Compose</span>
+            <span style="background:rgba(0,112,173,0.12);border:1px solid rgba(0,112,173,0.2);color:#7DD3E8;padding:0.3rem 0.8rem;border-radius:999px;font-size:0.72rem;font-weight:600;">Keycloak / OAuth2</span>
+            <span style="background:rgba(0,112,173,0.12);border:1px solid rgba(0,112,173,0.2);color:#7DD3E8;padding:0.3rem 0.8rem;border-radius:999px;font-size:0.72rem;font-weight:600;">OpenTelemetry</span>
+            <span style="background:rgba(0,112,173,0.12);border:1px solid rgba(0,112,173,0.2);color:#7DD3E8;padding:0.3rem 0.8rem;border-radius:999px;font-size:0.72rem;font-weight:600;">Prometheus + Grafana</span>
+            <span style="background:rgba(0,112,173,0.12);border:1px solid rgba(0,112,173,0.2);color:#7DD3E8;padding:0.3rem 0.8rem;border-radius:999px;font-size:0.72rem;font-weight:600;">Jaeger Tracing</span>
+            <span style="background:rgba(0,112,173,0.12);border:1px solid rgba(0,112,173,0.2);color:#7DD3E8;padding:0.3rem 0.8rem;border-radius:999px;font-size:0.72rem;font-weight:600;">Virtual Threads (Loom)</span>
+            <span style="background:rgba(0,112,173,0.12);border:1px solid rgba(0,112,173,0.2);color:#7DD3E8;padding:0.3rem 0.8rem;border-radius:999px;font-size:0.72rem;font-weight:600;">Testcontainers</span>
+            <span style="background:rgba(0,112,173,0.12);border:1px solid rgba(0,112,173,0.2);color:#7DD3E8;padding:0.3rem 0.8rem;border-radius:999px;font-size:0.72rem;font-weight:600;">WireMock</span>
+            <span style="background:rgba(0,112,173,0.12);border:1px solid rgba(0,112,173,0.2);color:#7DD3E8;padding:0.3rem 0.8rem;border-radius:999px;font-size:0.72rem;font-weight:600;">Gatling</span>
+            <span style="background:rgba(0,112,173,0.12);border:1px solid rgba(0,112,173,0.2);color:#7DD3E8;padding:0.3rem 0.8rem;border-radius:999px;font-size:0.72rem;font-weight:600;">MapStruct</span>
+            <span style="background:rgba(0,112,173,0.12);border:1px solid rgba(0,112,173,0.2);color:#7DD3E8;padding:0.3rem 0.8rem;border-radius:999px;font-size:0.72rem;font-weight:600;">ArchUnit</span>
+            <span style="background:rgba(0,112,173,0.12);border:1px solid rgba(0,112,173,0.2);color:#7DD3E8;padding:0.3rem 0.8rem;border-radius:999px;font-size:0.72rem;font-weight:600;">OWASP</span>
+            <span style="background:rgba(0,112,173,0.12);border:1px solid rgba(0,112,173,0.2);color:#7DD3E8;padding:0.3rem 0.8rem;border-radius:999px;font-size:0.72rem;font-weight:600;">RFC 7807 Problem Detail</span>
+        </div>
+    </div>
+
+</div><!-- end container -->
+
+<footer>
+    <div style="color:#334155;font-size:0.72rem;">
+        Capgemini · Digital Engineering · Java Microservices 30-Day Training Program
+        &nbsp;·&nbsp; 6 week files &nbsp;·&nbsp; 34 slides total &nbsp;·&nbsp; Java 21 + Spring Boot 3.2
+    </div>
+</footer>
+
+</body>
+</html>

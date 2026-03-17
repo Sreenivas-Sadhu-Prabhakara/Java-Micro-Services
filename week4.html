@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capgemini — Week 4 — Days 16–20: BFF Gateway (Layer 1)</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        /* ── Capgemini Brand Palette ── */
+                        'cg-blue':       '#0070AD',   /* Primary Capgemini Blue */
+                        'cg-blue-dark':  '#005A8C',   /* Darker shade */
+                        'cg-blue-deep':  '#003D5C',   /* Deepest navy */
+                        'cg-cyan':       '#12ABDB',   /* Bright accent cyan */
+                        'cg-cyan-light': '#7DD3E8',   /* Light cyan */
+                        'cg-navy':       '#0D1B2A',   /* Slide dark bg */
+                        'cg-navy-mid':   '#1B2D45',   /* Cards on dark */
+                        'cg-navy-light': '#243B5A',   /* Borders on dark */
+                        'cg-teal':       '#00B388',   /* Success / green accent */
+                        'cg-teal-dark':  '#008C6A',
+                        'cg-yellow':     '#FFB819',   /* Warning / highlight */
+                        'cg-red':        '#E4002B',   /* Error / alert */
+                        'cg-gray':       '#F4F6F9',   /* Light bg */
+                        'cg-gray-mid':   '#E2E7EE',
+                        'cg-slate':      '#64748B',
+                    },
+                    fontFamily: {
+                        sans:    ['Inter', 'system-ui', 'sans-serif'],
+                        heading: ['Outfit', 'sans-serif'],
+                        mono:    ['Fira Code', 'monospace'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <!-- Anime.js CDN -->
+
+    <style>
+        /* ====================== SCROLL PAGE BASE ====================== */
+        *, *::before, *::after { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            overflow-y: auto;
+            background: #0D1B2A;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            color: #E2E8F0;
+        }
+
+        /* ── Page wrapper ── */
+        #page-wrapper {
+            width: 100%;
+        }
+
+        /* ── Each "slide" becomes a stacked section ── */
+        .slide {
+            width: 100%;
+            min-height: 100vh;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            padding: 4rem 5% 3rem 5%;
+            box-sizing: border-box;
+            overflow: visible;
+        }
+
+        /* ── Slide header stays at top, never shrinks ── */
+        .slide-header {
+            flex-shrink: 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ── Content area is no longer scrollable — flows naturally ── */
+        .content-area {
+            flex: 1;
+            min-height: 0;
+            overflow: visible;
+            padding-right: 0;
+            margin-top: 0.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Remove old scrollbar styles — not needed for content-area */
+        .content-area::-webkit-scrollbar { display: none; }
+
+        /* ── Divider between slides ── */
+        .slide + .slide {
+            border-top: 2px solid rgba(0, 112, 173, 0.18);
+        }
+
+        /* ====================== SLIDE THEMES ====================== */
+        .slide-dark {
+            background: linear-gradient(135deg, #0D1B2A 0%, #0F2847 100%);
+            color: #E2E8F0;
+        }
+        .slide-dark::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at 20% 50%, rgba(0,112,173,0.12) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(18,171,219,0.08) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .slide-dark .slide-header,
+        .slide-dark .content-area,
+        .slide-dark .max-w-5xl { position: relative; z-index: 1; }
+
+        .slide-light {
+            background: linear-gradient(135deg, #F4F6F9 0%, #EEF2F8 100%);
+            color: #1E293B;
+        }
+        .slide-light::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(0,112,173,0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .slide-white {
+            background: #FFFFFF;
+            color: #1E293B;
+        }
+        .slide-white::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 80% 20%, rgba(0,112,173,0.03) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ====================== PATTERNS ====================== */
+        .bg-dots {
+            background-image: radial-gradient(circle, rgba(0,112,173,0.06) 1px, transparent 1px);
+            background-size: 28px 28px;
+        }
+        .bg-grid {
+            background-image:
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 44px 44px;
+        }
+        .bg-grid-light {
+            background-image:
+                linear-gradient(rgba(0,112,173,0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,112,173,0.04) 1px, transparent 1px);
+            background-size: 44px 44px;
+        }
+
+        /* ====================== TYPOGRAPHY ====================== */
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            line-height: 1.1;
+            margin: 0 0 0.75rem 0;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        h2 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            line-height: 1.2;
+            margin: 0 0 0.5rem 0;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        h3 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin: 0 0 0.3rem 0;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        p {
+            line-height: 1.7;
+            margin: 0 0 0.75rem 0;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        /* ====================== COMPONENTS ====================== */
+        .accent-line { height: 4px; width: 80px; background: linear-gradient(90deg,#0070AD,#12ABDB); border-radius: 2px; }
+
+        .outcome-card {
+            background: rgba(0,112,173,0.06);
+            border: 1px solid rgba(0,112,173,0.15);
+            border-left: 4px solid #0070AD;
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            margin-bottom: 0.75rem;
+            box-shadow: 0 2px 8px rgba(0,112,173,0.08);
+            transition: all 0.3s ease;
+        }
+        .outcome-card:hover {
+            background: rgba(0,112,173,0.1);
+            border-color: rgba(0,112,173,0.25);
+            box-shadow: 0 8px 24px rgba(0,112,173,0.2);
+            transform: translateX(4px);
+        }
+        .slide-light .outcome-card, .slide-white .outcome-card {
+            background: #FFFFFF;
+            border: 1px solid #E2E7EE;
+            border-left: 4px solid #0070AD;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        }
+        .slide-light .outcome-card:hover, .slide-white .outcome-card:hover {
+            box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+            border-color: #0070AD;
+            background: #F8FAFC;
+        }
+
+        .section-label { font-size: 0.7rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.08em; margin-bottom: 0.35rem; }
+        .slide-dark .section-label { color: #7DD3E8; }
+        .slide-light .section-label, .slide-white .section-label { color: #0070AD; }
+
+        .badge-in {
+            background: rgba(18,171,219,0.12);
+            color: #12ABDB;
+            border: 1px solid rgba(18,171,219,0.3);
+            padding: 0.15rem 0.65rem;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            display: inline-block;
+        }
+        .badge-out {
+            background: rgba(0,179,136,0.1);
+            color: #00B388;
+            border: 1px solid rgba(0,179,136,0.25);
+            padding: 0.15rem 0.65rem;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            display: inline-block;
+        }
+        .badge-day {
+            background: linear-gradient(135deg, #0070AD, #12ABDB);
+            color: #fff;
+            padding: 0.2rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            display: inline-block;
+            box-shadow: 0 4px 12px rgba(0,112,173,0.2);
+        }
+        .badge-phase {
+            background: rgba(0,112,173,0.1);
+            color: #0070AD;
+            border: 1px solid rgba(0,112,173,0.2);
+            padding: 0.15rem 0.65rem;
+            border-radius: 999px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            display: inline-block;
+        }
+
+        .check-item { display: flex; align-items: flex-start; gap: 0.5rem; margin-bottom: 0.5rem; }
+        .check-icon { color: #00B388; font-weight: bold; flex-shrink: 0; margin-top: 2px; }
+
+        /* ====================== CODE BLOCKS ====================== */
+        pre {
+            background: #0D1B2A;
+            padding: 1rem 1.1rem;
+            border-radius: 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.72rem;
+            overflow-x: auto;
+            overflow-y: visible;
+            border: 1px solid #1B2D45;
+            color: #CBD5E1;
+            line-height: 1.6;
+            margin: 0.5rem 0;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            user-select: text;
+            -webkit-user-select: text;
+            cursor: text;
+        }
+        pre:hover {
+            border-color: #0070AD;
+            box-shadow: 0 6px 24px rgba(0,112,173,0.2);
+        }
+        .slide-light pre, .slide-white pre {
+            background: #1B2D45;
+            border-color: #243B5A;
+            color: #E2E8F0;
+        }
+        pre::-webkit-scrollbar { height: 5px; }
+        pre::-webkit-scrollbar-track { background: rgba(0,0,0,0.15); border-radius: 3px; }
+        pre::-webkit-scrollbar-thumb { background: rgba(0,112,173,0.5); border-radius: 3px; }
+        pre::-webkit-scrollbar-thumb:hover { background: rgba(0,112,173,0.8); }
+
+        .code-copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: #0070AD;
+            border: 1px solid #12ABDB;
+            color: white;
+            padding: 0.3rem 0.7rem;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.2s ease;
+            z-index: 10;
+        }
+        pre:hover .code-copy-btn { opacity: 1; }
+        .code-copy-btn:hover { background: #12ABDB; color: #0D1B2A; }
+        .code-copy-btn.copied { background: #00B388; border-color: #00B388; opacity: 1; }
+
+        .scqa-box {
+            border-radius: 12px;
+            padding: 1.15rem 1.4rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+        .scqa-box:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,112,173,0.25);
+        }
+
+        /* ====================== LISTS ====================== */
+        .sl ul { list-style: none; padding-left: 0; }
+        .sl ul li {
+            font-size: 0.82rem; line-height: 1.6; margin-bottom: 0.45rem;
+            padding-left: 1.3rem; position: relative;
+        }
+        .sl ul li::before { content: '▸'; position: absolute; left: 0; color: #12ABDB; font-weight: bold; }
+        .slide-dark .sl ul li { color: #CBD5E1; }
+        .slide-light .sl ul li, .slide-white .sl ul li { color: #334155; }
+
+        .sl ol {
+            list-style: none;
+            padding-left: 0;
+            counter-reset: activity-counter;
+        }
+        .sl ol li {
+            font-size: 0.82rem; line-height: 1.6; margin-bottom: 0.55rem;
+            padding-left: 2rem; position: relative;
+            counter-increment: activity-counter;
+        }
+        .sl ol li::before {
+            content: counter(activity-counter);
+            position: absolute;
+            left: 0;
+            top: 0.05rem;
+            width: 1.35rem; height: 1.35rem;
+            background: linear-gradient(135deg, #0070AD, #12ABDB);
+            color: #fff;
+            font-size: 0.65rem;
+            font-weight: 800;
+            font-family: 'Outfit', sans-serif;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+            line-height: 1;
+        }
+        .slide-dark .sl ol li { color: #CBD5E1; }
+        .slide-light .sl ol li, .slide-white .sl ol li { color: #1E293B; }
+
+        /* ====================== INLINE CODE ====================== */
+        :not(pre) > code {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.78em;
+            padding: 0.1em 0.38em;
+            border-radius: 4px;
+            background: #0D1B2A;
+            color: #12ABDB;
+            border: 1px solid rgba(18,171,219,0.25);
+            word-break: break-word;
+        }
+        .slide-light :not(pre) > code,
+        .slide-white :not(pre) > code {
+            background: #EEF4FB;
+            color: #005A8C;
+            border: 1px solid rgba(0,112,173,0.2);
+        }
+
+        /* ====================== LIGHT/WHITE SLIDE TEXT ====================== */
+        .slide-light p, .slide-white p { color: #1E293B; }
+        .slide-light h2, .slide-white h2 { color: #0D1B2A; }
+        .slide-light h3, .slide-white h3 { color: #0D1B2A; }
+        .slide-light .outcome-card .check-item span,
+        .slide-white .outcome-card .check-item span { color: #1E293B; }
+        .slide-light .outcome-card .check-item strong,
+        .slide-white .outcome-card .check-item strong { color: #003D5C; }
+        .slide-light .text-sm, .slide-white .text-sm { color: #1E293B; }
+        .slide-light .text-sm strong, .slide-white .text-sm strong { color: #003D5C; }
+        .slide-light a, .slide-white a { color: #0070AD; }
+        .slide-light .check-icon, .slide-white .check-icon { color: #00875A; }
+        .slide-light .section-label, .slide-white .section-label { color: #005A8C; font-weight: 700; }
+
+        /* ====================== DARK SLIDE TEXT VISIBILITY ====================== */
+        .slide-dark .badge-phase { color: #7DD3E8; background: rgba(18,171,219,0.15); border-color: rgba(18,171,219,0.35); }
+        .slide-dark ol, .slide-dark ul { color: #CBD5E1; }
+        .slide-dark ol li, .slide-dark ul li { color: #CBD5E1; }
+        .slide-dark ol li strong, .slide-dark ul li strong { color: #E2E8F0; }
+        .slide-dark p { color: #CBD5E1; }
+        .slide-dark p strong { color: #E2E8F0; }
+        .slide-dark .text-sm { color: #CBD5E1; }
+        .slide-dark .text-sm strong { color: #E2E8F0; }
+        .slide-dark .outcome-card .check-item strong { color: #7DD3E8; }
+        .slide-dark .outcome-card .check-item span { color: #CBD5E1; }
+        /* ── Light slide list text ── */
+        .slide-light ol, .slide-light ul { color: #1E293B; }
+        .slide-light ol li, .slide-light ul li { color: #1E293B; }
+        .slide-light ol li strong, .slide-light ul li strong { color: #003D5C; }
+        .slide-light p { color: #1E293B; }
+        .slide-light p strong { color: #003D5C; }
+        .slide-light .text-sm strong { color: #003D5C; }
+
+        /* ====================== OVERFLOW / WRAPPING ====================== */
+        .content-area .grid, .content-area .grid > * { min-width: 0; }
+        .content-area { word-wrap: break-word; overflow-wrap: break-word; }
+        .content-area pre { max-width: 100%; overflow-x: auto; white-space: pre-wrap; word-break: break-word; }
+
+        /* ====================== TOP BAR ====================== */
+        .cg-topbar {
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #0070AD 0%, #12ABDB 50%, #00B388 100%);
+            z-index: 10;
+        }
+
+        /* Day circle */
+        .day-circle {
+            width: 56px; height: 56px; border-radius: 50%;
+            background: linear-gradient(135deg, #0070AD, #12ABDB);
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-family: 'Outfit'; font-weight: 800; font-size: 0.85rem;
+            flex-shrink: 0;
+            box-shadow: 0 6px 20px rgba(0,112,173,0.3);
+            min-width: 56px;
+        }
+
+        /* ====================== WEEK NAV BAR ====================== */
+        #week-nav {
+            position: sticky;
+            top: 0;
+            z-index: 999;
+            background: rgba(13,27,42,0.97);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0,112,173,0.25);
+            padding: 0.5rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+
+        /* ── "Back to top" floating button ── */
+        #back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0070AD, #12ABDB);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 16px rgba(0,112,173,0.4);
+            z-index: 500;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+        #back-to-top.visible { opacity: 1; transform: translateY(0); }
+        #back-to-top:hover { background: linear-gradient(135deg, #12ABDB, #00B388); box-shadow: 0 6px 24px rgba(0,112,173,0.5); }
+
+        /* ── Slide "anchor" heading for the section nav ── */
+        .slide-anchor {
+            display: block;
+            position: relative;
+            top: -80px;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        /* ====================== RESPONSIVE ====================== */
+        @media (max-width: 768px) {
+            .slide { padding: 3.5rem 4% 2.5rem 4%; }
+            .grid.grid-cols-2 { grid-template-columns: 1fr !important; }
+            .grid.grid-cols-3 { grid-template-columns: 1fr !important; }
+            pre { font-size: 0.68rem; }
+        }
+
+        /* ====================== PRINT / PDF ====================== */
+        @media print {
+            @page { size: A4 portrait; margin: 1.5cm; }
+            body { overflow: visible !important; background: white !important; color: #1E293B !important; }
+            #week-nav, #back-to-top, .no-print { display: none !important; }
+            .slide {
+                padding: 1.5rem 1.5rem 1rem 1.5rem !important;
+                page-break-after: always !important;
+                break-inside: avoid !important;
+                min-height: 0 !important;
+                overflow: visible !important;
+            }
+            .slide::before { display: none !important; }
+            .slide-dark { background-color: #0D1B2A !important; color: #E2E8F0 !important; }
+            .slide-light { background-color: #F4F6F9 !important; color: #1E293B !important; }
+            .slide-white { background-color: #FFFFFF !important; color: #1E293B !important; }
+            .slide-dark h2, .slide-dark h3, .slide-dark p { color: #E2E8F0 !important; }
+            .slide-light h2, .slide-light h3, .slide-light p { color: #1E293B !important; }
+            pre { overflow: visible !important; max-width: 100% !important; font-size: 0.6rem !important; white-space: pre-wrap !important; break-inside: avoid !important; box-shadow: none !important; }
+            .code-copy-btn { display: none !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; animation: none !important; transition: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="page-wrapper">
+
+<!-- ========================================================================== -->
+
+<!-- ====== WEEK NAVIGATION BAR ====== -->
+<div id="week-nav">
+    <a href="index.html" style="text-decoration:none;display:inline-block;padding:0.45rem 0.9rem;border-radius:8px;border:1px solid transparent;font-size:0.72rem;font-family:Outfit,sans-serif;font-weight:700;text-align:center;line-height:1.3;transition:all 0.2s;background:linear-gradient(135deg,#0070AD,#12ABDB);color:white;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">🏠 Master</a>
+      <a href="week1.html" style="text-decoration:none;display:inline-block;padding:0.45rem 0.9rem;border-radius:8px;border:1px solid transparent;font-size:0.72rem;font-family:Outfit,sans-serif;font-weight:700;text-align:center;line-height:1.3;transition:all 0.2s;background:rgba(0,112,173,0.08);border-color:rgba(0,112,173,0.2);color:rgba(255,255,255,0.7);" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">Week 1<br><span style='font-size:0.6rem'>Days 1–5</span></a>
+      <a href="week2.html" style="text-decoration:none;display:inline-block;padding:0.45rem 0.9rem;border-radius:8px;border:1px solid transparent;font-size:0.72rem;font-family:Outfit,sans-serif;font-weight:700;text-align:center;line-height:1.3;transition:all 0.2s;background:rgba(0,112,173,0.08);border-color:rgba(0,112,173,0.2);color:rgba(255,255,255,0.7);" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">Week 2<br><span style='font-size:0.6rem'>Days 6–10</span></a>
+      <a href="week3.html" style="text-decoration:none;display:inline-block;padding:0.45rem 0.9rem;border-radius:8px;border:1px solid transparent;font-size:0.72rem;font-family:Outfit,sans-serif;font-weight:700;text-align:center;line-height:1.3;transition:all 0.2s;background:rgba(0,112,173,0.08);border-color:rgba(0,112,173,0.2);color:rgba(255,255,255,0.7);" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">Week 3<br><span style='font-size:0.6rem'>Days 11–15</span></a>
+      <a href="week4.html" style="text-decoration:none;display:inline-block;padding:0.45rem 0.9rem;border-radius:8px;border:1px solid transparent;font-size:0.72rem;font-family:Outfit,sans-serif;font-weight:700;text-align:center;line-height:1.3;transition:all 0.2s;background:rgba(0,179,136,0.25);border-color:#00B388;color:#00B388;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">Week 4<br><span style='font-size:0.6rem'>Days 16–20</span></a>
+      <a href="week5.html" style="text-decoration:none;display:inline-block;padding:0.45rem 0.9rem;border-radius:8px;border:1px solid transparent;font-size:0.72rem;font-family:Outfit,sans-serif;font-weight:700;text-align:center;line-height:1.3;transition:all 0.2s;background:rgba(0,112,173,0.08);border-color:rgba(0,112,173,0.2);color:rgba(255,255,255,0.7);" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">Week 5<br><span style='font-size:0.6rem'>Days 21–25</span></a>
+      <a href="week6.html" style="text-decoration:none;display:inline-block;padding:0.45rem 0.9rem;border-radius:8px;border:1px solid transparent;font-size:0.72rem;font-family:Outfit,sans-serif;font-weight:700;text-align:center;line-height:1.3;transition:all 0.2s;background:rgba(0,112,173,0.08);border-color:rgba(0,112,173,0.2);color:rgba(255,255,255,0.7);" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">Week 6<br><span style='font-size:0.6rem'>Days 26–30</span></a>
+    <div style="margin-left:auto;color:rgba(255,255,255,0.3);font-size:0.65rem;font-family:Fira Code,monospace;">Java Microservices 30-Day Program</div>
+</div>
+<!-- Add top padding to account for nav bar -->
+
+<!-- SLIDE 20 — DAY 16                                                           -->
+<!-- ========================================================================== -->
+<div class="slide slide-light bg-grid-light flex-col sl">
+    <div class="cg-topbar"></div>
+    <div class="mt-2 flex items-center gap-4">
+        <div class="day-circle">D16</div>
+        <div>
+            <div class="flex items-center gap-2 mb-1">
+                <span class="badge-day">DAY 16</span>
+                <span class="badge-phase">Phase 4 — BFF Gateway</span>
+            </div>
+            <h2 class="text-3xl text-cg-navy m-0">Spring Cloud Gateway — Routing & Filters</h2>
+        </div>
+    </div>
+    <div class="accent-line mt-3 mb-3"></div>
+    <div class="content-area">
+        <div class="mb-4">
+            <div class="section-label">📥 Input</div>
+            <div class="flex gap-2 flex-wrap mt-1">
+                <span class="badge-in">Day 15 — System API + Middleware fully operational</span>
+                <span class="badge-in">BFF module has basic Spring Boot scaffold only</span>
+            </div>
+        </div>
+        <div class="grid grid-cols-2 gap-5">
+            <div>
+                <div class="section-label">🔧 Activities</div>
+                <ol>
+                    <li><strong>Replace spring-boot-starter-web with gateway</strong> — BFF uses <code>spring-cloud-starter-gateway</code> (reactive/Netty). Remove <code>spring-boot-starter-web</code> (blocking/Tomcat). They conflict.</li>
+                    <li><strong>Define routes in YAML</strong> — Route <code>/api/v1/products/**</code> → middleware:8082. Route <code>/api/v1/system/**</code> → system-api:8081 (for admin). Use predicates: Path, Method, Header.</li>
+                    <li><strong>Add gateway filters</strong> — <code>AddRequestHeader</code>, <code>AddResponseHeader</code>, <code>StripPrefix</code>, <code>RewritePath</code>. Add request/response logging filter.</li>
+                    <li><strong>Create custom GlobalFilter</strong> — Log every request: method, path, duration. Add <code>X-Response-Time</code> header to every response.</li>
+                    <li><strong>Configure CORS</strong> — Allow specific origins, methods, headers. Critical for browser-based clients calling the BFF.</li>
+                    <li><strong>Test routing</strong> — <code>curl localhost:8080/api/v1/products</code> → routed to middleware → routed to system-api. Full chain through BFF.</li>
+                    <li><strong>Add Actuator gateway routes</strong> — <code>/actuator/gateway/routes</code> to inspect all configured routes and filters at runtime.</li>
+                </ol>
+                <div class="section-label mt-4">📐 Principles</div>
+                <ul>
+                    <li><strong>API Gateway Pattern</strong> — Single entry point. Cross-cutting concerns (auth, logging, CORS) centralized.</li>
+                    <li><strong>Reactive</strong> — Gateway uses Spring WebFlux/Netty. Non-blocking I/O. High throughput.</li>
+                    <li><strong>Defense in Depth</strong> — Only BFF port exposed. Internal services unreachable from outside.</li>
+                </ul>
+            </div>
+            <div>
+                <div class="section-label">💻 Gateway Routes</div>
+                <pre><code># bff-gateway/application.yml
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: middleware-products
+          uri: http://middleware:8082
+          predicates:
+            - Path=/api/v1/products/**,/api/v1/catalog/**
+          filters:
+            - StripPrefix=0
+            - AddRequestHeader=X-Gateway, capgemini-bff
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+        - id: system-admin
+          uri: http://system-api:8081
+          predicates:
+            - Path=/admin/api/v1/**
+            - Header=X-Admin-Token, .+
+          filters:
+            - RewritePath=/admin(?&lt;segment&gt;/?.*), $\{segment}</code></pre>
+                <div class="section-label mt-3">💻 Custom Global Filter</div>
+                <pre><code>@Component
+@Slf4j
+public class RequestTimingFilter implements GlobalFilter, Ordered {
+
+    @Override
+    public Mono&lt;Void&gt; filter(ServerWebExchange exchange,
+                              GatewayFilterChain chain) {
+        long start = System.currentTimeMillis();
+        String path = exchange.getRequest().getPath().value();
+        return chain.filter(exchange).then(Mono.fromRunnable(() -&gt; {
+            long ms = System.currentTimeMillis() - start;
+            exchange.getResponse().getHeaders()
+                .add("X-Response-Time", ms + "ms");
+            log.info("Gateway: {} {} → {}ms", 
+                exchange.getRequest().getMethod(), path, ms);
+        }));
+    }
+
+    @Override public int getOrder() { return -1; }
+}</code></pre>
+            </div>
+        </div>
+        <div class="mt-4">
+            <div class="section-label">✅ Exact Outcomes (Day 16)</div>
+            <div class="grid grid-cols-2 gap-3 mt-2">
+                <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Spring Cloud Gateway configured</strong> — Reactive/Netty based, spring-boot-starter-web removed</span></div></div>
+                <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Routes defined in YAML</strong> — Products → middleware, Admin → system-api</span></div></div>
+                <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Full chain via BFF</strong> — <code>curl :8080/api/v1/products</code> → MW → SYS → DB and back</span></div></div>
+                <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Custom GlobalFilter</strong> — X-Response-Time header on every response</span></div></div>
+                <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>CORS configured</strong> — Browser clients can call BFF from allowed origins</span></div></div>
+                <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Actuator gateway routes</strong> — <code>/actuator/gateway/routes</code> shows all routes at runtime</span></div></div>
+                <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Request logging active</strong> — Every request logged with method, path, duration</span></div></div>
+                <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Only port 8080 exposed to host</strong> — 8081 and 8082 are internal Docker network only</span></div></div>
+            </div>
+        </div>
+        <div class="mt-4 mb-2 flex items-center justify-between">
+            <div class="section-label">📤 Output</div>
+            <span class="badge-out">BFF Gateway routing all traffic — full 3-layer chain operational through single entry point</span>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================================== -->
+<!-- SLIDE 21 — DAY 17                                                           -->
+<!-- ========================================================================== -->
+<div class="slide slide-dark bg-grid flex-col sl">
+    <div class="cg-topbar"></div>
+    <div class="mt-2 flex items-center gap-4">
+        <div class="day-circle">D17</div>
+        <div>
+            <div class="flex items-center gap-2 mb-1">
+                <span class="badge-day">DAY 17</span>
+                <span class="badge-phase">Phase 4 — BFF Gateway</span>
+            </div>
+            <h2 class="text-3xl text-white m-0">OAuth2 / JWT Security & Authentication</h2>
+        </div>
+    </div>
+    <div class="accent-line mt-3 mb-3"></div>
+    <div class="content-area">
+        <div class="mb-4">
+            <div class="section-label">📥 Input</div>
+            <div class="flex gap-2 flex-wrap mt-1">
+                <span class="badge-in">Day 16 — BFF Gateway routing traffic, no security</span>
+                <span class="badge-in">All endpoints publicly accessible</span>
+            </div>
+        </div>
+        <div class="grid grid-cols-2 gap-5">
+            <div>
+                <div class="section-label">🔧 Activities</div>
+                <ol>
+                    <li><strong>Add OAuth2 Resource Server</strong> — <code>spring-boot-starter-oauth2-resource-server</code> in BFF. Gateway validates JWT tokens on every request before routing.</li>
+                    <li><strong>Setup Keycloak (or mock)</strong> — Run Keycloak in Docker for dev. Create realm, client, users. Alternatively use a JWT mock for testing.</li>
+                    <li><strong>Configure JWT validation</strong> — Set <code>spring.security.oauth2.resourceserver.jwt.issuer-uri</code> to Keycloak. Gateway validates signature, expiry, issuer, audience.</li>
+                    <li><strong>Create SecurityConfig</strong> — Permit <code>/actuator/health</code>, protect all <code>/api/**</code> routes. Define role-based access: <code>ROLE_USER</code> for read, <code>ROLE_ADMIN</code> for write.</li>
+                    <li><strong>Propagate JWT downstream</strong> — Pass <code>Authorization</code> header from BFF to middleware. Middleware can extract user info from token for audit logging.</li>
+                    <li><strong>Add CSRF protection</strong> — Disable for stateless API (JWT). Document why. Enable for cookie-based flows if needed.</li>
+                    <li><strong>Test security</strong> — Call without token → 401. Call with expired token → 401. Call with valid token → 200. Call with wrong role → 403.</li>
+                </ol>
+                <div class="section-label mt-4">📐 Principles</div>
+                <ul>
+                    <li><strong>OWASP A01</strong> — Broken Access Control prevented via JWT + role-based authorization.</li>
+                    <li><strong>OWASP A07</strong> — Authentication failures handled. Rate limiting on auth endpoints.</li>
+                    <li><strong>Zero Trust</strong> — Validate token at gateway. Don't trust internal services blindly.</li>
+                </ul>
+            </div>
+            <div>
+                <div class="section-label">💻 Security Config</div>
+                <pre><code>@Configuration
+@EnableWebFluxSecurity
+public class SecurityConfig {
+
+    @Bean
+    SecurityWebFilterChain securityFilterChain(
+            ServerHttpSecurity http) {
+        return http
+            .csrf(ServerHttpSecurity.CsrfSpec::disable)
+            .authorizeExchange(auth -&gt; auth
+                .pathMatchers("/actuator/**").permitAll()
+                .pathMatchers(GET, "/api/v1/**").hasRole("USER")
+                .pathMatchers(POST, "/api/v1/**").hasRole("ADMIN")
+                .pathMatchers(PUT, "/api/v1/**").hasRole("ADMIN")
+                .pathMatchers(DELETE, "/api/v1/**").hasRole("ADMIN")
+                .anyExchange().authenticated())
+            .oauth2ResourceServer(oauth2 -&gt; oauth2
+                .jwt(jwt -&gt; jwt
+                    .jwtAuthenticationConverter(
+                        jwtAuthConverter())))
+            .build();
+    }
+}</code></pre>
+                <div class="section-label mt-3">💻 JWT Config</div>
+                <pre><code># bff-gateway/application.yml
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://keycloak:8180/realms/training
+          jwk-set-uri: http://keycloak:8180/realms/training/protocol/openid-connect/certs</code></pre>
+                <pre><code># Test security
+# No token → 401
+$ curl -I localhost:8080/api/v1/products
+# HTTP/1.1 401 Unauthorized
+
+# With valid token → 200
+$ TOKEN=$(curl -s -X POST \
+  'http://localhost:8180/realms/training/protocol/openid-connect/token' \
+  -d 'grant_type=password&amp;client_id=bff&amp;username=user1&amp;password=pass' \
+  | jq -r '.access_token')
+$ curl -H "Authorization: Bearer $TOKEN" \
+  localhost:8080/api/v1/products
+# 200 OK + data</code></pre>
+            </div>
+        </div>
+        <div class="mt-4">
+            <div class="section-label">✅ Exact Outcomes (Day 17)</div>
+            <div class="grid grid-cols-2 gap-3 mt-2">
+                <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>JWT validation on all /api/** routes</strong> — No token → 401, expired → 401</span></div></div>
+                <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Role-based access control</strong> — ROLE_USER=read, ROLE_ADMIN=write, wrong role → 403</span></div></div>
+                <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Keycloak running in Docker</strong> — Realm, client, and test users configured</span></div></div>
+                <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>JWT propagated downstream</strong> — Authorization header forwarded to middleware</span></div></div>
+                <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Health endpoints public</strong> — /actuator/health accessible without token</span></div></div>
+                <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>CSRF disabled (stateless)</strong> — Documented reasoning for JWT-based API</span></div></div>
+                <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Security tests passing</strong> — 401/403/200 scenarios all verified</span></div></div>
+                <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>docker-compose updated</strong> — Keycloak service added with realm export</span></div></div>
+            </div>
+        </div>
+        <div class="mt-4 mb-2 flex items-center justify-between">
+            <div class="section-label">📤 Output</div>
+            <span class="badge-out">Secured BFF with OAuth2/JWT — role-based access, Keycloak IdP, token propagation</span>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================================== -->
+<!-- SLIDE 22 — DAY 18                                                           -->
+<!-- ========================================================================== -->
+<div class="slide slide-dark bg-grid flex-col sl">
+    <div class="cg-topbar"></div>
+    <div class="mt-2 flex items-center gap-4">
+        <div class="day-circle">D18</div>
+        <div>
+            <div class="flex items-center gap-2 mb-1">
+                <span class="badge-day">DAY 18</span>
+                <span class="badge-phase">Phase 4 — BFF Gateway</span>
+            </div>
+            <h2 class="text-3xl text-white m-0">Rate Limiting, CORS & Gateway Hardening</h2>
+        </div>
+    </div>
+    <div class="accent-line mt-3 mb-3"></div>
+    <div class="content-area">
+        <div class="mb-4">
+            <div class="section-label">📥 Input</div>
+            <div class="flex gap-2 flex-wrap mt-1">
+                <span class="badge-in">Day 17 — OAuth2/JWT auth working on BFF Gateway</span>
+                <span class="badge-in">No rate limiting, no CORS policy, no abuse protection</span>
+            </div>
+        </div>
+        <div class="grid grid-cols-2 gap-5">
+            <div>
+                <div class="section-label">🔧 Activities</div>
+                <ol>
+                    <li><strong>Add RequestRateLimiter filter</strong> — Integrate <code>spring-cloud-gateway</code> rate limiter with Redis. Configure <code>replenishRate</code>, <code>burstCapacity</code>, and <code>requestedTokens</code> per route.</li>
+                    <li><strong>Redis for token bucket</strong> — Add Redis container to docker-compose. Gateway stores rate-limit counters in Redis. Test with <code>k6</code> or <code>wrk</code> to verify throttling.</li>
+                    <li><strong>Configure CORS globally</strong> — Set allowed origins, methods, headers in Gateway. Use <code>CorsWebFilter</code> bean. Allow <code>Authorization</code> header for JWT propagation.</li>
+                    <li><strong>Request/Response logging filter</strong> — Create custom <code>GlobalFilter</code> to log request method, path, status, latency. Mask sensitive headers (Authorization). Correlation ID in MDC.</li>
+                    <li><strong>Add response headers</strong> — <code>X-Content-Type-Options: nosniff</code>, <code>X-Frame-Options: DENY</code>, <code>Strict-Transport-Security</code>, <code>Cache-Control</code> on sensitive endpoints.</li>
+                    <li><strong>Request size limits</strong> — Configure <code>max-in-memory-size</code> to prevent large payload attacks. Return 413 Payload Too Large for oversized requests.</li>
+                    <li><strong>Integration tests</strong> — Test rate limiting returns 429. Test CORS preflight returns correct headers. Test oversized payloads rejected.</li>
+                </ol>
+                <div class="section-label mt-4">📐 Principles</div>
+                <ul>
+                    <li><strong>OWASP A05</strong> — Security Misconfiguration prevented via strict CORS, security headers.</li>
+                    <li><strong>Throttle at the edge</strong> — Rate limiting at gateway protects all downstream services.</li>
+                    <li><strong>Defense in depth</strong> — Multiple layers: auth + rate limit + CORS + headers.</li>
+                </ul>
+            </div>
+            <div>
+                <div class="section-label">💻 Rate Limiter Config</div>
+                <pre><code>spring:
+  cloud:
+    gateway:
+      routes:
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/api/v1/orders/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter:
+                  replenishRate: 10
+                  burstCapacity: 20
+                  requestedTokens: 1
+                key-resolver: "#{@userKeyResolver}"
+
+  data:
+    redis:
+      host: localhost
+      port: 6379</code></pre>
+                <div class="section-label mt-3">💻 CORS & Security Headers</div>
+                <pre><code>@Bean
+CorsWebFilter corsFilter() {
+    CorsConfiguration config = new CorsConfiguration();
+    config.addAllowedOrigin("http://localhost:3000");
+    config.addAllowedMethod("*");
+    config.addAllowedHeader("*");
+    config.setAllowCredentials(true);
+    config.setMaxAge(3600L);
+
+    UrlBasedCorsConfigurationSource src =
+        new UrlBasedCorsConfigurationSource();
+    src.registerCorsConfiguration("/api/**", config);
+    return new CorsWebFilter(src);
+}
+
+@Bean
+KeyResolver userKeyResolver() {
+    return exchange -&gt; Mono.justOrEmpty(
+        exchange.getRequest().getHeaders()
+            .getFirst("X-Forwarded-For"))
+        .defaultIfEmpty(exchange.getRequest()
+            .getRemoteAddress().getHostString());
+}</code></pre>
+            </div>
+        </div>
+        <div class="mt-4 mb-2 flex items-center justify-between">
+            <div class="section-label">✅ Exact Outcomes (Day 18)</div>
+        </div>
+        <div class="grid grid-cols-3 gap-3 mb-3">
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Rate limiter active</strong> — Redis-backed token bucket returning 429 after threshold</span></div></div>
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>CORS configured</strong> — Preflight returns correct headers, cross-origin calls succeed</span></div></div>
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Security headers</strong> — All OWASP recommended response headers present</span></div></div>
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Request logging</strong> — GlobalFilter logs method/path/status/latency with correlation ID</span></div></div>
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Payload limits</strong> — Oversized requests rejected with 413 status</span></div></div>
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Integration tests green</strong> — Rate limiting, CORS, headers all verified</span></div></div>
+        </div>
+        <div class="mt-4 mb-2 flex items-center justify-between">
+            <div class="section-label">📤 Output</div>
+            <span class="badge-out">Hardened BFF Gateway — rate-limited, CORS-safe, security-headered, abuse-resistant</span>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================================== -->
+<!-- SLIDE 23 — DAY 19                                                           -->
+<!-- ========================================================================== -->
+<div class="slide slide-dark bg-grid flex-col sl">
+    <div class="cg-topbar"></div>
+    <div class="mt-2 flex items-center gap-4">
+        <div class="day-circle">D19</div>
+        <div>
+            <div class="flex items-center gap-2 mb-1">
+                <span class="badge-day">DAY 19</span>
+                <span class="badge-phase">Phase 5 — Observability</span>
+            </div>
+            <h2 class="text-3xl text-white m-0">Centralized Logging — ELK Stack & Structured JSON Logs</h2>
+        </div>
+    </div>
+    <div class="accent-line mt-3 mb-3"></div>
+    <div class="content-area">
+        <div class="mb-4">
+            <div class="section-label">📥 Input</div>
+            <div class="flex gap-2 flex-wrap mt-1">
+                <span class="badge-in">Day 18 — Hardened BFF Gateway with request logging</span>
+                <span class="badge-in">Logs scattered across containers, no aggregation</span>
+            </div>
+        </div>
+        <div class="grid grid-cols-2 gap-5">
+            <div>
+                <div class="section-label">🔧 Activities</div>
+                <ol>
+                    <li><strong>Switch to Logback JSON encoder</strong> — Add <code>logstash-logback-encoder</code> dependency. Configure <code>logback-spring.xml</code> with <code>LogstashEncoder</code> for structured JSON output.</li>
+                    <li><strong>Add MDC fields</strong> — Inject <code>traceId</code>, <code>spanId</code>, <code>serviceName</code>, <code>correlationId</code> into every log line. Use Micrometer Tracing for auto-propagation.</li>
+                    <li><strong>Deploy ELK in Docker Compose</strong> — Elasticsearch, Logstash, Kibana containers. Logstash receives JSON logs via TCP appender. Elasticsearch indexes. Kibana visualizes.</li>
+                    <li><strong>Configure Logstash pipeline</strong> — Parse JSON logs, add metadata fields (environment, version), route to Elasticsearch index per service per day.</li>
+                    <li><strong>Kibana dashboards</strong> — Create index patterns. Build dashboards: error rate by service, latency percentiles, log volume over time, top error messages.</li>
+                    <li><strong>Log levels per environment</strong> — <code>DEBUG</code> in dev, <code>INFO</code> in staging, <code>WARN</code> in prod. Use Spring profiles to switch. Runtime level change via actuator.</li>
+                    <li><strong>Sensitive data masking</strong> — Mask PII (emails, tokens) in logs using Logback pattern replacements. Never log passwords or full credit card numbers.</li>
+                </ol>
+                <div class="section-label mt-4">📐 Principles</div>
+                <ul>
+                    <li><strong>12-Factor XI</strong> — Treat logs as event streams. Write to stdout, ship externally.</li>
+                    <li><strong>Observability Pillar #1</strong> — Logs are the narrative. Structured + correlated = debuggable.</li>
+                    <li><strong>GDPR compliance</strong> — Mask PII in logs. Retention policies on Elasticsearch indices.</li>
+                </ul>
+            </div>
+            <div>
+                <div class="section-label">💻 logback-spring.xml</div>
+                <pre><code>&lt;configuration&gt;
+  &lt;appender name="JSON"
+    class="ch.qos.logback.core.ConsoleAppender"&gt;
+    &lt;encoder class="net.logstash.logback.encoder
+        .LogstashEncoder"&gt;
+      &lt;includeMdcKeyName&gt;traceId&lt;/includeMdcKeyName&gt;
+      &lt;includeMdcKeyName&gt;spanId&lt;/includeMdcKeyName&gt;
+      &lt;customFields&gt;
+        {"service":"order-service","env":"dev"}
+      &lt;/customFields&gt;
+    &lt;/encoder&gt;
+  &lt;/appender&gt;
+
+  &lt;appender name="LOGSTASH"
+    class="net.logstash.logback.appender
+        .LogstashTcpSocketAppender"&gt;
+    &lt;destination&gt;logstash:5000&lt;/destination&gt;
+    &lt;encoder class="net.logstash.logback.encoder
+        .LogstashEncoder"/&gt;
+  &lt;/appender&gt;
+
+  &lt;root level="INFO"&gt;
+    &lt;appender-ref ref="JSON"/&gt;
+    &lt;appender-ref ref="LOGSTASH"/&gt;
+  &lt;/root&gt;
+&lt;/configuration&gt;</code></pre>
+                <div class="section-label mt-3">💻 Docker Compose — ELK</div>
+                <pre><code>  elasticsearch:
+    image: elasticsearch:8.12.0
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ports: ["9200:9200"]
+
+  logstash:
+    image: logstash:8.12.0
+    volumes:
+      - ./logstash/pipeline:/usr/share/
+          logstash/pipeline
+    ports: ["5000:5000"]
+    depends_on: [elasticsearch]
+
+  kibana:
+    image: kibana:8.12.0
+    ports: ["5601:5601"]
+    depends_on: [elasticsearch]</code></pre>
+            </div>
+        </div>
+        <div class="mt-4 mb-2 flex items-center justify-between">
+            <div class="section-label">✅ Exact Outcomes (Day 19)</div>
+        </div>
+        <div class="grid grid-cols-3 gap-3 mb-3">
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Structured JSON logs</strong> — All services emit JSON with traceId, spanId, serviceName</span></div></div>
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>ELK stack running</strong> — Elasticsearch + Logstash + Kibana in docker-compose</span></div></div>
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Kibana dashboards</strong> — Error rate, latency, log volume dashboards created</span></div></div>
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Correlation IDs</strong> — Trace a single request across all services via traceId</span></div></div>
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>PII masking</strong> — Sensitive data masked in log output, verified</span></div></div>
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Runtime log control</strong> — Actuator endpoint changes log level without restart</span></div></div>
+        </div>
+        <div class="mt-4 mb-2 flex items-center justify-between">
+            <div class="section-label">📤 Output</div>
+            <span class="badge-out">Centralized ELK logging — structured JSON, correlated traces, Kibana dashboards, PII-safe</span>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================================== -->
+<!-- SLIDE 24 — DAY 20                                                           -->
+<!-- ========================================================================== -->
+<div class="slide slide-dark bg-grid flex-col sl">
+    <div class="cg-topbar"></div>
+    <div class="mt-2 flex items-center gap-4">
+        <div class="day-circle">D20</div>
+        <div>
+            <div class="flex items-center gap-2 mb-1">
+                <span class="badge-day">DAY 20</span>
+                <span class="badge-phase">Phase 5 — Observability</span>
+            </div>
+            <h2 class="text-3xl text-white m-0">Metrics & Monitoring — Prometheus + Grafana Dashboards</h2>
+        </div>
+    </div>
+    <div class="accent-line mt-3 mb-3"></div>
+    <div class="content-area">
+        <div class="mb-4">
+            <div class="section-label">📥 Input</div>
+            <div class="flex gap-2 flex-wrap mt-1">
+                <span class="badge-in">Day 19 — Centralized logging with ELK operational</span>
+                <span class="badge-in">No application metrics, no alerting, no performance baselines</span>
+            </div>
+        </div>
+        <div class="grid grid-cols-2 gap-5">
+            <div>
+                <div class="section-label">🔧 Activities</div>
+                <ol>
+                    <li><strong>Add Micrometer + Prometheus registry</strong> — <code>micrometer-registry-prometheus</code> in all services. Expose <code>/actuator/prometheus</code> endpoint with JVM, HTTP, DB pool, custom metrics.</li>
+                    <li><strong>Custom business metrics</strong> — Add counters: <code>orders_created_total</code>, <code>orders_failed_total</code>. Timers: <code>order_processing_duration</code>. Gauges: <code>active_users_count</code>.</li>
+                    <li><strong>Deploy Prometheus</strong> — Docker container with <code>prometheus.yml</code> scrape config targeting all services. Scrape interval 15s. Service discovery via Docker DNS.</li>
+                    <li><strong>Deploy Grafana</strong> — Docker container. Add Prometheus as data source. Import JVM dashboard (ID: 4701). Build custom service dashboard with RED metrics.</li>
+                    <li><strong>RED method dashboards</strong> — Rate (requests/sec), Errors (error rate %), Duration (p50/p95/p99 latency) for each service. SLA compliance panel.</li>
+                    <li><strong>Alerting rules</strong> — Prometheus alert rules: error rate > 5% for 5min, p99 latency > 2s, JVM heap > 80%. Grafana notification channels (Slack/email).</li>
+                    <li><strong>Health check integration</strong> — Customize Spring Boot health indicators for DB, Redis, Kafka readiness. Grafana panel showing service health matrix.</li>
+                </ol>
+                <div class="section-label mt-4">📐 Principles</div>
+                <ul>
+                    <li><strong>Observability Pillar #2</strong> — Metrics are the vital signs. RED method = universal service health.</li>
+                    <li><strong>USE Method</strong> — Utilization, Saturation, Errors for infrastructure resources.</li>
+                    <li><strong>SRE Golden Signals</strong> — Latency, traffic, errors, saturation — all captured.</li>
+                </ul>
+            </div>
+            <div>
+                <div class="section-label">💻 Custom Metrics</div>
+                <pre><code>@Component
+@RequiredArgsConstructor
+public class OrderMetrics {
+
+    private final MeterRegistry registry;
+
+    private Counter ordersCreated;
+    private Counter ordersFailed;
+    private Timer   orderProcessing;
+
+    @PostConstruct
+    void init() {
+        ordersCreated = Counter.builder(
+                "orders.created.total")
+            .description("Total orders created")
+            .tag("service", "order-service")
+            .register(registry);
+
+        ordersFailed = Counter.builder(
+                "orders.failed.total")
+            .tag("service", "order-service")
+            .register(registry);
+
+        orderProcessing = Timer.builder(
+                "order.processing.duration")
+            .publishPercentiles(0.5, 0.95, 0.99)
+            .register(registry);
+    }
+
+    public void recordCreated() {
+        ordersCreated.increment();
+    }
+
+    public Timer.Sample startTimer() {
+        return Timer.start(registry);
+    }
+}</code></pre>
+                <div class="section-label mt-3">💻 prometheus.yml</div>
+                <pre><code>global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'order-service'
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ['order-service:8081']
+
+  - job_name: 'inventory-service'
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ['inventory-service:8082']
+
+  - job_name: 'bff-gateway'
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ['bff-gateway:8080']</code></pre>
+            </div>
+        </div>
+        <div class="mt-4 mb-2 flex items-center justify-between">
+            <div class="section-label">✅ Exact Outcomes (Day 20)</div>
+        </div>
+        <div class="grid grid-cols-3 gap-3 mb-3">
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Prometheus scraping</strong> — All services exposing /actuator/prometheus, Prometheus collecting</span></div></div>
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Custom metrics</strong> — Business counters and timers registered and incrementing</span></div></div>
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Grafana dashboards</strong> — JVM + RED method + custom business dashboards live</span></div></div>
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Alerting configured</strong> — Error rate, latency, heap alerts with notification channels</span></div></div>
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Health matrix</strong> — Grafana panel showing all service health status</span></div></div>
+            <div class="outcome-card"><div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>SLA tracking</strong> — p99 latency and availability percentages visible per service</span></div></div>
+        </div>
+        <div class="mt-4 mb-2 flex items-center justify-between">
+            <div class="section-label">📤 Output</div>
+            <span class="badge-out">Full metrics pipeline — Prometheus scraping, Grafana RED dashboards, alerting, SLA tracking</span>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================================== -->
+</div><!-- end page-wrapper -->
+
+<button id="back-to-top" title="Back to top" aria-label="Back to top">↑</button>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // ── Code copy buttons ──
+    document.querySelectorAll('pre').forEach((pre, idx) => {
+        if (getComputedStyle(pre).position === 'static') pre.style.position = 'relative';
+        const btn = document.createElement('button');
+        btn.className = 'code-copy-btn';
+        btn.textContent = 'COPY';
+        btn.type = 'button';
+        pre.insertBefore(btn, pre.firstChild);
+        btn.addEventListener('click', async (e) => {
+            e.preventDefault(); e.stopPropagation();
+            const code = pre.querySelector('code');
+            const text = (code ? code.innerText : pre.innerText) || '';
+            if (!text) return;
+            try {
+                await navigator.clipboard.writeText(text);
+                btn.textContent = '✓ COPIED'; btn.classList.add('copied');
+            } catch {
+                const ta = document.createElement('textarea');
+                ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+                document.body.appendChild(ta); ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                btn.textContent = '✓ COPIED'; btn.classList.add('copied');
+            }
+            setTimeout(() => { btn.textContent = 'COPY'; btn.classList.remove('copied'); }, 2500);
+        });
+    });
+
+    // ── Auto-wrap slide headers (elements before .content-area) ──
+    document.querySelectorAll('.slide').forEach(slide => {
+        const ca = slide.querySelector('.content-area');
+        if (!ca) return;
+        const nodes = [];
+        let node = slide.firstElementChild;
+        while (node && node !== ca) { nodes.push(node); node = node.nextElementSibling; }
+        if (nodes.length > 0) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'slide-header';
+            slide.insertBefore(wrapper, nodes[0]);
+            nodes.forEach(n => wrapper.appendChild(n));
+        }
+    });
+
+    // ── Back-to-top button ──
+    const btn = document.getElementById('back-to-top');
+    window.addEventListener('scroll', () => {
+        btn.classList.toggle('visible', window.scrollY > 400);
+    });
+    btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+});
+</script>
+
+</body>
+</html>

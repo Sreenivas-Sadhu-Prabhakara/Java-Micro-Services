@@ -1,0 +1,1847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capgemini — Week 1 — Days 1–5: Foundation & Scaffold</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        /* ── Capgemini Brand Palette ── */
+                        'cg-blue':       '#0070AD',   /* Primary Capgemini Blue */
+                        'cg-blue-dark':  '#005A8C',   /* Darker shade */
+                        'cg-blue-deep':  '#003D5C',   /* Deepest navy */
+                        'cg-cyan':       '#12ABDB',   /* Bright accent cyan */
+                        'cg-cyan-light': '#7DD3E8',   /* Light cyan */
+                        'cg-navy':       '#0D1B2A',   /* Slide dark bg */
+                        'cg-navy-mid':   '#1B2D45',   /* Cards on dark */
+                        'cg-navy-light': '#243B5A',   /* Borders on dark */
+                        'cg-teal':       '#00B388',   /* Success / green accent */
+                        'cg-teal-dark':  '#008C6A',
+                        'cg-yellow':     '#FFB819',   /* Warning / highlight */
+                        'cg-red':        '#E4002B',   /* Error / alert */
+                        'cg-gray':       '#F4F6F9',   /* Light bg */
+                        'cg-gray-mid':   '#E2E7EE',
+                        'cg-slate':      '#64748B',
+                    },
+                    fontFamily: {
+                        sans:    ['Inter', 'system-ui', 'sans-serif'],
+                        heading: ['Outfit', 'sans-serif'],
+                        mono:    ['Fira Code', 'monospace'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <!-- Anime.js CDN -->
+
+    <style>
+        /* ====================== SCROLL PAGE BASE ====================== */
+        *, *::before, *::after { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            overflow-y: auto;
+            background: #0D1B2A;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            color: #E2E8F0;
+        }
+
+        /* ── Page wrapper ── */
+        #page-wrapper {
+            width: 100%;
+        }
+
+        /* ── Each "slide" becomes a stacked section ── */
+        .slide {
+            width: 100%;
+            min-height: 100vh;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            padding: 4rem 5% 3rem 5%;
+            box-sizing: border-box;
+            overflow: visible;
+        }
+
+        /* ── Slide header stays at top, never shrinks ── */
+        .slide-header {
+            flex-shrink: 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ── Content area is no longer scrollable — flows naturally ── */
+        .content-area {
+            flex: 1;
+            min-height: 0;
+            overflow: visible;
+            padding-right: 0;
+            margin-top: 0.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Remove old scrollbar styles — not needed for content-area */
+        .content-area::-webkit-scrollbar { display: none; }
+
+        /* ── Divider between slides ── */
+        .slide + .slide {
+            border-top: 2px solid rgba(0, 112, 173, 0.18);
+        }
+
+        /* ====================== SLIDE THEMES ====================== */
+        .slide-dark {
+            background: linear-gradient(135deg, #0D1B2A 0%, #0F2847 100%);
+            color: #E2E8F0;
+        }
+        .slide-dark::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at 20% 50%, rgba(0,112,173,0.12) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(18,171,219,0.08) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .slide-dark .slide-header,
+        .slide-dark .content-area,
+        .slide-dark .max-w-5xl { position: relative; z-index: 1; }
+
+        .slide-light {
+            background: linear-gradient(135deg, #F4F6F9 0%, #EEF2F8 100%);
+            color: #1E293B;
+        }
+        .slide-light::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(0,112,173,0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .slide-white {
+            background: #FFFFFF;
+            color: #1E293B;
+        }
+        .slide-white::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 80% 20%, rgba(0,112,173,0.03) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ====================== PATTERNS ====================== */
+        .bg-dots {
+            background-image: radial-gradient(circle, rgba(0,112,173,0.06) 1px, transparent 1px);
+            background-size: 28px 28px;
+        }
+        .bg-grid {
+            background-image:
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 44px 44px;
+        }
+        .bg-grid-light {
+            background-image:
+                linear-gradient(rgba(0,112,173,0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,112,173,0.04) 1px, transparent 1px);
+            background-size: 44px 44px;
+        }
+
+        /* ====================== TYPOGRAPHY ====================== */
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            line-height: 1.1;
+            margin: 0 0 0.75rem 0;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        h2 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            line-height: 1.2;
+            margin: 0 0 0.5rem 0;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        h3 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin: 0 0 0.3rem 0;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        p {
+            line-height: 1.7;
+            margin: 0 0 0.75rem 0;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        /* ====================== COMPONENTS ====================== */
+        .accent-line { height: 4px; width: 80px; background: linear-gradient(90deg,#0070AD,#12ABDB); border-radius: 2px; }
+
+        .outcome-card {
+            background: rgba(0,112,173,0.06);
+            border: 1px solid rgba(0,112,173,0.15);
+            border-left: 4px solid #0070AD;
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            margin-bottom: 0.75rem;
+            box-shadow: 0 2px 8px rgba(0,112,173,0.08);
+            transition: all 0.3s ease;
+        }
+        .outcome-card:hover {
+            background: rgba(0,112,173,0.1);
+            border-color: rgba(0,112,173,0.25);
+            box-shadow: 0 8px 24px rgba(0,112,173,0.2);
+            transform: translateX(4px);
+        }
+        .slide-light .outcome-card, .slide-white .outcome-card {
+            background: #FFFFFF;
+            border: 1px solid #E2E7EE;
+            border-left: 4px solid #0070AD;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        }
+        .slide-light .outcome-card:hover, .slide-white .outcome-card:hover {
+            box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+            border-color: #0070AD;
+            background: #F8FAFC;
+        }
+
+        .section-label { font-size: 0.7rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.08em; margin-bottom: 0.35rem; }
+        .slide-dark .section-label { color: #7DD3E8; }
+        .slide-light .section-label, .slide-white .section-label { color: #0070AD; }
+
+        .badge-in {
+            background: rgba(18,171,219,0.12);
+            color: #12ABDB;
+            border: 1px solid rgba(18,171,219,0.3);
+            padding: 0.15rem 0.65rem;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            display: inline-block;
+        }
+        .badge-out {
+            background: rgba(0,179,136,0.1);
+            color: #00B388;
+            border: 1px solid rgba(0,179,136,0.25);
+            padding: 0.15rem 0.65rem;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            display: inline-block;
+        }
+        .badge-day {
+            background: linear-gradient(135deg, #0070AD, #12ABDB);
+            color: #fff;
+            padding: 0.2rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            display: inline-block;
+            box-shadow: 0 4px 12px rgba(0,112,173,0.2);
+        }
+        .badge-phase {
+            background: rgba(0,112,173,0.1);
+            color: #0070AD;
+            border: 1px solid rgba(0,112,173,0.2);
+            padding: 0.15rem 0.65rem;
+            border-radius: 999px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            display: inline-block;
+        }
+
+        .check-item { display: flex; align-items: flex-start; gap: 0.5rem; margin-bottom: 0.5rem; }
+        .check-icon { color: #00B388; font-weight: bold; flex-shrink: 0; margin-top: 2px; }
+
+        /* ====================== CODE BLOCKS ====================== */
+        pre {
+            background: #0D1B2A;
+            padding: 1rem 1.1rem;
+            border-radius: 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.72rem;
+            overflow-x: auto;
+            overflow-y: visible;
+            border: 1px solid #1B2D45;
+            color: #CBD5E1;
+            line-height: 1.6;
+            margin: 0.5rem 0;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            user-select: text;
+            -webkit-user-select: text;
+            cursor: text;
+        }
+        pre:hover {
+            border-color: #0070AD;
+            box-shadow: 0 6px 24px rgba(0,112,173,0.2);
+        }
+        .slide-light pre, .slide-white pre {
+            background: #1B2D45;
+            border-color: #243B5A;
+            color: #E2E8F0;
+        }
+        pre::-webkit-scrollbar { height: 5px; }
+        pre::-webkit-scrollbar-track { background: rgba(0,0,0,0.15); border-radius: 3px; }
+        pre::-webkit-scrollbar-thumb { background: rgba(0,112,173,0.5); border-radius: 3px; }
+        pre::-webkit-scrollbar-thumb:hover { background: rgba(0,112,173,0.8); }
+
+        .code-copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: #0070AD;
+            border: 1px solid #12ABDB;
+            color: white;
+            padding: 0.3rem 0.7rem;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.2s ease;
+            z-index: 10;
+        }
+        pre:hover .code-copy-btn { opacity: 1; }
+        .code-copy-btn:hover { background: #12ABDB; color: #0D1B2A; }
+        .code-copy-btn.copied { background: #00B388; border-color: #00B388; opacity: 1; }
+
+        .scqa-box {
+            border-radius: 12px;
+            padding: 1.15rem 1.4rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+        .scqa-box:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,112,173,0.25);
+        }
+
+        /* ====================== LISTS ====================== */
+        .sl ul { list-style: none; padding-left: 0; }
+        .sl ul li {
+            font-size: 0.82rem; line-height: 1.6; margin-bottom: 0.45rem;
+            padding-left: 1.3rem; position: relative;
+        }
+        .sl ul li::before { content: '▸'; position: absolute; left: 0; color: #12ABDB; font-weight: bold; }
+        .slide-dark .sl ul li { color: #CBD5E1; }
+        .slide-light .sl ul li, .slide-white .sl ul li { color: #334155; }
+
+        .sl ol {
+            list-style: none;
+            padding-left: 0;
+            counter-reset: activity-counter;
+        }
+        .sl ol li {
+            font-size: 0.82rem; line-height: 1.6; margin-bottom: 0.55rem;
+            padding-left: 2rem; position: relative;
+            counter-increment: activity-counter;
+        }
+        .sl ol li::before {
+            content: counter(activity-counter);
+            position: absolute;
+            left: 0;
+            top: 0.05rem;
+            width: 1.35rem; height: 1.35rem;
+            background: linear-gradient(135deg, #0070AD, #12ABDB);
+            color: #fff;
+            font-size: 0.65rem;
+            font-weight: 800;
+            font-family: 'Outfit', sans-serif;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+            line-height: 1;
+        }
+        .slide-dark .sl ol li { color: #CBD5E1; }
+        .slide-light .sl ol li, .slide-white .sl ol li { color: #1E293B; }
+
+        /* ====================== INLINE CODE ====================== */
+        :not(pre) > code {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.78em;
+            padding: 0.1em 0.38em;
+            border-radius: 4px;
+            background: #0D1B2A;
+            color: #12ABDB;
+            border: 1px solid rgba(18,171,219,0.25);
+            word-break: break-word;
+        }
+        .slide-light :not(pre) > code,
+        .slide-white :not(pre) > code {
+            background: #EEF4FB;
+            color: #005A8C;
+            border: 1px solid rgba(0,112,173,0.2);
+        }
+
+        /* ====================== LIGHT/WHITE SLIDE TEXT ====================== */
+        .slide-light p, .slide-white p { color: #1E293B; }
+        .slide-light h2, .slide-white h2 { color: #0D1B2A; }
+        .slide-light h3, .slide-white h3 { color: #0D1B2A; }
+        .slide-light .outcome-card .check-item span,
+        .slide-white .outcome-card .check-item span { color: #1E293B; }
+        .slide-light .outcome-card .check-item strong,
+        .slide-white .outcome-card .check-item strong { color: #003D5C; }
+        .slide-light .text-sm, .slide-white .text-sm { color: #1E293B; }
+        .slide-light .text-sm strong, .slide-white .text-sm strong { color: #003D5C; }
+        .slide-light a, .slide-white a { color: #0070AD; }
+        .slide-light .check-icon, .slide-white .check-icon { color: #00875A; }
+        .slide-light .section-label, .slide-white .section-label { color: #005A8C; font-weight: 700; }
+
+        /* ====================== DARK SLIDE TEXT VISIBILITY ====================== */
+        .slide-dark .badge-phase { color: #7DD3E8; background: rgba(18,171,219,0.15); border-color: rgba(18,171,219,0.35); }
+        .slide-dark ol, .slide-dark ul { color: #CBD5E1; }
+        .slide-dark ol li, .slide-dark ul li { color: #CBD5E1; }
+        .slide-dark ol li strong, .slide-dark ul li strong { color: #E2E8F0; }
+        .slide-dark p { color: #CBD5E1; }
+        .slide-dark p strong { color: #E2E8F0; }
+        .slide-dark .text-sm { color: #CBD5E1; }
+        .slide-dark .text-sm strong { color: #E2E8F0; }
+        .slide-dark .outcome-card .check-item strong { color: #7DD3E8; }
+        .slide-dark .outcome-card .check-item span { color: #CBD5E1; }
+        /* ── Light slide list text ── */
+        .slide-light ol, .slide-light ul { color: #1E293B; }
+        .slide-light ol li, .slide-light ul li { color: #1E293B; }
+        .slide-light ol li strong, .slide-light ul li strong { color: #003D5C; }
+        .slide-light p { color: #1E293B; }
+        .slide-light p strong { color: #003D5C; }
+        .slide-light .text-sm strong { color: #003D5C; }
+
+        /* ====================== OVERFLOW / WRAPPING ====================== */
+        .content-area .grid, .content-area .grid > * { min-width: 0; }
+        .content-area { word-wrap: break-word; overflow-wrap: break-word; }
+        .content-area pre { max-width: 100%; overflow-x: auto; white-space: pre-wrap; word-break: break-word; }
+
+        /* ====================== TOP BAR ====================== */
+        .cg-topbar {
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #0070AD 0%, #12ABDB 50%, #00B388 100%);
+            z-index: 10;
+        }
+
+        /* Day circle */
+        .day-circle {
+            width: 56px; height: 56px; border-radius: 50%;
+            background: linear-gradient(135deg, #0070AD, #12ABDB);
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-family: 'Outfit'; font-weight: 800; font-size: 0.85rem;
+            flex-shrink: 0;
+            box-shadow: 0 6px 20px rgba(0,112,173,0.3);
+            min-width: 56px;
+        }
+
+        /* ====================== WEEK NAV BAR ====================== */
+        #week-nav {
+            position: sticky;
+            top: 0;
+            z-index: 999;
+            background: rgba(13,27,42,0.97);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0,112,173,0.25);
+            padding: 0.5rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+
+        /* ── "Back to top" floating button ── */
+        #back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0070AD, #12ABDB);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 16px rgba(0,112,173,0.4);
+            z-index: 500;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+        #back-to-top.visible { opacity: 1; transform: translateY(0); }
+        #back-to-top:hover { background: linear-gradient(135deg, #12ABDB, #00B388); box-shadow: 0 6px 24px rgba(0,112,173,0.5); }
+
+        /* ── Slide "anchor" heading for the section nav ── */
+        .slide-anchor {
+            display: block;
+            position: relative;
+            top: -80px;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        /* ====================== RESPONSIVE ====================== */
+        @media (max-width: 768px) {
+            .slide { padding: 3.5rem 4% 2.5rem 4%; }
+            .grid.grid-cols-2 { grid-template-columns: 1fr !important; }
+            .grid.grid-cols-3 { grid-template-columns: 1fr !important; }
+            pre { font-size: 0.68rem; }
+        }
+
+        /* ====================== PRINT / PDF ====================== */
+        @media print {
+            @page { size: A4 portrait; margin: 1.5cm; }
+            body { overflow: visible !important; background: white !important; color: #1E293B !important; }
+            #week-nav, #back-to-top, .no-print { display: none !important; }
+            .slide {
+                padding: 1.5rem 1.5rem 1rem 1.5rem !important;
+                page-break-after: always !important;
+                break-inside: avoid !important;
+                min-height: 0 !important;
+                overflow: visible !important;
+            }
+            .slide::before { display: none !important; }
+            .slide-dark { background-color: #0D1B2A !important; color: #E2E8F0 !important; }
+            .slide-light { background-color: #F4F6F9 !important; color: #1E293B !important; }
+            .slide-white { background-color: #FFFFFF !important; color: #1E293B !important; }
+            .slide-dark h2, .slide-dark h3, .slide-dark p { color: #E2E8F0 !important; }
+            .slide-light h2, .slide-light h3, .slide-light p { color: #1E293B !important; }
+            pre { overflow: visible !important; max-width: 100% !important; font-size: 0.6rem !important; white-space: pre-wrap !important; break-inside: avoid !important; box-shadow: none !important; }
+            .code-copy-btn { display: none !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; animation: none !important; transition: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="page-wrapper">
+
+<!-- ========================================================================== -->
+
+<!-- ====== WEEK NAVIGATION BAR ====== -->
+<div id="week-nav">
+    <a href="index.html" style="text-decoration:none;display:inline-block;padding:0.45rem 0.9rem;border-radius:8px;border:1px solid transparent;font-size:0.72rem;font-family:Outfit,sans-serif;font-weight:700;text-align:center;line-height:1.3;transition:all 0.2s;background:linear-gradient(135deg,#0070AD,#12ABDB);color:white;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">🏠 Master</a>
+      <a href="week1.html" style="text-decoration:none;display:inline-block;padding:0.45rem 0.9rem;border-radius:8px;border:1px solid transparent;font-size:0.72rem;font-family:Outfit,sans-serif;font-weight:700;text-align:center;line-height:1.3;transition:all 0.2s;background:rgba(0,179,136,0.25);border-color:#00B388;color:#00B388;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">Week 1<br><span style='font-size:0.6rem'>Days 1–5</span></a>
+      <a href="week2.html" style="text-decoration:none;display:inline-block;padding:0.45rem 0.9rem;border-radius:8px;border:1px solid transparent;font-size:0.72rem;font-family:Outfit,sans-serif;font-weight:700;text-align:center;line-height:1.3;transition:all 0.2s;background:rgba(0,112,173,0.08);border-color:rgba(0,112,173,0.2);color:rgba(255,255,255,0.7);" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">Week 2<br><span style='font-size:0.6rem'>Days 6–10</span></a>
+      <a href="week3.html" style="text-decoration:none;display:inline-block;padding:0.45rem 0.9rem;border-radius:8px;border:1px solid transparent;font-size:0.72rem;font-family:Outfit,sans-serif;font-weight:700;text-align:center;line-height:1.3;transition:all 0.2s;background:rgba(0,112,173,0.08);border-color:rgba(0,112,173,0.2);color:rgba(255,255,255,0.7);" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">Week 3<br><span style='font-size:0.6rem'>Days 11–15</span></a>
+      <a href="week4.html" style="text-decoration:none;display:inline-block;padding:0.45rem 0.9rem;border-radius:8px;border:1px solid transparent;font-size:0.72rem;font-family:Outfit,sans-serif;font-weight:700;text-align:center;line-height:1.3;transition:all 0.2s;background:rgba(0,112,173,0.08);border-color:rgba(0,112,173,0.2);color:rgba(255,255,255,0.7);" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">Week 4<br><span style='font-size:0.6rem'>Days 16–20</span></a>
+      <a href="week5.html" style="text-decoration:none;display:inline-block;padding:0.45rem 0.9rem;border-radius:8px;border:1px solid transparent;font-size:0.72rem;font-family:Outfit,sans-serif;font-weight:700;text-align:center;line-height:1.3;transition:all 0.2s;background:rgba(0,112,173,0.08);border-color:rgba(0,112,173,0.2);color:rgba(255,255,255,0.7);" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">Week 5<br><span style='font-size:0.6rem'>Days 21–25</span></a>
+      <a href="week6.html" style="text-decoration:none;display:inline-block;padding:0.45rem 0.9rem;border-radius:8px;border:1px solid transparent;font-size:0.72rem;font-family:Outfit,sans-serif;font-weight:700;text-align:center;line-height:1.3;transition:all 0.2s;background:rgba(0,112,173,0.08);border-color:rgba(0,112,173,0.2);color:rgba(255,255,255,0.7);" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">Week 6<br><span style='font-size:0.6rem'>Days 26–30</span></a>
+    <div style="margin-left:auto;color:rgba(255,255,255,0.3);font-size:0.65rem;font-family:Fira Code,monospace;">Java Microservices 30-Day Program</div>
+</div>
+<!-- Add top padding to account for nav bar -->
+
+<!-- SLIDE 1 — TITLE / HERO                                                     -->
+<!-- ========================================================================== -->
+<div class="slide slide-dark bg-grid flex-col justify-center items-center text-center">
+    <div class="cg-topbar" style="position:absolute;top:0;left:0;right:0;z-index:10;"></div>
+    <div class="max-w-5xl mx-auto w-full" style="position:relative;z-index:5;">
+        <!-- Capgemini Logo Mark SVG -->
+        <div class="flex justify-center mb-5">
+            <svg width="180" height="40" viewBox="0 0 180 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="180" height="40" rx="4" fill="rgba(0,112,173,0.1)"/>
+                <text x="90" y="26" text-anchor="middle" fill="#12ABDB" font-family="Outfit" font-weight="800" font-size="18" letter-spacing="3">CAPGEMINI</text>
+            </svg>
+        </div>
+        <h3 style="font-family:'Outfit',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#12ABDB;font-size:0.9rem;margin:0 0 0.5rem 0;">DIGITAL ENGINEERING · TRAINING PROGRAM</h3>
+        <h1 style="font-family:'Outfit',sans-serif;font-weight:800;font-size:3.5rem;color:#FFFFFF;line-height:1.15;margin:0 0 0.75rem 0;">Java Microservices<br><span style="color:#12ABDB;">From Scratch → Production</span></h1>
+        <div class="accent-line mx-auto mb-5"></div>
+        <p style="font-size:1.1rem;color:#CBD5E1;max-width:48rem;margin:0 auto 0 auto;line-height:1.7;">A comprehensive 30-day greenfield program building a production-grade 3-layer distributed system. One slide per day. Clear inputs, activities, code, and <strong style="color:#12ABDB;">exact deliverable outcomes</strong>.</p>
+        <div class="mt-7 flex gap-3 justify-center flex-wrap">
+            <span style="padding:0.35rem 1rem;border-radius:999px;background:#1B2D45;color:#CBD5E1;font-size:0.85rem;font-weight:600;border:1px solid #243B5A;">Java 21</span>
+            <span style="padding:0.35rem 1rem;border-radius:999px;background:#1B2D45;color:#CBD5E1;font-size:0.85rem;font-weight:600;border:1px solid #243B5A;">Spring Boot 3.2</span>
+            <span style="padding:0.35rem 1rem;border-radius:999px;background:#1B2D45;color:#CBD5E1;font-size:0.85rem;font-weight:600;border:1px solid #243B5A;">3 Docker Containers</span>
+            <span style="padding:0.35rem 1rem;border-radius:999px;background:#1B2D45;color:#CBD5E1;font-size:0.85rem;font-weight:600;border:1px solid #243B5A;">PostgreSQL + JPA</span>
+            <span style="padding:0.35rem 1rem;border-radius:999px;background:#1B2D45;color:#CBD5E1;font-size:0.85rem;font-weight:600;border:1px solid #243B5A;">SOLID + OWASP</span>
+        </div>
+        <div class="mt-6 grid grid-cols-3 gap-4 max-w-2xl mx-auto text-center">
+            <div style="background:#1B2D45;border-radius:8px;padding:0.75rem;border:1px solid #243B5A;">
+                <div style="color:#12ABDB;font-family:'Outfit',sans-serif;font-weight:800;font-size:1.5rem;">30</div>
+                <div style="color:#64748B;font-size:0.75rem;">Days of Training</div>
+            </div>
+            <div style="background:#1B2D45;border-radius:8px;padding:0.75rem;border:1px solid #243B5A;">
+                <div style="color:#00B388;font-family:'Outfit',sans-serif;font-weight:800;font-size:1.5rem;">1:1</div>
+                <div style="color:#64748B;font-size:0.75rem;">Slide per Day</div>
+            </div>
+            <div style="background:#1B2D45;border-radius:8px;padding:0.75rem;border:1px solid #243B5A;">
+                <div style="color:#FFB819;font-family:'Outfit',sans-serif;font-weight:800;font-size:1.5rem;">6</div>
+                <div style="color:#64748B;font-size:0.75rem;">Build Phases</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================================== -->
+<!-- SLIDE 2 — SCQA FRAMEWORK                                                   -->
+<!-- ========================================================================== -->
+<div class="slide slide-dark bg-grid flex-col">
+    <div class="cg-topbar"></div>
+    <div class="mt-2" style="position:relative;z-index:5;">
+        <h3 style="font-family:'Outfit',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#7DD3E8;font-size:0.75rem;margin:0 0 0.3rem 0;">Strategic Context</h3>
+        <h2 style="font-family:'Outfit',sans-serif;font-weight:700;font-size:1.75rem;color:#FFFFFF;margin:0 0 0.4rem 0;">Why Microservices? — SCQA Framework</h2>
+        <div class="accent-line mt-2 mb-3"></div>
+    </div>
+    <div class="content-area" style="position:relative;z-index:5;">
+        <div class="grid grid-cols-2 gap-3 mt-1">
+
+            <!-- S — Situation -->
+            <div style="background:rgba(18,171,219,0.12);border:1px solid rgba(18,171,219,0.35);border-left:4px solid #12ABDB;border-radius:10px;padding:1rem 1.2rem;">
+                <div class="flex items-center gap-2 mb-2">
+                    <div style="width:28px;height:28px;border-radius:50%;background:rgba(18,171,219,0.25);border:2px solid #12ABDB;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <span style="font-family:'Outfit',sans-serif;font-weight:800;font-size:0.85rem;color:#12ABDB;">S</span>
+                    </div>
+                    <span style="font-family:'Outfit',sans-serif;font-weight:700;font-size:0.95rem;color:#7DD3E8;">Situation</span>
+                </div>
+                <p style="font-size:0.82rem;color:#CBD5E1;margin:0;line-height:1.6;">Enterprise clients require systems that handle high concurrency, deploy independently, and scale components in isolation. Teams must ship features continuously with zero downtime across global regions.</p>
+            </div>
+
+            <!-- C — Complication -->
+            <div style="background:rgba(18,171,219,0.12);border:1px solid rgba(18,171,219,0.35);border-left:4px solid #12ABDB;border-radius:10px;padding:1rem 1.2rem;">
+                <div class="flex items-center gap-2 mb-2">
+                    <div style="width:28px;height:28px;border-radius:50%;background:rgba(18,171,219,0.25);border:2px solid #12ABDB;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <span style="font-family:'Outfit',sans-serif;font-weight:800;font-size:0.85rem;color:#12ABDB;">C</span>
+                    </div>
+                    <span style="font-family:'Outfit',sans-serif;font-weight:700;font-size:0.95rem;color:#7DD3E8;">Complication</span>
+                </div>
+                <p style="font-size:0.82rem;color:#CBD5E1;margin:0;line-height:1.6;">Monolithic Java apps cannot scale individual features. A single bug crashes the entire system. Tight coupling means every change is risky. Deployment windows are weeks, not minutes. New engineers take months to onboard.</p>
+            </div>
+
+            <!-- Q — Question -->
+            <div style="background:rgba(18,171,219,0.12);border:1px solid rgba(18,171,219,0.35);border-left:4px solid #12ABDB;border-radius:10px;padding:1rem 1.2rem;">
+                <div class="flex items-center gap-2 mb-2">
+                    <div style="width:28px;height:28px;border-radius:50%;background:rgba(18,171,219,0.25);border:2px solid #12ABDB;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <span style="font-family:'Outfit',sans-serif;font-weight:800;font-size:0.85rem;color:#12ABDB;">Q</span>
+                    </div>
+                    <span style="font-family:'Outfit',sans-serif;font-weight:700;font-size:0.95rem;color:#7DD3E8;">Question</span>
+                </div>
+                <p style="font-size:0.82rem;color:#CBD5E1;margin:0;line-height:1.6;">How do we build a <strong style="color:#E2E8F0;">greenfield</strong> system from Day 1 that is independently deployable, fault-tolerant, secured at every layer, and observable — using Java 21 and open-source tooling?</p>
+            </div>
+
+            <!-- A — Answer -->
+            <div style="background:rgba(18,171,219,0.22);border:2px solid #12ABDB;border-left:4px solid #7DD3E8;border-radius:10px;padding:1rem 1.2rem;">
+                <div class="flex items-center gap-2 mb-2">
+                    <div style="width:28px;height:28px;border-radius:50%;background:#12ABDB;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <span style="font-family:'Outfit',sans-serif;font-weight:800;font-size:0.85rem;color:#0D1B2A;">A</span>
+                    </div>
+                    <span style="font-family:'Outfit',sans-serif;font-weight:700;font-size:0.95rem;color:#FFFFFF;">Answer</span>
+                </div>
+                <p style="font-size:0.82rem;color:#E2E8F0;margin:0;line-height:1.6;">A <strong style="color:#FFFFFF;">3-layer microservices architecture</strong> — BFF → Middleware → System API — each in its own Docker container, connected to PostgreSQL via JPA, built with Java 21, secured with OWASP, following SOLID/Clean Code.</p>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================================== -->
+<!-- SLIDE 3 — TARGET ARCHITECTURE (ENHANCED)                                    -->
+<!-- ========================================================================== -->
+<div class="slide slide-light bg-grid-light flex-col sl">
+    <div class="cg-topbar"></div>
+    <div class="mt-2">
+        <h3 class="text-cg-blue text-sm">Architecture Blueprint</h3>
+        <h2 class="text-3xl text-cg-navy">Target 3-Layer Distributed System</h2>
+        <div class="accent-line mt-2 mb-2"></div>
+    </div>
+    <div class="content-area">
+
+        <!-- ── ARCHITECTURE DIAGRAM ── -->
+        <div class="w-full bg-white p-4 rounded-2xl border border-cg-gray-mid shadow-lg mb-4">
+            <svg width="100%" height="320" viewBox="0 0 1100 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Client -->
+                <rect x="10" y="120" width="105" height="80" rx="8" fill="#F4F6F9" stroke="#CBD5E1" stroke-width="2"/>
+                <text x="62" y="152" text-anchor="middle" fill="#0D1B2A" font-family="Outfit" font-size="14" font-weight="700">Client</text>
+                <text x="62" y="170" text-anchor="middle" fill="#64748B" font-family="Inter" font-size="9">Web / Mobile</text>
+                <text x="62" y="186" text-anchor="middle" fill="#94A3B8" font-family="Inter" font-size="8">React / Angular</text>
+                <line x1="115" y1="160" x2="180" y2="160" stroke="#0070AD" stroke-width="3" marker-end="url(#cg-arr-b3)"/>
+                <text x="147" y="152" text-anchor="middle" fill="#0070AD" font-family="Fira Code" font-size="7">HTTPS</text>
+
+                <!-- DOCKER 1: BFF -->
+                <rect x="180" y="30" width="190" height="250" rx="12" fill="#0070AD"/>
+                <rect x="190" y="40" width="170" height="15" rx="3" fill="#005A8C"/>
+                <text x="275" y="51" text-anchor="middle" fill="white" font-family="Fira Code" font-size="8">🐳 Container 1 — BFF</text>
+                <text x="275" y="82" text-anchor="middle" fill="white" font-family="Outfit" font-size="16" font-weight="800">BFF Gateway</text>
+                <text x="275" y="98" text-anchor="middle" fill="#7DD3E8" font-family="Inter" font-size="9">Backend for Frontend</text>
+                <rect x="198" y="110" width="155" height="24" rx="4" fill="#005A8C"/><text x="275" y="126" text-anchor="middle" fill="white" font-family="Inter" font-size="9" font-weight="600">Spring Cloud Gateway</text>
+                <rect x="198" y="140" width="155" height="24" rx="4" fill="#005A8C"/><text x="275" y="156" text-anchor="middle" fill="white" font-family="Inter" font-size="9" font-weight="600">OAuth2 / JWT Auth</text>
+                <rect x="198" y="170" width="155" height="24" rx="4" fill="#005A8C"/><text x="275" y="186" text-anchor="middle" fill="white" font-family="Inter" font-size="9" font-weight="600">Rate Limiting</text>
+                <rect x="198" y="200" width="155" height="24" rx="4" fill="#005A8C"/><text x="275" y="216" text-anchor="middle" fill="white" font-family="Inter" font-size="9" font-weight="600">Response Aggregation</text>
+                <rect x="198" y="230" width="155" height="24" rx="4" fill="#003D5C"/><text x="275" y="246" text-anchor="middle" fill="#7DD3E8" font-family="Inter" font-size="8" font-weight="600">Port: 8080 (exposed)</text>
+                <line x1="370" y1="160" x2="435" y2="160" stroke="#12ABDB" stroke-width="3" marker-end="url(#cg-arr-c3)"/>
+                <text x="402" y="152" text-anchor="middle" fill="#12ABDB" font-family="Fira Code" font-size="7">REST</text>
+
+                <!-- DOCKER 2: Middleware -->
+                <rect x="435" y="30" width="190" height="250" rx="12" fill="#1B2D45"/>
+                <rect x="445" y="40" width="170" height="15" rx="3" fill="#0D1B2A"/>
+                <text x="530" y="51" text-anchor="middle" fill="#94A3B8" font-family="Fira Code" font-size="8">🐳 Container 2 — MW</text>
+                <text x="530" y="82" text-anchor="middle" fill="white" font-family="Outfit" font-size="16" font-weight="800">Middleware</text>
+                <text x="530" y="98" text-anchor="middle" fill="#7DD3E8" font-family="Inter" font-size="9">Business Orchestration</text>
+                <rect x="453" y="110" width="155" height="24" rx="4" fill="#0D1B2A"/><text x="530" y="126" text-anchor="middle" fill="#12ABDB" font-family="Inter" font-size="9" font-weight="600">Application Services</text>
+                <rect x="453" y="140" width="155" height="24" rx="4" fill="#0D1B2A"/><text x="530" y="156" text-anchor="middle" fill="#12ABDB" font-family="Inter" font-size="9" font-weight="600">OpenFeign Clients</text>
+                <rect x="453" y="170" width="155" height="24" rx="4" fill="#0D1B2A"/><text x="530" y="186" text-anchor="middle" fill="#12ABDB" font-family="Inter" font-size="9" font-weight="600">Resilience4j Circuits</text>
+                <rect x="453" y="200" width="155" height="24" rx="4" fill="#0D1B2A"/><text x="530" y="216" text-anchor="middle" fill="#12ABDB" font-family="Inter" font-size="9" font-weight="600">Virtual Threads (Loom)</text>
+                <rect x="453" y="230" width="155" height="24" rx="4" fill="#0D1B2A"/><text x="530" y="246" text-anchor="middle" fill="#64748B" font-family="Inter" font-size="8" font-weight="600">Port: 8082 (internal)</text>
+                <line x1="625" y1="160" x2="690" y2="160" stroke="#00B388" stroke-width="3" marker-end="url(#cg-arr-t3)"/>
+                <text x="657" y="152" text-anchor="middle" fill="#00B388" font-family="Fira Code" font-size="7">REST</text>
+
+                <!-- DOCKER 3: System API -->
+                <rect x="690" y="50" width="175" height="220" rx="12" fill="#003D5C"/>
+                <rect x="700" y="60" width="155" height="15" rx="3" fill="#0D1B2A"/>
+                <text x="777" y="71" text-anchor="middle" fill="#94A3B8" font-family="Fira Code" font-size="8">🐳 Container 3 — SYS</text>
+                <text x="777" y="100" text-anchor="middle" fill="white" font-family="Outfit" font-size="16" font-weight="800">System API</text>
+                <text x="777" y="116" text-anchor="middle" fill="#7DD3E8" font-family="Inter" font-size="9">Data Access Layer</text>
+                <rect x="710" y="130" width="135" height="24" rx="4" fill="#0D1B2A"/><text x="777" y="146" text-anchor="middle" fill="#FFB819" font-family="Inter" font-size="9" font-weight="600">Spring Data JPA</text>
+                <rect x="710" y="160" width="135" height="24" rx="4" fill="#0D1B2A"/><text x="777" y="176" text-anchor="middle" fill="#FFB819" font-family="Inter" font-size="9" font-weight="600">Hibernate / Flyway</text>
+                <rect x="710" y="190" width="135" height="24" rx="4" fill="#0D1B2A"/><text x="777" y="206" text-anchor="middle" fill="#FFB819" font-family="Inter" font-size="9" font-weight="600">CRUD Endpoints</text>
+                <rect x="710" y="220" width="135" height="18" rx="4" fill="#0D1B2A"/><text x="777" y="233" text-anchor="middle" fill="#64748B" font-family="Inter" font-size="8">Port: 8081 (internal)</text>
+                <line x1="865" y1="160" x2="925" y2="160" stroke="#64748B" stroke-width="3" marker-end="url(#cg-arr-g3)"/>
+                <text x="895" y="152" text-anchor="middle" fill="#64748B" font-family="Fira Code" font-size="7">JDBC</text>
+
+                <!-- PostgreSQL -->
+                <path d="M925 140 C925 125 995 125 995 140 L995 190 C995 205 925 205 925 190 Z" fill="#336791"/>
+                <ellipse cx="960" cy="140" rx="35" ry="12" fill="#4A8DBD"/>
+                <text x="960" y="173" text-anchor="middle" fill="white" font-family="Outfit" font-size="11" font-weight="700">PostgreSQL</text>
+                <text x="960" y="190" text-anchor="middle" fill="#B8D4E8" font-family="Inter" font-size="7">ENV URL Config</text>
+
+                <!-- Tracing bar -->
+                <rect x="180" y="290" width="685" height="24" rx="5" fill="#F4F6F9" stroke="#FFB819" stroke-width="2"/>
+                <text x="522" y="306" text-anchor="middle" fill="#D97706" font-family="Outfit" font-size="9" font-weight="700">OpenTelemetry — Distributed Tracing + Prometheus Metrics + Grafana Dashboards</text>
+
+                <defs>
+                    <marker id="cg-arr-b3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#0070AD"/></marker>
+                    <marker id="cg-arr-c3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#12ABDB"/></marker>
+                    <marker id="cg-arr-t3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#00B388"/></marker>
+                    <marker id="cg-arr-g3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#64748B"/></marker>
+                </defs>
+            </svg>
+        </div>
+
+        <!-- ── 3-LAYER DEEP-DIVE CARDS ── -->
+        <div class="grid grid-cols-3 gap-3 mb-4">
+
+            <!-- Layer 1: BFF Gateway -->
+            <div class="bg-white rounded-xl p-4 border-t-4 shadow-sm" style="border-top-color:#0070AD;">
+                <div class="flex items-center gap-2 mb-2">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-xs" style="background:#0070AD;">L1</div>
+                    <h3 class="text-cg-blue text-sm m-0">BFF Gateway</h3>
+                </div>
+                <p class="text-xs text-gray-500 m-0 mb-2"><strong>Purpose:</strong> The single entry point for all client traffic. Shields internal services from direct exposure.</p>
+                <div class="text-xs text-gray-600">
+                    <div class="font-semibold text-cg-blue mb-1">What to Expect:</div>
+                    <ul class="m-0 pl-3 space-y-0.5" style="list-style:disc;">
+                        <li>Route definitions mapping URL paths to downstream services</li>
+                        <li>JWT token validation on every incoming request</li>
+                        <li>Rate limiting per client (token bucket algorithm)</li>
+                        <li>Response aggregation — combine data from multiple services into a single client payload</li>
+                        <li>CORS/CSRF configuration for browser security</li>
+                    </ul>
+                    <div class="font-semibold text-cg-blue mt-2 mb-1">How You'll Build It:</div>
+                    <ul class="m-0 pl-3 space-y-0.5" style="list-style:disc;">
+                        <li>Start with <code class="text-xs">spring-cloud-starter-gateway</code></li>
+                        <li>Define routes in <code class="text-xs">application.yml</code> using predicates & filters</li>
+                        <li>Add <code class="text-xs">spring-boot-starter-oauth2-resource-server</code> for JWT</li>
+                        <li>Configure <code class="text-xs">RequestRateLimiter</code> filter with Redis backing</li>
+                        <li>Write custom <code class="text-xs">GatewayFilter</code> for header manipulation</li>
+                    </ul>
+                </div>
+                <div class="mt-2 flex gap-1 flex-wrap">
+                    <span class="badge-phase" style="font-size:0.6rem;">Days 16–20</span>
+                    <span class="badge-out" style="font-size:0.6rem;">Spring Cloud Gateway</span>
+                </div>
+            </div>
+
+            <!-- Layer 2: Middleware -->
+            <div class="bg-white rounded-xl p-4 border-t-4 shadow-sm" style="border-top-color:#12ABDB;">
+                <div class="flex items-center gap-2 mb-2">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-xs" style="background:#12ABDB;">L2</div>
+                    <h3 class="text-sm m-0" style="color:#12ABDB;">Middleware</h3>
+                </div>
+                <p class="text-xs text-gray-500 m-0 mb-2"><strong>Purpose:</strong> Business orchestration layer. Composes calls to System API, applies business rules, transforms data, handles failures.</p>
+                <div class="text-xs text-gray-600">
+                    <div class="font-semibold mb-1" style="color:#12ABDB;">What to Expect:</div>
+                    <ul class="m-0 pl-3 space-y-0.5" style="list-style:disc;">
+                        <li>Declarative REST clients via OpenFeign to call System API</li>
+                        <li>Service composition — orchestrate multiple downstream calls</li>
+                        <li>DTO ↔ Entity mapping using MapStruct or manual mappers</li>
+                        <li>Circuit breakers (Resilience4j) for fault tolerance</li>
+                        <li>Global exception handling with RFC 7807 Problem Detail</li>
+                        <li>Virtual Threads (Project Loom) for massive concurrency</li>
+                    </ul>
+                    <div class="font-semibold mt-2 mb-1" style="color:#12ABDB;">How You'll Build It:</div>
+                    <ul class="m-0 pl-3 space-y-0.5" style="list-style:disc;">
+                        <li>Add <code class="text-xs">spring-cloud-starter-openfeign</code> dependency</li>
+                        <li>Create <code class="text-xs">@FeignClient</code> interfaces pointing to system-api</li>
+                        <li>Implement <code class="text-xs">@Service</code> classes that compose Feign calls</li>
+                        <li>Add <code class="text-xs">@CircuitBreaker</code> annotations with fallback methods</li>
+                        <li>Create <code class="text-xs">@RestControllerAdvice</code> for centralized error handling</li>
+                    </ul>
+                </div>
+                <div class="mt-2 flex gap-1 flex-wrap">
+                    <span class="badge-phase" style="font-size:0.6rem;">Days 11–15</span>
+                    <span class="badge-out" style="font-size:0.6rem;">OpenFeign + Resilience4j</span>
+                </div>
+            </div>
+
+            <!-- Layer 3: System API -->
+            <div class="bg-white rounded-xl p-3 border-t-4 shadow-sm" style="border-top-color:#FFB819;">
+                <div class="flex items-center gap-2 mb-1">
+                    <div class="w-7 h-7 rounded-full flex items-center justify-center text-white font-bold" style="font-size:0.6rem;background:#FFB819;min-width:28px;">L3</div>
+                    <h3 style="font-size:0.8rem;margin:0;color:#D97706;">System API</h3>
+                </div>
+                <p style="font-size:0.65rem;color:#6B7280;margin:0 0 0.3rem 0;line-height:1.4;"><strong>Purpose:</strong> Data access layer. Owns the database schema, JPA entities, and exposes CRUD REST endpoints. The single source of truth for data.</p>
+                <div style="font-size:0.65rem;color:#4B5563;">
+                    <div style="font-weight:600;margin-bottom:0.2rem;color:#D97706;">What to Expect:</div>
+                    <ul class="m-0 pl-3" style="list-style:disc;line-height:1.4;">
+                        <li>PostgreSQL in Docker with persistent volumes</li>
+                        <li>JPA entities with relationships (OneToMany, ManyToOne)</li>
+                        <li>Flyway migrations for version-controlled schema</li>
+                        <li>Spring Data JPA repositories with custom queries</li>
+                        <li>Bean Validation (<code style="font-size:0.6rem;">@Valid</code>) on all incoming DTOs</li>
+                        <li>SpringDoc OpenAPI for auto-generated Swagger docs</li>
+                    </ul>
+                    <div style="font-weight:600;margin-top:0.3rem;margin-bottom:0.2rem;color:#D97706;">How You'll Build It:</div>
+                    <ul class="m-0 pl-3" style="list-style:disc;line-height:1.4;">
+                        <li>Add PostgreSQL container in <code style="font-size:0.6rem;">docker-compose.yml</code></li>
+                        <li>Create <code style="font-size:0.6rem;">@Entity</code> classes with JPA annotations</li>
+                        <li>Write Flyway SQL migrations in <code style="font-size:0.6rem;">db/migration/</code></li>
+                        <li>Extend <code style="font-size:0.6rem;">JpaRepository&lt;T, ID&gt;</code> for each entity</li>
+                        <li>Build <code style="font-size:0.6rem;">@RestController</code> with full CRUD (GET/POST/PUT/DELETE)</li>
+                        <li>Add <code style="font-size:0.6rem;">springdoc-openapi-starter-webmvc-ui</code></li>
+                    </ul>
+                </div>
+                <div class="mt-2 flex gap-1 flex-wrap">
+                    <span class="badge-phase" style="font-size:0.58rem;">Days 6–10</span>
+                    <span class="badge-out" style="font-size:0.58rem;">JPA + Flyway + OpenAPI</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── COMMUNICATION PATTERNS & CROSS-CUTTING CONCERNS ── -->
+        <div class="grid grid-cols-2 gap-3 mb-4">
+
+            <!-- Communication Patterns -->
+            <div class="bg-white rounded-xl p-4 border border-cg-gray-mid shadow-sm">
+                <h3 class="text-cg-blue text-xs m-0 mb-2">🔗 Inter-Service Communication Patterns</h3>
+                <div class="text-xs text-gray-600 space-y-2">
+                    <div class="flex gap-2">
+                        <span class="text-cg-blue font-bold">①</span>
+                        <div><strong>Client → BFF:</strong> HTTPS/TLS. JSON payloads. JWT Bearer token in <code class="text-xs">Authorization</code> header. BFF validates token before routing.</div>
+                    </div>
+                    <div class="flex gap-2">
+                        <span class="text-cg-blue font-bold">②</span>
+                        <div><strong>BFF → Middleware:</strong> Internal REST over Docker network. No TLS needed (container-to-container). Service discovery via Docker DNS (<code class="text-xs">http://middleware:8082</code>).</div>
+                    </div>
+                    <div class="flex gap-2">
+                        <span class="text-cg-blue font-bold">③</span>
+                        <div><strong>Middleware → System API:</strong> OpenFeign declarative REST client. Automatic serialization/deserialization. Circuit breaker wraps each call. Retry on transient failures.</div>
+                    </div>
+                    <div class="flex gap-2">
+                        <span class="text-cg-blue font-bold">④</span>
+                        <div><strong>System API → PostgreSQL:</strong> JDBC via HikariCP connection pool. JPA/Hibernate handles ORM. Connection URL from environment variable — never hardcoded.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cross-Cutting Concerns -->
+            <div class="bg-white rounded-xl p-4 border border-cg-gray-mid shadow-sm">
+                <h3 class="text-cg-blue text-xs m-0 mb-2">🛡️ Cross-Cutting Concerns (All 3 Layers)</h3>
+                <div class="text-xs text-gray-600 space-y-1.5">
+                    <div class="flex items-start gap-2">
+                        <span class="text-cg-teal font-bold flex-shrink-0">●</span>
+                        <div><strong>Observability:</strong> OpenTelemetry agent auto-instruments all 3 services. Distributed traces propagate via <code class="text-xs">traceparent</code> header across BFF → MW → SYS. Jaeger for visualization, Prometheus for metrics.</div>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="text-cg-teal font-bold flex-shrink-0">●</span>
+                        <div><strong>Security:</strong> OWASP Top 10 addressed. Input validation at every boundary. SQL injection prevention via parameterized JPA queries. XSS prevention via output encoding. Secrets in environment variables.</div>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="text-cg-teal font-bold flex-shrink-0">●</span>
+                        <div><strong>Health & Readiness:</strong> Each service exposes <code class="text-xs">/actuator/health</code> and <code class="text-xs">/actuator/readiness</code>. Docker Compose uses <code class="text-xs">healthcheck</code> to enforce startup order.</div>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="text-cg-teal font-bold flex-shrink-0">●</span>
+                        <div><strong>Config Management:</strong> Profile-based YAML files. Docker environment variables override defaults. No secrets in code or Git. 12-Factor compliant.</div>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="text-cg-teal font-bold flex-shrink-0">●</span>
+                        <div><strong>Error Handling:</strong> RFC 7807 Problem Detail JSON format across all layers. Consistent error structure: <code class="text-xs">type</code>, <code class="text-xs">title</code>, <code class="text-xs">status</code>, <code class="text-xs">detail</code>, <code class="text-xs">instance</code>.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── KEY PRINCIPLES & HOW TO APPROACH THIS ── -->
+        <div class="grid grid-cols-3 gap-3">
+            <div class="bg-cg-navy rounded-lg p-3 text-center">
+                <div class="text-cg-cyan font-heading font-bold text-lg">Bottom-Up</div>
+                <div class="text-gray-400 text-xs mt-1">Build Layer 3 (System API) first. Get data flowing. Then Layer 2 (Middleware) to orchestrate. Finally Layer 1 (BFF) to expose to clients.</div>
+            </div>
+            <div class="bg-cg-navy rounded-lg p-3 text-center">
+                <div class="text-cg-teal font-heading font-bold text-lg">Contract-First</div>
+                <div class="text-gray-400 text-xs mt-1">Define REST API contracts (OpenAPI spec) before writing code. Each layer's API is its contract with the layer above. Break changes = break trust.</div>
+            </div>
+            <div class="bg-cg-navy rounded-lg p-3 text-center">
+                <div class="text-cg-yellow font-heading font-bold text-lg">Fail-Safe</div>
+                <div class="text-gray-400 text-xs mt-1">Every call across layers can fail. Design for failure from Day 1. Circuit breakers, retries, timeouts, and fallback responses are not optional — they're required.</div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- ========================================================================== -->
+<!-- SLIDE 4 — 30-DAY ROADMAP OVERVIEW                                           -->
+<!-- ========================================================================== -->
+<div class="slide slide-dark bg-grid flex-col">
+    <div class="cg-topbar"></div>
+    <div class="mt-2">
+        <h3 class="text-cg-cyan text-sm">Program Roadmap</h3>
+        <h2 class="text-4xl text-white">30 Days — 6 Phases — 1 Slide per Day</h2>
+        <div class="accent-line mt-2 mb-3"></div>
+    </div>
+    <div class="content-area">
+        <div class="grid grid-cols-3 gap-3">
+            <div class="rounded-xl p-4 bg-cg-navy-mid border border-cg-navy-light">
+                <div class="flex items-center gap-2 mb-2"><span class="badge-day">PHASE 1</span><span class="text-cg-slate text-xs">Days 1–5</span></div>
+                <h3 class="text-cg-cyan text-sm m-0 mb-1">Foundation & Scaffold</h3>
+                <p class="text-xs text-gray-400 m-0">JDK 21 install, multi-module Maven, Spring Boot 3.2 scaffold, Hexagonal Architecture, Docker multi-stage builds, docker-compose with networking.</p>
+                <div class="mt-2 flex gap-1.5 flex-wrap">
+                    <span class="badge-out text-xs">JDK 21 Project</span>
+                    <span class="badge-out text-xs">3 Dockerfiles</span>
+                </div>
+            </div>
+            <div class="rounded-xl p-4 bg-cg-navy-mid border border-cg-navy-light">
+                <div class="flex items-center gap-2 mb-2"><span class="badge-day">PHASE 2</span><span class="text-cg-slate text-xs">Days 6–10</span></div>
+                <h3 class="text-cg-cyan text-sm m-0 mb-1">System API — Layer 3</h3>
+                <p class="text-xs text-gray-400 m-0">PostgreSQL container, JPA entities, Flyway migrations, Spring Data repositories, Bean Validation, OWASP, CRUD REST endpoints, SpringDoc OpenAPI.</p>
+                <div class="mt-2 flex gap-1.5 flex-wrap">
+                    <span class="badge-out text-xs">Running DB</span>
+                    <span class="badge-out text-xs">Layer 3 API</span>
+                </div>
+            </div>
+            <div class="rounded-xl p-4 bg-cg-navy-mid border border-cg-navy-light">
+                <div class="flex items-center gap-2 mb-2"><span class="badge-day">PHASE 3</span><span class="text-cg-slate text-xs">Days 11–15</span></div>
+                <h3 class="text-cg-cyan text-sm m-0 mb-1">Middleware — Layer 2</h3>
+                <p class="text-xs text-gray-400 m-0">OpenFeign clients, service composition, business orchestration, DTO mapping, global error handling (RFC 7807), Resilience4j circuit breakers.</p>
+                <div class="mt-2 flex gap-1.5 flex-wrap">
+                    <span class="badge-out text-xs">Orchestration</span>
+                    <span class="badge-out text-xs">Fault Tolerance</span>
+                </div>
+            </div>
+            <div class="rounded-xl p-4 bg-cg-navy-mid border border-cg-navy-light">
+                <div class="flex items-center gap-2 mb-2"><span class="badge-day">PHASE 4</span><span class="text-cg-slate text-xs">Days 16–20</span></div>
+                <h3 class="text-cg-cyan text-sm m-0 mb-1">BFF & Gateway — Layer 1</h3>
+                <p class="text-xs text-gray-400 m-0">Spring Cloud Gateway, BFF aggregation, OAuth2/JWT security, rate limiting, CORS/CSRF, full docker-compose boot, end-to-end integration test.</p>
+                <div class="mt-2 flex gap-1.5 flex-wrap">
+                    <span class="badge-out text-xs">Secured BFF</span>
+                    <span class="badge-out text-xs">Full Stack</span>
+                </div>
+            </div>
+            <div class="rounded-xl p-4 bg-cg-navy-mid border border-cg-navy-light">
+                <div class="flex items-center gap-2 mb-2"><span class="badge-day">PHASE 5</span><span class="text-cg-slate text-xs">Days 21–25</span></div>
+                <h3 class="text-cg-cyan text-sm m-0 mb-1">Performance Engineering</h3>
+                <p class="text-xs text-gray-400 m-0">Virtual Threads (Loom), JVM profiling (JFR), HikariCP tuning, N+1 query fixes, caching strategies, Gatling load testing with reports.</p>
+                <div class="mt-2 flex gap-1.5 flex-wrap">
+                    <span class="badge-out text-xs">10x Throughput</span>
+                    <span class="badge-out text-xs">Benchmarks</span>
+                </div>
+            </div>
+            <div class="rounded-xl p-4 bg-cg-navy-mid border border-cg-navy-light">
+                <div class="flex items-center gap-2 mb-2"><span class="badge-day">PHASE 6</span><span class="text-cg-slate text-xs">Days 26–30</span></div>
+                <h3 class="text-cg-cyan text-sm m-0 mb-1">Observability & Deploy</h3>
+                <p class="text-xs text-gray-400 m-0">OpenTelemetry agent, Jaeger tracing, Prometheus + Grafana dashboards, security audit, final code review, cloud-deploy readiness checklist.</p>
+                <div class="mt-2 flex gap-1.5 flex-wrap">
+                    <span class="badge-out text-xs">Full Tracing</span>
+                    <span class="badge-out text-xs">Prod Ready</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================================== -->
+
+<!-- SLIDE 5 — DAY 1                                                             -->
+<!-- ========================================================================== -->
+<div class="slide slide-dark bg-grid flex-col sl">
+    <div class="cg-topbar"></div>
+    <div class="mt-2 flex items-center gap-4">
+        <div class="day-circle">D1</div>
+        <div>
+            <div class="flex items-center gap-2 mb-1">
+                <span class="badge-day">DAY 1</span>
+                <span class="badge-phase">Phase 1 — Foundation</span>
+            </div>
+            <h2 class="text-3xl text-white m-0">Development Environment & JDK 21 Setup</h2>
+        </div>
+    </div>
+    <div class="accent-line mt-3 mb-3"></div>
+
+    <div class="content-area">
+        <!-- INPUT -->
+        <div class="mb-4">
+            <div class="section-label">📥 Input (What you start with)</div>
+            <div class="flex gap-2 flex-wrap mt-1">
+                <span class="badge-in">Clean developer machine (macOS / Linux / Windows)</span>
+                <span class="badge-in">Internet access for downloads</span>
+                <span class="badge-in">Terminal / IDE of choice</span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-5">
+            <!-- LEFT: Activities -->
+            <div>
+                <div class="section-label">🔧 Activities (Step-by-step)</div>
+                <ol>
+                    <li><strong>Install JDK 21</strong> (Eclipse Temurin) — download from Adoptium.net or use <code>sdkman</code>. Set <code>JAVA_HOME</code>. Verify with <code>java --version</code> and <code>javac --version</code>.</li>
+                    <li><strong>Install Maven 3.9+</strong> — set <code>M2_HOME</code>. Verify with <code>mvn --version</code>. Understand <code>settings.xml</code> for proxy/enterprise repos.</li>
+                    <li><strong>Install Docker Desktop</strong> — enable Docker Compose V2. Verify with <code>docker --version</code> and <code>docker compose version</code>.</li>
+                    <li><strong>Install IDE</strong> — IntelliJ IDEA (recommended) or VS Code with Java Extension Pack. Configure JDK 21 in project settings.</li>
+                    <li><strong>Create the Parent POM</strong> — multi-module Maven project with 3 child modules: <code>bff-gateway</code>, <code>middleware</code>, <code>system-api</code>.</li>
+                    <li><strong>Explore Java 21 features</strong> — write small programs using Records, Pattern Matching for switch, Sealed Classes, Text Blocks. Run them to verify JDK works.</li>
+                </ol>
+
+                <div class="section-label mt-4">📐 Principles Applied</div>
+                <ul>
+                    <li><strong>SOLID (D)</strong> — Dependency Inversion starts at project structure: each module is independent with its own <code>pom.xml</code>.</li>
+                    <li><strong>Clean Code</strong> — Consistent naming from Day 1. Establish conventions: package names, group IDs, artifact naming.</li>
+                    <li><strong>12-Factor App</strong> — Prepare for externalized config; no hardcoded paths.</li>
+                </ul>
+            </div>
+
+            <!-- RIGHT: Code + Config -->
+            <div>
+                <div class="section-label">💻 Code & Configuration</div>
+                <pre style="font-size:0.62rem;user-select:text;-webkit-user-select:text;cursor:text;"><code># 1. Install JDK 21 via SDKMAN
+$ curl -s "https://get.sdkman.io" | bash
+$ sdk install java 21.0.3-tem
+$ java --version
+# openjdk 21.0.3 2024-04-16 LTS
+
+# 2. Install Maven
+$ sdk install maven 3.9.6
+$ mvn --version
+
+# 3. Verify Docker
+$ docker --version
+$ docker compose version</code></pre>
+
+                <pre style="font-size:0.62rem;user-select:text;-webkit-user-select:text;cursor:text;"><code>&lt;!-- Parent pom.xml --&gt;
+&lt;project&gt;
+  &lt;groupId&gt;com.capgemini.training&lt;/groupId&gt;
+  &lt;artifactId&gt;microservices-parent&lt;/artifactId&gt;
+  &lt;version&gt;1.0.0-SNAPSHOT&lt;/version&gt;
+  &lt;packaging&gt;pom&lt;/packaging&gt;
+  &lt;modules&gt;
+    &lt;module&gt;bff-gateway&lt;/module&gt;
+    &lt;module&gt;middleware&lt;/module&gt;
+    &lt;module&gt;system-api&lt;/module&gt;
+  &lt;/modules&gt;
+  &lt;properties&gt;
+    &lt;java.version&gt;21&lt;/java.version&gt;
+    &lt;spring-boot.version&gt;3.2.5&lt;/spring-boot.version&gt;
+    &lt;maven.compiler.source&gt;21&lt;/maven.compiler.source&gt;
+    &lt;maven.compiler.target&gt;21&lt;/maven.compiler.target&gt;
+  &lt;/properties&gt;
+&lt;/project&gt;</code></pre>
+
+                <pre style="font-size:0.62rem;user-select:text;-webkit-user-select:text;cursor:text;"><code>// Java 21 — Record (Immutable DTO)
+public record ProductDTO(
+    UUID id, String name,
+    BigDecimal price, ProductStatus status
+) {}
+
+// Pattern Matching for switch
+String label = switch (status) {
+    case ACTIVE   -&gt; "✅ Available";
+    case ARCHIVED -&gt; "📦 Discontinued";
+    case DRAFT    -&gt; "📝 Coming Soon";
+};</code></pre>
+            </div>
+        </div>
+
+        <!-- EXACT OUTCOMES -->
+        <div class="mt-4">
+            <div class="section-label">✅ Exact Outcomes (Must have by end of Day 1)</div>
+            <div class="grid grid-cols-2 gap-3 mt-2">
+                <div class="outcome-card">
+                    <div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>JDK 21 installed & verified</strong> — <code>java --version</code> outputs <code>openjdk 21.x</code></span></div>
+                </div>
+                <div class="outcome-card">
+                    <div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Maven 3.9+ installed & verified</strong> — <code>mvn --version</code> works, uses JDK 21</span></div>
+                </div>
+                <div class="outcome-card">
+                    <div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Docker Desktop installed</strong> — <code>docker run hello-world</code> succeeds</span></div>
+                </div>
+                <div class="outcome-card">
+                    <div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>IDE configured</strong> — IntelliJ/VSCode with JDK 21 recognized</span></div>
+                </div>
+                <div class="outcome-card">
+                    <div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Parent POM created</strong> — <code>mvn validate</code> on root succeeds with 3 modules listed</span></div>
+                </div>
+                <div class="outcome-card">
+                    <div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Java 21 features tested</strong> — Record, Pattern Matching switch, Text Block all compile & run</span></div>
+                </div>
+                <div class="outcome-card">
+                    <div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Git repo initialized</strong> — <code>.gitignore</code> added (target/, .idea/, *.iml, .DS_Store). Initial commit pushed.</span></div>
+                </div>
+                <div class="outcome-card">
+                    <div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Folder structure exists</strong> — <code>bff-gateway/</code>, <code>middleware/</code>, <code>system-api/</code> directories with child <code>pom.xml</code> files</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- OUTPUT -->
+        <div class="mt-4 mb-2 flex items-center justify-between">
+            <div class="section-label">📤 Output (Deliverable)</div>
+            <span class="badge-out">Git repo with multi-module Maven project + JDK 21 verified</span>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================================== -->
+<!-- SLIDE 6 — DAY 2                                                             -->
+<!-- ========================================================================== -->
+<div class="slide slide-dark bg-grid flex-col sl">
+    <div class="cg-topbar"></div>
+    <div class="mt-2 flex items-center gap-4">
+        <div class="day-circle">D2</div>
+        <div>
+            <div class="flex items-center gap-2 mb-1">
+                <span class="badge-day">DAY 2</span>
+                <span class="badge-phase">Phase 1 — Foundation</span>
+            </div>
+            <h2 class="text-3xl text-white m-0">Spring Boot 3.2 Scaffold & Multi-Module Maven</h2>
+        </div>
+    </div>
+    <div class="accent-line mt-3 mb-3"></div>
+
+    <div class="content-area">
+        <!-- INPUT -->
+        <div class="mb-3">
+            <div class="section-label">📥 Input (What you start with)</div>
+            <div class="flex gap-2 flex-wrap mt-1">
+                <span class="badge-in">Day 1 Git repo with parent POM + 3 empty modules</span>
+                <span class="badge-in">JDK 21, Maven 3.9+, Docker installed</span>
+                <span class="badge-in">IntelliJ / VS Code configured</span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <!-- LEFT: Activities -->
+            <div>
+                <div class="section-label">🔧 Activities (Step-by-step)</div>
+                <ol>
+                    <li><strong>Generate Spring Boot starters</strong> — Use <a href="https://start.spring.io" class="text-cg-cyan underline">start.spring.io</a> to generate each module skeleton with Spring Web, Actuator, DevTools. Import into the parent multi-module.</li>
+                    <li><strong>Configure parent BOM</strong> — Add <code>spring-boot-starter-parent</code> as parent. Define <code>&lt;dependencyManagement&gt;</code> with Spring Cloud BOM for version alignment across all 3 modules.</li>
+                    <li><strong>Wire child modules</strong> — Each child <code>pom.xml</code> inherits from parent. Add <code>spring-boot-maven-plugin</code> with layered JAR support. Ensure <code>mvn clean package -pl system-api</code> builds only one module.</li>
+                    <li><strong>Create Application classes</strong> — <code>@SpringBootApplication</code> in each module. Configure separate <code>server.port</code> values: system-api=8081, middleware=8082, bff-gateway=8080.</li>
+                    <li><strong>Setup application.yml</strong> — Externalized config using profiles: <code>application.yml</code>, <code>application-local.yml</code>, <code>application-docker.yml</code>. Use <code>spring.config.activate.on-profile</code>.</li>
+                    <li><strong>Verify Actuator endpoints</strong> — Start each app, hit <code>/actuator/health</code> and <code>/actuator/info</code>. Confirm JSON responses and HTTP 200.</li>
+                    <li><strong>Run all 3 simultaneously</strong> — Open 3 terminals. Start each module. Verify no port conflicts. Each returns <code>{"status":"UP"}</code> on its health endpoint.</li>
+                </ol>
+
+                <div class="section-label mt-3">📐 Principles Applied</div>
+                <ul>
+                    <li><strong>SOLID (S)</strong> — Single Responsibility: each module owns exactly one layer's concern.</li>
+                    <li><strong>12-Factor #3</strong> — Config stored in environment, not in code. Profile-based YAML files.</li>
+                    <li><strong>DRY</strong> — Shared dependency versions in parent POM; no version duplication in child POMs.</li>
+                    <li><strong>Convention over Configuration</strong> — Spring Boot auto-config reduces boilerplate. Sensible defaults for embedded Tomcat.</li>
+                </ul>
+            </div>
+
+            <!-- RIGHT: Code + Config -->
+            <div>
+                <div class="section-label">💻 Code & Configuration</div>
+                <pre style="font-size:0.62rem;user-select:text;-webkit-user-select:text;cursor:text;"><code>&lt;!-- Parent pom.xml — enhanced --&gt;
+&lt;parent&gt;
+  &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+  &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
+  &lt;version&gt;3.2.5&lt;/version&gt;
+&lt;/parent&gt;
+&lt;dependencyManagement&gt;
+  &lt;dependencies&gt;
+    &lt;dependency&gt;
+      &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+      &lt;artifactId&gt;spring-cloud-dependencies&lt;/artifactId&gt;
+      &lt;version&gt;2023.0.1&lt;/version&gt;
+      &lt;type&gt;pom&lt;/type&gt;
+      &lt;scope&gt;import&lt;/scope&gt;
+    &lt;/dependency&gt;
+  &lt;/dependencies&gt;
+&lt;/dependencyManagement&gt;</code></pre>
+
+                <pre style="font-size:0.62rem;user-select:text;-webkit-user-select:text;cursor:text;"><code># system-api/src/main/resources/application.yml
+spring:
+  application:
+    name: system-api
+  profiles:
+    active: local
+server:
+  port: 8081
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always</code></pre>
+
+                <pre style="font-size:0.62rem;user-select:text;-webkit-user-select:text;cursor:text;"><code>// SystemApiApplication.java
+@SpringBootApplication
+public class SystemApiApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(
+            SystemApiApplication.class, args);
+    }
+}</code></pre>
+
+                <pre style="font-size:0.62rem;user-select:text;-webkit-user-select:text;cursor:text;"><code># Build & verify all modules
+$ mvn clean package -DskipTests
+$ java -jar system-api/target/*.jar &
+$ curl http://localhost:8081/actuator/health
+# {"status":"UP"}
+$ curl http://localhost:8082/actuator/health
+# {"status":"UP"}
+$ curl http://localhost:8080/actuator/health
+# {"status":"UP"}</code></pre>
+            </div>
+        </div>
+
+        <!-- EXACT OUTCOMES -->
+        <div class="mt-3">
+            <div class="section-label">✅ Exact Outcomes (Must have by end of Day 2)</div>
+            <div class="grid grid-cols-2 gap-2 mt-2">
+                <div class="outcome-card" style="background:rgba(0,112,173,0.15);border-color:rgba(0,112,173,0.4);border-left-color:#12ABDB;">
+                    <div class="check-item"><span class="check-icon">✓</span><span class="text-sm" style="color:#E2E8F0;"><strong style="color:#fff;">Parent POM uses spring-boot-starter-parent 3.2.5</strong> — version alignment for all modules via BOM</span></div>
+                </div>
+                <div class="outcome-card" style="background:rgba(0,112,173,0.15);border-color:rgba(0,112,173,0.4);border-left-color:#12ABDB;">
+                    <div class="check-item"><span class="check-icon">✓</span><span class="text-sm" style="color:#E2E8F0;"><strong style="color:#fff;">3 Spring Boot apps compile & run</strong> — <code>mvn clean package</code> from root builds all 3 JARs</span></div>
+                </div>
+                <div class="outcome-card" style="background:rgba(0,112,173,0.15);border-color:rgba(0,112,173,0.4);border-left-color:#12ABDB;">
+                    <div class="check-item"><span class="check-icon">✓</span><span class="text-sm" style="color:#E2E8F0;"><strong style="color:#fff;">Each module has its own port</strong> — system-api:8081, middleware:8082, bff-gateway:8080</span></div>
+                </div>
+                <div class="outcome-card" style="background:rgba(0,112,173,0.15);border-color:rgba(0,112,173,0.4);border-left-color:#12ABDB;">
+                    <div class="check-item"><span class="check-icon">✓</span><span class="text-sm" style="color:#E2E8F0;"><strong style="color:#fff;">Actuator health endpoints live</strong> — <code>/actuator/health</code> returns <code>{"status":"UP"}</code> for each</span></div>
+                </div>
+                <div class="outcome-card" style="background:rgba(0,112,173,0.15);border-color:rgba(0,112,173,0.4);border-left-color:#12ABDB;">
+                    <div class="check-item"><span class="check-icon">✓</span><span class="text-sm" style="color:#E2E8F0;"><strong style="color:#fff;">Profile-based config in place</strong> — <code>application.yml</code> + <code>application-local.yml</code> + <code>application-docker.yml</code></span></div>
+                </div>
+                <div class="outcome-card" style="background:rgba(0,112,173,0.15);border-color:rgba(0,112,173,0.4);border-left-color:#12ABDB;">
+                    <div class="check-item"><span class="check-icon">✓</span><span class="text-sm" style="color:#E2E8F0;"><strong style="color:#fff;">Spring Cloud BOM imported</strong> — <code>dependencyManagement</code> in parent POM with <code>2023.0.1</code></span></div>
+                </div>
+                <div class="outcome-card" style="background:rgba(0,112,173,0.15);border-color:rgba(0,112,173,0.4);border-left-color:#12ABDB;">
+                    <div class="check-item"><span class="check-icon">✓</span><span class="text-sm" style="color:#E2E8F0;"><strong style="color:#fff;">Layered JAR enabled</strong> — <code>spring-boot-maven-plugin</code> with layers configuration in each child</span></div>
+                </div>
+                <div class="outcome-card" style="background:rgba(0,112,173,0.15);border-color:rgba(0,112,173,0.4);border-left-color:#12ABDB;">
+                    <div class="check-item"><span class="check-icon">✓</span><span class="text-sm" style="color:#E2E8F0;"><strong style="color:#fff;">All 3 run simultaneously</strong> — No port conflicts; <code>curl</code> to each health endpoint succeeds</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- OUTPUT -->
+        <div class="mt-3 mb-2 flex items-center justify-between">
+            <div class="section-label">📤 Output (Deliverable)</div>
+            <span class="badge-out">3 Spring Boot 3.2 apps running on separate ports with Actuator health checks</span>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================================== -->
+<!-- SLIDE 7 — DAY 3                                                             -->
+<!-- ========================================================================== -->
+<div class="slide slide-dark bg-grid flex-col sl">
+    <div class="cg-topbar"></div>
+    <div class="mt-2 flex items-center gap-4">
+        <div class="day-circle">D3</div>
+        <div>
+            <div class="flex items-center gap-2 mb-1">
+                <span class="badge-day">DAY 3</span>
+                <span class="badge-phase">Phase 1 — Foundation</span>
+            </div>
+            <h2 class="text-3xl text-white m-0">Hexagonal Architecture & Clean Package Structure</h2>
+        </div>
+    </div>
+    <div class="accent-line mt-3 mb-3"></div>
+
+    <div class="content-area">
+        <!-- INPUT -->
+        <div class="mb-4">
+            <div class="section-label">📥 Input (What you start with)</div>
+            <div class="flex gap-2 flex-wrap mt-1">
+                <span class="badge-in">Day 2 — 3 running Spring Boot apps with Actuator health</span>
+                <span class="badge-in">Flat/default package structure (single package per module)</span>
+                <span class="badge-in">No internal architecture yet — just @SpringBootApplication classes</span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-5">
+            <!-- LEFT: Activities -->
+            <div>
+                <div class="section-label">🔧 Activities (Step-by-step)</div>
+                <ol>
+                    <li><strong>Understand Hexagonal Architecture</strong> — Study Ports & Adapters pattern. The domain (business logic) sits at the centre. Inbound adapters (REST controllers) call domain ports. Outbound adapters (JPA repos, Feign clients) implement domain ports. Dependencies flow <em>inward</em> only.</li>
+                    <li><strong>Create package structure in system-api</strong> — Organize into 5 top-level packages: <code>adapter.in.web</code>, <code>adapter.out.persistence</code>, <code>application.port.in</code>, <code>application.port.out</code>, and <code>domain.model</code>. This is the template for all 3 modules.</li>
+                    <li><strong>Create package structure in middleware</strong> — Same pattern but outbound adapter is <code>adapter.out.feign</code> (calls to system-api via OpenFeign) instead of persistence. Add <code>adapter.in.web</code> for its own REST controllers.</li>
+                    <li><strong>Create package structure in bff-gateway</strong> — Lighter: <code>config</code> (gateway routes, security), <code>filter</code> (custom gateway filters), <code>aggregation</code> (response composers). Gateway is reactive — less traditional hex layers.</li>
+                    <li><strong>Define Port interfaces</strong> — In system-api, create <code>CreateProductUseCase</code> (inbound port interface) and <code>LoadProductPort</code> (outbound port interface). Write them as plain Java interfaces — no Spring annotations.</li>
+                    <li><strong>Wire with Spring DI</strong> — Create a <code>@Service</code> class that implements inbound ports and uses injected outbound ports. The controller calls the inbound port, not the service directly. The service calls the outbound port, not the repository directly.</li>
+                    <li><strong>Enforce dependency rules</strong> — Verify: <code>domain.model</code> imports ZERO Spring classes. <code>application.port.*</code> imports ZERO adapter classes. Only adapters import Spring/JPA/Feign. Use <code>ArchUnit</code> to codify this.</li>
+                    <li><strong>Add ArchUnit dependency</strong> — Add <code>com.tngtech.archunit:archunit-junit5</code> to the parent POM. Write a single architecture test that fails if domain imports adapter classes.</li>
+                </ol>
+
+                <div class="section-label mt-4">📐 Principles Applied</div>
+                <ul>
+                    <li><strong>SOLID (D)</strong> — Dependency Inversion: high-level domain depends on abstractions (ports), not low-level adapters (JPA, Feign).</li>
+                    <li><strong>SOLID (I)</strong> — Interface Segregation: separate inbound port per use case (<code>CreateProductUseCase</code>, <code>GetProductUseCase</code>) — not one fat interface.</li>
+                    <li><strong>SOLID (O)</strong> — Open/Closed: add new adapters (e.g., gRPC) without changing domain. Just implement the port.</li>
+                    <li><strong>Clean Architecture</strong> — Domain has zero framework dependencies. Testable in isolation with plain JUnit — no Spring context needed.</li>
+                    <li><strong>Hexagonal / Ports & Adapters</strong> — Application core is framework-agnostic. Swap PostgreSQL for MongoDB by changing only the outbound adapter.</li>
+                </ul>
+            </div>
+
+            <!-- RIGHT: Code + Config + Diagram -->
+            <div>
+                <div class="section-label">💻 Package Structure (system-api)</div>
+                <pre style="font-size:0.62rem;user-select:text;-webkit-user-select:text;cursor:text;"><code>com.capgemini.training.systemapi/
+├── SystemApiApplication.java
+│
+├── adapter/
+│   ├── in/
+│   │   └── web/
+│   │       ├── ProductController.java    ← @RestController
+│   │       ├── ProductRequest.java       ← Inbound DTO
+│   │       └── ProductResponse.java      ← Outbound DTO
+│   └── out/
+│       └── persistence/
+│           ├── ProductJpaEntity.java      ← @Entity
+│           ├── ProductJpaRepository.java  ← JpaRepository
+│           └── ProductPersistenceAdapter.java ← implements LoadProductPort
+│
+├── application/
+│   ├── port/
+│   │   ├── in/
+│   │   │   ├── CreateProductUseCase.java ← interface
+│   │   │   └── GetProductUseCase.java    ← interface
+│   │   └── out/
+│   │       ├── LoadProductPort.java      ← interface
+│   │       └── SaveProductPort.java      ← interface
+│   └── service/
+│       └── ProductService.java           ← implements UseCases, uses Ports
+│
+└── domain/
+    └── model/
+        ├── Product.java                  ← Pure domain entity (no @Entity!)
+        └── ProductStatus.java            ← Enum / Sealed type</code></pre>
+
+                <div class="section-label mt-3">💻 Port & Adapter Wiring</div>
+                <pre style="font-size:0.62rem;user-select:text;-webkit-user-select:text;cursor:text;"><code>// ── Inbound Port (interface) ──
+public interface CreateProductUseCase {
+    Product create(CreateProductCommand cmd);
+}
+
+// ── Outbound Port (interface) ──
+public interface SaveProductPort {
+    Product save(Product product);
+}
+
+// ── Domain Service (implements inbound, uses outbound) ──
+@Service
+@RequiredArgsConstructor
+public class ProductService
+        implements CreateProductUseCase {
+
+    private final SaveProductPort savePort;  // outbound
+
+    @Override
+    public Product create(CreateProductCommand cmd) {
+        Product product = Product.from(cmd);  // domain logic
+        return savePort.save(product);
+    }
+}
+
+// ── Outbound Adapter (implements outbound port) ──
+@Component
+@RequiredArgsConstructor
+public class ProductPersistenceAdapter
+        implements SaveProductPort {
+
+    private final ProductJpaRepository repo;
+
+    @Override
+    public Product save(Product product) {
+        ProductJpaEntity entity = toEntity(product);
+        return toDomain(repo.save(entity));
+    }
+}</code></pre>
+
+                <div class="section-label mt-3">💻 ArchUnit Test</div>
+                <pre style="font-size:0.62rem;user-select:text;-webkit-user-select:text;cursor:text;"><code>@AnalyzeClasses(packages = "com.capgemini.training.systemapi")
+class ArchitectureTest {
+
+    @ArchTest
+    static final ArchRule domain_must_not_depend_on_adapters =
+        noClasses()
+            .that().resideInAPackage("..domain..")
+            .should().dependOnClassesThat()
+            .resideInAnyPackage(
+                "..adapter..", "..application.service..");
+
+    @ArchTest
+    static final ArchRule domain_must_not_use_spring =
+        noClasses()
+            .that().resideInAPackage("..domain..")
+            .should().dependOnClassesThat()
+            .resideInAPackage("org.springframework..");
+}</code></pre>
+            </div>
+        </div>
+
+        <!-- VISUAL: Hex Architecture Diagram -->
+        <div class="mt-4 mb-3">
+            <div class="section-label">🔷 Hexagonal Architecture — Visual</div>
+            <div class="bg-cg-navy-mid rounded-xl p-4 border border-cg-navy-light mt-2">
+                <div class="grid grid-cols-5 gap-2 items-center text-center text-xs">
+                    <!-- Inbound Adapters -->
+                    <div class="rounded-lg p-3 border-2 border-cg-blue" style="background:rgba(0,112,173,0.15);">
+                        <div class="text-cg-cyan font-bold mb-1">⬅ Inbound Adapters</div>
+                        <div class="text-gray-400">REST Controllers</div>
+                        <div class="text-gray-500 mt-1" style="font-size:0.65rem;">Receives HTTP requests.<br>Calls <strong>Use Case Ports</strong>.<br>Maps DTOs → Commands.</div>
+                    </div>
+                    <!-- Arrow -->
+                    <div class="text-cg-cyan text-2xl font-bold">→</div>
+                    <!-- Domain Core -->
+                    <div class="rounded-lg p-3 border-2 border-cg-teal" style="background:rgba(0,179,136,0.1);">
+                        <div class="text-cg-teal font-bold mb-1">⬡ Domain Core</div>
+                        <div class="text-gray-400">Pure Business Logic</div>
+                        <div class="text-gray-500 mt-1" style="font-size:0.65rem;"><strong>ZERO</strong> framework imports.<br>Entities, Value Objects,<br>Domain Services, Events.</div>
+                    </div>
+                    <!-- Arrow -->
+                    <div class="text-cg-yellow text-2xl font-bold">→</div>
+                    <!-- Outbound Adapters -->
+                    <div class="rounded-lg p-3 border-2 border-cg-yellow" style="background:rgba(255,184,25,0.1);">
+                        <div class="text-cg-yellow font-bold mb-1">Outbound Adapters ➡</div>
+                        <div class="text-gray-400">JPA / Feign / Kafka</div>
+                        <div class="text-gray-500 mt-1" style="font-size:0.65rem;">Implements <strong>Out Ports</strong>.<br>JPA entities, repos,<br>Feign clients, messaging.</div>
+                    </div>
+                </div>
+                <div class="text-center mt-3">
+                    <span class="text-gray-500 text-xs">⚡ The golden rule: <strong class="text-cg-cyan">Dependencies always point inward</strong>. Domain never imports adapters. Adapters implement ports defined by the domain.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- EXACT OUTCOMES -->
+        <div class="mt-3">
+            <div class="section-label">✅ Exact Outcomes (Must have by end of Day 3)</div>
+            <div class="grid grid-cols-2 gap-3 mt-2">
+                <div class="outcome-card">
+                    <div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>system-api has hexagonal package structure</strong> — <code>adapter.in.web</code>, <code>adapter.out.persistence</code>, <code>application.port.in</code>, <code>application.port.out</code>, <code>domain.model</code></span></div>
+                </div>
+                <div class="outcome-card">
+                    <div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>middleware has hexagonal package structure</strong> — Same as system-api but <code>adapter.out.feign</code> instead of persistence</span></div>
+                </div>
+                <div class="outcome-card">
+                    <div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>bff-gateway has config/filter/aggregation packages</strong> — Lighter structure appropriate for a reactive gateway</span></div>
+                </div>
+                <div class="outcome-card">
+                    <div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>At least 2 inbound port interfaces exist</strong> — <code>CreateProductUseCase</code> and <code>GetProductUseCase</code> in system-api</span></div>
+                </div>
+                <div class="outcome-card">
+                    <div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>At least 2 outbound port interfaces exist</strong> — <code>LoadProductPort</code> and <code>SaveProductPort</code> in system-api</span></div>
+                </div>
+                <div class="outcome-card">
+                    <div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>ProductService implements inbound ports</strong> — Uses constructor injection of outbound ports. <em>Not</em> calling repositories directly.</span></div>
+                </div>
+                <div class="outcome-card">
+                    <div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>domain.model has ZERO Spring imports</strong> — <code>Product.java</code> is a plain Java class (or Record). No <code>@Entity</code>, no <code>@Component</code>.</span></div>
+                </div>
+                <div class="outcome-card">
+                    <div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>ArchUnit test passes</strong> — <code>mvn test</code> runs architecture test: domain cannot depend on adapters or Spring.</span></div>
+                </div>
+                <div class="outcome-card">
+                    <div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>Separate JPA entity from domain entity</strong> — <code>ProductJpaEntity</code> (with <code>@Entity</code>) in adapter. <code>Product</code> (clean) in domain. Mapper methods bridge them.</span></div>
+                </div>
+                <div class="outcome-card">
+                    <div class="check-item"><span class="check-icon">✓</span><span class="text-sm"><strong>All 3 modules still compile & run</strong> — <code>mvn clean package</code> succeeds. Actuator health still <code>UP</code> on all ports.</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- OUTPUT -->
+        <div class="mt-4 mb-2 flex items-center justify-between">
+            <div class="section-label">📤 Output (Deliverable)</div>
+            <span class="badge-out">Hexagonal package structure in all 3 modules + ArchUnit tests enforcing dependency rules</span>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================================== -->
+<!-- SLIDE 8 — DAY 4                                                             -->
+<!-- ========================================================================== -->
+<div class="slide slide-dark bg-grid flex-col sl">
+    <div class="cg-topbar"></div>
+    <div class="mt-2 flex items-center gap-4">
+        <div class="day-circle">D4</div>
+        <div>
+            <div class="flex items-center gap-2 mb-1">
+                <span class="badge-day">DAY 4</span>
+                <span class="badge-phase">Phase 1 — Foundation</span>
+            </div>
+            <h2 class="text-3xl text-white m-0">Docker Multi-Stage Builds & Containerization</h2>
+        </div>
+    </div>
+    <div class="accent-line mt-3 mb-3"></div>
+    <div class="content-area">
+        <div class="mb-3">
+            <div class="section-label">📥 Input</div>
+            <div class="flex gap-2 flex-wrap mt-1">
+                <span class="badge-in">Day 3 — 3 modules with hexagonal structure, all compile</span>
+                <span class="badge-in">Docker Desktop installed & running</span>
+                <span class="badge-in">Spring Boot layered JAR plugin configured</span>
+            </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <div class="section-label">🔧 Activities</div>
+                <ol>
+                    <li><strong>Write multi-stage Dockerfile for system-api</strong> — Stage 1: Maven build using <code>eclipse-temurin:21-jdk</code>. Stage 2: Runtime using <code>eclipse-temurin:21-jre-alpine</code>. Copy only the layered JAR. Final image &lt;200MB.</li>
+                    <li><strong>Understand Docker layers</strong> — Spring Boot layered JARs split into dependencies, spring-boot-loader, snapshot-dependencies, and application. Leverage Docker layer caching: dependencies change rarely → cached.</li>
+                    <li><strong>Create Dockerfiles for middleware & bff-gateway</strong> — Same multi-stage pattern. Parameterize module name via <code>ARG</code>.</li>
+                    <li><strong>Build images locally</strong> — <code>docker build -t system-api:latest -f system-api/Dockerfile .</code> for each. Verify with <code>docker images</code>.</li>
+                    <li><strong>Run containers individually</strong> — <code>docker run -p 8081:8081 system-api:latest</code>. Hit <code>/actuator/health</code> from host. Verify port mapping.</li>
+                    <li><strong>Optimize image size</strong> — Use <code>.dockerignore</code> to exclude <code>.git</code>, <code>target/</code>, <code>.idea/</code>. Compare image sizes before/after. Target: &lt;200MB per image.</li>
+                    <li><strong>Add non-root user</strong> — Security best practice: <code>RUN addgroup -S app && adduser -S app -G app</code> then <code>USER app</code>. Never run containers as root.</li>
+                    <li><strong>Tag images with version</strong> — <code>docker tag system-api:latest system-api:1.0.0</code>. Understand semantic versioning for container images.</li>
+                </ol>
+                <div class="section-label mt-3">📐 Principles</div>
+                <ul>
+                    <li><strong>12-Factor #5</strong> — Strictly separate build and run stages. Multi-stage builds enforce this.</li>
+                    <li><strong>Security</strong> — Non-root container user. Minimal base image (Alpine). No build tools in runtime.</li>
+                    <li><strong>OWASP</strong> — Scan base images with <code>docker scout</code> for known CVEs.</li>
+                </ul>
+            </div>
+            <div>
+                <div class="section-label">💻 Dockerfile (system-api)</div>
+                <pre style="font-size:0.65rem;user-select:text;-webkit-user-select:text;cursor:text;"><code># ── Stage 1: Build ──
+FROM eclipse-temurin:21-jdk AS build
+WORKDIR /workspace
+COPY pom.xml .
+COPY system-api/pom.xml system-api/
+# Cache dependencies
+RUN mvn dependency:go-offline -pl system-api -am
+COPY system-api/src system-api/src
+RUN mvn clean package -pl system-api -DskipTests
+
+# ── Stage 2: Runtime ──
+FROM eclipse-temurin:21-jre-alpine
+RUN addgroup -S app && adduser -S app -G app
+WORKDIR /app
+COPY --from=build /workspace/system-api/target/*.jar app.jar
+USER app
+EXPOSE 8081
+ENTRYPOINT ["java", \
+  "-XX:+UseZGC", \
+  "-XX:MaxRAMPercentage=75.0", \
+  "-jar", "app.jar"]</code></pre>
+                <div class="section-label mt-3">💻 .dockerignore</div>
+                <pre style="font-size:0.65rem;user-select:text;-webkit-user-select:text;cursor:text;"><code>.git
+.idea
+*.iml
+**/target
+**/.DS_Store
+*.md
+docker-compose*.yml</code></pre>
+                <div class="section-label mt-3">💻 Build & Run Commands</div>
+                <pre style="font-size:0.65rem;user-select:text;-webkit-user-select:text;cursor:text;"><code># Build all 3 images
+$ docker build -t system-api:1.0.0 \
+    -f system-api/Dockerfile .
+$ docker build -t middleware:1.0.0 \
+    -f middleware/Dockerfile .
+$ docker build -t bff-gateway:1.0.0 \
+    -f bff-gateway/Dockerfile .
+
+# Verify sizes
+$ docker images | grep -E "system|middle|bff"
+# system-api    1.0.0   ~185MB
+# middleware    1.0.0   ~185MB
+# bff-gateway   1.0.0   ~185MB
+
+# Run & test
+$ docker run -d -p 8081:8081 system-api:1.0.0
+$ curl http://localhost:8081/actuator/health
+# {"status":"UP"}</code></pre>
+            </div>
+        </div>
+        <div class="mt-3">
+            <div class="section-label">✅ Exact Outcomes (Day 4)</div>
+            <div class="grid grid-cols-2 gap-2 mt-2">
+                <div class="outcome-card" style="background:rgba(0,112,173,0.15);border-color:rgba(0,112,173,0.4);border-left-color:#12ABDB;">
+                    <div class="check-item"><span class="check-icon">✓</span><span class="text-sm" style="color:#E2E8F0;"><strong style="color:#fff;">Multi-stage Dockerfile for each module</strong> — Build stage (JDK) + Runtime stage (JRE Alpine)</span></div>
+                </div>
+                <div class="outcome-card" style="background:rgba(0,112,173,0.15);border-color:rgba(0,112,173,0.4);border-left-color:#12ABDB;">
+                    <div class="check-item"><span class="check-icon">✓</span><span class="text-sm" style="color:#E2E8F0;"><strong style="color:#fff;">3 Docker images built</strong> — <code>docker images</code> shows system-api, middleware, bff-gateway</span></div>
+                </div>
+                <div class="outcome-card" style="background:rgba(0,112,173,0.15);border-color:rgba(0,112,173,0.4);border-left-color:#12ABDB;">
+                    <div class="check-item"><span class="check-icon">✓</span><span class="text-sm" style="color:#E2E8F0;"><strong style="color:#fff;">Each image &lt;200MB</strong> — Alpine JRE base, no build tools in runtime</span></div>
+                </div>
+                <div class="outcome-card" style="background:rgba(0,112,173,0.15);border-color:rgba(0,112,173,0.4);border-left-color:#12ABDB;">
+                    <div class="check-item"><span class="check-icon">✓</span><span class="text-sm" style="color:#E2E8F0;"><strong style="color:#fff;">Non-root user in all containers</strong> — <code>USER app</code> directive in every Dockerfile</span></div>
+                </div>
+                <div class="outcome-card" style="background:rgba(0,112,173,0.15);border-color:rgba(0,112,173,0.4);border-left-color:#12ABDB;">
+                    <div class="check-item"><span class="check-icon">✓</span><span class="text-sm" style="color:#E2E8F0;"><strong style="color:#fff;">.dockerignore present</strong> — Excludes .git, target/, .idea/ from build context</span></div>
+                </div>
+                <div class="outcome-card" style="background:rgba(0,112,173,0.15);border-color:rgba(0,112,173,0.4);border-left-color:#12ABDB;">
+                    <div class="check-item"><span class="check-icon">✓</span><span class="text-sm" style="color:#E2E8F0;"><strong style="color:#fff;">Containers run and pass health checks</strong> — <code>curl /actuator/health</code> returns UP from each container</span></div>
+                </div>
+                <div class="outcome-card" style="background:rgba(0,112,173,0.15);border-color:rgba(0,112,173,0.4);border-left-color:#12ABDB;">
+                    <div class="check-item"><span class="check-icon">✓</span><span class="text-sm" style="color:#E2E8F0;"><strong style="color:#fff;">ZGC garbage collector configured</strong> — <code>-XX:+UseZGC</code> in ENTRYPOINT for low-latency GC</span></div>
+                </div>
+                <div class="outcome-card" style="background:rgba(0,112,173,0.15);border-color:rgba(0,112,173,0.4);border-left-color:#12ABDB;">
+                    <div class="check-item"><span class="check-icon">✓</span><span class="text-sm" style="color:#E2E8F0;"><strong style="color:#fff;">Images tagged with version</strong> — <code>:1.0.0</code> and <code>:latest</code> tags applied</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-3 mb-2 flex items-center justify-between">
+            <div class="section-label">📤 Output</div>
+            <span class="badge-out">3 optimized Docker images (&lt;200MB each) with non-root user, ZGC, health checks passing</span>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================================== -->
+<!-- SLIDE 9 — DAY 5                                                             -->
+<!-- ========================================================================== -->
+<div class="slide slide-dark bg-grid flex-col sl">
+    <div class="cg-topbar"></div>
+    <div class="mt-2 flex items-center gap-4">
+        <div class="day-circle">D5</div>
+        <div>
+            <div class="flex items-center gap-2 mb-1">
+                <span class="badge-day">DAY 5</span>
+                <span class="badge-phase">Phase 1 — Foundation</span>
+            </div>
+            <h2 class="text-3xl text-white m-0">Docker Compose & Service Networking</h2>
+        </div>
+    </div>
+    <div class="accent-line mt-3 mb-3"></div>
+    <div class="content-area">
+        <div class="mb-3">
+            <div class="section-label">📥 Input</div>
+            <div class="flex gap-2 flex-wrap mt-1">
+                <span class="badge-in">Day 4 — 3 Docker images built and tested individually</span>
+                <span class="badge-in">Docker Compose V2 installed</span>
+            </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <div class="section-label">🔧 Activities</div>
+                <ol>
+                    <li><strong>Create docker-compose.yml</strong> — Define all 3 services + PostgreSQL. Use custom bridge network <code>training-net</code>. Services communicate via container names as hostnames.</li>
+                    <li><strong>Configure PostgreSQL service</strong> — Use <code>postgres:16-alpine</code>. Set <code>POSTGRES_DB</code>, <code>POSTGRES_USER</code>, <code>POSTGRES_PASSWORD</code> via environment. Mount named volume for data persistence.</li>
+                    <li><strong>Add health checks</strong> — PostgreSQL: <code>pg_isready</code>. Spring Boot apps: <code>curl /actuator/health</code>. Use <code>depends_on</code> with <code>condition: service_healthy</code> for startup ordering.</li>
+                    <li><strong>Wire environment variables</strong> — Pass <code>SPRING_PROFILES_ACTIVE=docker</code> and DB connection URL via compose environment section. No hardcoded values.</li>
+                    <li><strong>Boot the full stack</strong> — <code>docker compose up -d</code>. Watch logs with <code>docker compose logs -f</code>. Verify all 4 containers are healthy.</li>
+                    <li><strong>Test inter-service connectivity</strong> — Exec into middleware container, <code>curl http://system-api:8081/actuator/health</code>. Verify DNS resolution across Docker network.</li>
+                    <li><strong>Add resource limits</strong> — Set <code>deploy.resources.limits</code> (256MB RAM, 0.5 CPU) per service. Simulate constrained production environments.</li>
+                    <li><strong>Create compose profiles</strong> — <code>docker compose --profile monitoring up</code> for optional services. Prepare for Prometheus/Grafana later.</li>
+                </ol>
+                <div class="section-label mt-3">📐 Principles</div>
+                <ul>
+                    <li><strong>12-Factor #4</strong> — Backing services (PostgreSQL) treated as attached resources via URL config.</li>
+                    <li><strong>12-Factor #10</strong> — Dev/prod parity: Docker Compose mirrors production topology.</li>
+                    <li><strong>Defense in Depth</strong> — Internal services not exposed to host. Only BFF port mapped.</li>
+                </ul>
+            </div>
+            <div>
+                <div class="section-label">💻 docker-compose.yml</div>
+                <pre style="font-size:0.62rem;user-select:text;-webkit-user-select:text;cursor:text;"><code>version: '3.9'
+networks:
+  training-net:
+    driver: bridge
+
+volumes:
+  pgdata:
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: training
+      POSTGRES_USER: appuser
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
+    volumes: [pgdata:/var/lib/postgresql/data]
+    networks: [training-net]
+    ports: ["5432:5432"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U appuser"]
+      interval: 5s
+      retries: 5
+
+  system-api:
+    build: { context: ., dockerfile: system-api/Dockerfile }
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/training
+      SPRING_DATASOURCE_USERNAME: appuser
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-secret}
+    depends_on:
+      postgres: { condition: service_healthy }
+    networks: [training-net]
+    deploy:
+      resources: { limits: { memory: 512M } }
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/actuator/health"]
+      interval: 10s
+      retries: 5
+
+  middleware:
+    build: { context: ., dockerfile: middleware/Dockerfile }
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SYSTEM_API_URL: http://system-api:8081
+    depends_on:
+      system-api: { condition: service_healthy }
+    networks: [training-net]
+
+  bff-gateway:
+    build: { context: ., dockerfile: bff-gateway/Dockerfile }
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      MIDDLEWARE_URL: http://middleware:8082
+    depends_on:
+      middleware: { condition: service_healthy }
+    networks: [training-net]
+    ports: ["8080:8080"]</code></pre>
+            </div>
+        </div>
+        <div class="mt-3">
+            <div class="section-label">✅ Exact Outcomes (Day 5)</div>
+            <div class="grid grid-cols-2 gap-2 mt-2">
+                <div class="outcome-card" style="background:rgba(0,112,173,0.15);border-color:rgba(0,112,173,0.4);border-left-color:#12ABDB;">
+                    <div class="check-item"><span class="check-icon">✓</span><span class="text-sm" style="color:#E2E8F0;"><strong style="color:#fff;">docker-compose.yml with 4 services</strong> — postgres, system-api, middleware, bff-gateway</span></div>
+                </div>
+                <div class="outcome-card" style="background:rgba(0,112,173,0.15);border-color:rgba(0,112,173,0.4);border-left-color:#12ABDB;">
+                    <div class="check-item"><span class="check-icon">✓</span><span class="text-sm" style="color:#E2E8F0;"><strong style="color:#fff;"><code>docker compose up -d</code> boots all 4 containers</strong> — All show "healthy" in <code>docker compose ps</code></span></div>
+                </div>
+                <div class="outcome-card" style="background:rgba(0,112,173,0.15);border-color:rgba(0,112,173,0.4);border-left-color:#12ABDB;">
+                    <div class="check-item"><span class="check-icon">✓</span><span class="text-sm" style="color:#E2E8F0;"><strong style="color:#fff;">Health checks defined for every service</strong> — <code>pg_isready</code> for DB, <code>curl /actuator/health</code> for apps</span></div>
+                </div>
+                <div class="outcome-card" style="background:rgba(0,112,173,0.15);border-color:rgba(0,112,173,0.4);border-left-color:#12ABDB;">
+                    <div class="check-item"><span class="check-icon">✓</span><span class="text-sm" style="color:#E2E8F0;"><strong style="color:#fff;">Startup ordering enforced</strong> — <code>depends_on: condition: service_healthy</code> chain</span></div>
+                </div>
+                <div class="outcome-card" style="background:rgba(0,112,173,0.15);border-color:rgba(0,112,173,0.4);border-left-color:#12ABDB;">
+                    <div class="check-item"><span class="check-icon">✓</span><span class="text-sm" style="color:#E2E8F0;"><strong style="color:#fff;">Inter-service DNS works</strong> — <code>curl http://system-api:8081</code> from inside middleware container succeeds</span></div>
+                </div>
+                <div class="outcome-card" style="background:rgba(0,112,173,0.15);border-color:rgba(0,112,173,0.4);border-left-color:#12ABDB;">
+                    <div class="check-item"><span class="check-icon">✓</span><span class="text-sm" style="color:#E2E8F0;"><strong style="color:#fff;">Only BFF port (8080) exposed to host</strong> — Internal services accessible only within Docker network</span></div>
+                </div>
+                <div class="outcome-card" style="background:rgba(0,112,173,0.15);border-color:rgba(0,112,173,0.4);border-left-color:#12ABDB;">
+                    <div class="check-item"><span class="check-icon">✓</span><span class="text-sm" style="color:#E2E8F0;"><strong style="color:#fff;">PostgreSQL data persisted</strong> — Named volume <code>pgdata</code>. <code>docker compose down</code> + <code>up</code> retains data</span></div>
+                </div>
+                <div class="outcome-card" style="background:rgba(0,112,173,0.15);border-color:rgba(0,112,173,0.4);border-left-color:#12ABDB;">
+                    <div class="check-item"><span class="check-icon">✓</span><span class="text-sm" style="color:#E2E8F0;"><strong style="color:#fff;">Environment variables externalized</strong> — DB password via <code>${DB_PASSWORD}</code>. No secrets in compose file</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-3 mb-2 flex items-center justify-between">
+            <div class="section-label">📤 Output</div>
+            <span class="badge-out">Full docker-compose stack: 3 services + PostgreSQL, networked, health-checked, ordered startup</span>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================================== -->
+</div><!-- end page-wrapper -->
+
+<button id="back-to-top" title="Back to top" aria-label="Back to top">↑</button>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // ── Code copy buttons ──
+    document.querySelectorAll('pre').forEach((pre, idx) => {
+        if (getComputedStyle(pre).position === 'static') pre.style.position = 'relative';
+        const btn = document.createElement('button');
+        btn.className = 'code-copy-btn';
+        btn.textContent = 'COPY';
+        btn.type = 'button';
+        pre.insertBefore(btn, pre.firstChild);
+        btn.addEventListener('click', async (e) => {
+            e.preventDefault(); e.stopPropagation();
+            const code = pre.querySelector('code');
+            const text = (code ? code.innerText : pre.innerText) || '';
+            if (!text) return;
+            try {
+                await navigator.clipboard.writeText(text);
+                btn.textContent = '✓ COPIED'; btn.classList.add('copied');
+            } catch {
+                const ta = document.createElement('textarea');
+                ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+                document.body.appendChild(ta); ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                btn.textContent = '✓ COPIED'; btn.classList.add('copied');
+            }
+            setTimeout(() => { btn.textContent = 'COPY'; btn.classList.remove('copied'); }, 2500);
+        });
+    });
+
+    // ── Auto-wrap slide headers (elements before .content-area) ──
+    document.querySelectorAll('.slide').forEach(slide => {
+        const ca = slide.querySelector('.content-area');
+        if (!ca) return;
+        const nodes = [];
+        let node = slide.firstElementChild;
+        while (node && node !== ca) { nodes.push(node); node = node.nextElementSibling; }
+        if (nodes.length > 0) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'slide-header';
+            slide.insertBefore(wrapper, nodes[0]);
+            nodes.forEach(n => wrapper.appendChild(n));
+        }
+    });
+
+    // ── Back-to-top button ──
+    const btn = document.getElementById('back-to-top');
+    window.addEventListener('scroll', () => {
+        btn.classList.toggle('visible', window.scrollY > 400);
+    });
+    btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+});
+</script>
+
+</body>
+</html>
