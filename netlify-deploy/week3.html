@@ -14,6 +14,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
+            corePlugins: { preflight: false },
             theme: {
                 extend: {
                     colors: {
@@ -236,9 +237,9 @@
         .slide-light .section-label, .slide-white .section-label { color: #0070AD; }
 
         .badge-in {
-            background: rgba(18,171,219,0.12);
-            color: #12ABDB;
-            border: 1px solid rgba(18,171,219,0.3);
+            background: #0070AD;
+            color: #ffffff;
+            border: 1px solid #12ABDB;
             padding: 0.15rem 0.65rem;
             border-radius: 999px;
             font-size: 0.7rem;
@@ -246,9 +247,9 @@
             display: inline-block;
         }
         .badge-out {
-            background: rgba(0,179,136,0.1);
-            color: #00B388;
-            border: 1px solid rgba(0,179,136,0.25);
+            background: #00875A;
+            color: #ffffff;
+            border: 1px solid #00B388;
             padding: 0.15rem 0.65rem;
             border-radius: 999px;
             font-size: 0.7rem;
@@ -418,6 +419,24 @@
         .slide-light a, .slide-white a { color: #0070AD; }
         .slide-light .check-icon, .slide-white .check-icon { color: #00875A; }
         .slide-light .section-label, .slide-white .section-label { color: #005A8C; font-weight: 700; }
+        /* ── Badge contrast on light backgrounds ── */
+        .slide-light .badge-in, .slide-white .badge-in {
+            background: #0070AD !important;
+            color: #ffffff !important;
+            border: 1px solid #005A8C !important;
+            font-weight: 700 !important;
+        }
+        .slide-light .badge-out, .slide-white .badge-out {
+            background: #00875A !important;
+            color: #ffffff !important;
+            border: 1px solid #006644 !important;
+            font-weight: 700 !important;
+        }
+        .slide-light .badge-phase, .slide-white .badge-phase {
+            background: #0070AD !important;
+            color: #ffffff !important;
+            border: 1px solid #005A8C !important;
+        }
 
         /* ====================== DARK SLIDE TEXT VISIBILITY ====================== */
         .slide-dark .badge-phase { color: #7DD3E8; background: rgba(18,171,219,0.15); border-color: rgba(18,171,219,0.35); }
@@ -706,22 +725,22 @@ feign:
             </div>
         </div>
         <div class="grid grid-cols-2 gap-5">
-            <div>
-                <div class="section-label">🔧 Activities</div>
-                <ol>
-                    <li><strong>Compose multiple downstream calls</strong> — Fetch product + category + supplier from system-api in a single middleware endpoint. Aggregate into a rich response: <code>ProductDetailView</code>.</li>
-                    <li><strong>Implement parallel calls</strong> — Use <code>CompletableFuture.supplyAsync()</code> to call product, category, and supplier endpoints in parallel. Combine results with <code>allOf()</code>.</li>
-                    <li><strong>Add business rules</strong> — Calculate tax, apply discounts based on category, check inventory thresholds, generate display labels. This is the middleware's core value.</li>
-                    <li><strong>Create aggregation endpoints</strong> — <code>GET /api/v1/catalog/overview</code> returns top products, category stats, recent additions — all composed from multiple system-api calls.</li>
-                    <li><strong>Implement DTO mapping layer</strong> — Create mapper classes (or use MapStruct) to transform between Feign response DTOs, domain models, and middleware response DTOs.</li>
-                    <li><strong>Handle partial failures</strong> — If supplier call fails but product succeeds, return product with <code>supplier: null</code> rather than failing the entire request. Graceful degradation.</li>
-                    <li><strong>Add request correlation IDs</strong> — Generate UUID on first request. Pass as <code>X-Correlation-ID</code> header through Feign. Log it at every layer for traceability.</li>
+            <div style="background:#0F2847;border-radius:12px;padding:1.25rem;border:1px solid rgba(18,171,219,0.2);">
+                <div class="section-label" style="color:#7DD3E8!important;">🔧 Activities</div>
+                <ol style="color:#ffffff!important">
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Compose multiple downstream calls</strong> — Fetch product + category + supplier from system-api in a single middleware endpoint. Aggregate into a rich response: <code>ProductDetailView</code>.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Implement parallel calls</strong> — Use <code>CompletableFuture.supplyAsync()</code> to call product, category, and supplier endpoints in parallel. Combine results with <code>allOf()</code>.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Add business rules</strong> — Calculate tax, apply discounts based on category, check inventory thresholds, generate display labels. This is the middleware's core value.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Create aggregation endpoints</strong> — <code>GET /api/v1/catalog/overview</code> returns top products, category stats, recent additions — all composed from multiple system-api calls.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Implement DTO mapping layer</strong> — Create mapper classes (or use MapStruct) to transform between Feign response DTOs, domain models, and middleware response DTOs.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Handle partial failures</strong> — If supplier call fails but product succeeds, return product with <code>supplier: null</code> rather than failing the entire request. Graceful degradation.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Add request correlation IDs</strong> — Generate UUID on first request. Pass as <code>X-Correlation-ID</code> header through Feign. Log it at every layer for traceability.</li>
                 </ol>
-                <div class="section-label mt-4">📐 Principles</div>
-                <ul>
-                    <li><strong>Saga Pattern (simple)</strong> — Compose multi-step operations with graceful partial failure handling.</li>
-                    <li><strong>CQRS-lite</strong> — Read (query) endpoints aggregate data. Write (command) endpoints pass through to system-api.</li>
-                    <li><strong>Correlation</strong> — Every request traceable across services via X-Correlation-ID.</li>
+                <div class="section-label mt-4" style="color:#7DD3E8!important;">📐 Principles</div>
+                <ul style="color:#ffffff!important">
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Saga Pattern (simple)</strong> — Compose multi-step operations with graceful partial failure handling.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">CQRS-lite</strong> — Read (query) endpoints aggregate data. Write (command) endpoints pass through to system-api.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Correlation</strong> — Every request traceable across services via X-Correlation-ID.</li>
                 </ul>
             </div>
             <div>
@@ -950,22 +969,22 @@ $ curl localhost:8082/actuator/circuitbreakers
             </div>
         </div>
         <div class="grid grid-cols-2 gap-5">
-            <div>
-                <div class="section-label">🔧 Activities</div>
-                <ol>
-                    <li><strong>Create middleware @RestControllerAdvice</strong> — Handle <code>FeignException</code> (downstream errors), <code>CallNotPermittedException</code> (circuit open), <code>BulkheadFullException</code>, <code>RequestNotPermitted</code>.</li>
-                    <li><strong>Map downstream errors</strong> — system-api 400 → middleware 400 (pass through). system-api 404 → middleware 404. system-api 500 → middleware 502 (Bad Gateway). Circuit open → 503 (Service Unavailable).</li>
-                    <li><strong>Consistent RFC 7807 across middleware</strong> — Same ProblemDetail format as system-api. Include <code>X-Correlation-ID</code> in error responses for traceability.</li>
-                    <li><strong>Write unit tests for orchestration service</strong> — Mock Feign client with Mockito. Test happy path, partial failures, full failures. Verify fallback behavior.</li>
-                    <li><strong>Write circuit breaker integration tests</strong> — Use WireMock to simulate system-api. Return 500s to trigger circuit open. Verify fallback. Return 200s to close circuit.</li>
-                    <li><strong>Write controller tests</strong> — MockMvc tests for middleware endpoints. Verify response structure, status codes, correlation IDs.</li>
-                    <li><strong>Add logging standards</strong> — Structured JSON logging with <code>logback-spring.xml</code>. Fields: timestamp, level, correlationId, service, message. MDC for correlation.</li>
+            <div style="background:#0F2847;border-radius:12px;padding:1.25rem;border:1px solid rgba(18,171,219,0.2);">
+                <div class="section-label" style="color:#7DD3E8!important;">🔧 Activities</div>
+                <ol style="color:#ffffff!important">
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Create middleware @RestControllerAdvice</strong> — Handle <code>FeignException</code> (downstream errors), <code>CallNotPermittedException</code> (circuit open), <code>BulkheadFullException</code>, <code>RequestNotPermitted</code>.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Map downstream errors</strong> — system-api 400 → middleware 400 (pass through). system-api 404 → middleware 404. system-api 500 → middleware 502 (Bad Gateway). Circuit open → 503 (Service Unavailable).</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Consistent RFC 7807 across middleware</strong> — Same ProblemDetail format as system-api. Include <code>X-Correlation-ID</code> in error responses for traceability.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Write unit tests for orchestration service</strong> — Mock Feign client with Mockito. Test happy path, partial failures, full failures. Verify fallback behavior.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Write circuit breaker integration tests</strong> — Use WireMock to simulate system-api. Return 500s to trigger circuit open. Verify fallback. Return 200s to close circuit.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Write controller tests</strong> — MockMvc tests for middleware endpoints. Verify response structure, status codes, correlation IDs.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Add logging standards</strong> — Structured JSON logging with <code>logback-spring.xml</code>. Fields: timestamp, level, correlationId, service, message. MDC for correlation.</li>
                 </ol>
-                <div class="section-label mt-4">📐 Principles</div>
-                <ul>
-                    <li><strong>Error Translation</strong> — Never expose downstream stack traces. Map to appropriate HTTP codes.</li>
-                    <li><strong>WireMock</strong> — Simulate downstream services in tests. No dependency on running system-api.</li>
-                    <li><strong>Structured Logging</strong> — JSON logs for machine parsing. MDC for distributed tracing context.</li>
+                <div class="section-label mt-4" style="color:#7DD3E8!important;">📐 Principles</div>
+                <ul style="color:#ffffff!important">
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Error Translation</strong> — Never expose downstream stack traces. Map to appropriate HTTP codes.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">WireMock</strong> — Simulate downstream services in tests. No dependency on running system-api.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Structured Logging</strong> — JSON logs for machine parsing. MDC for distributed tracing context.</li>
                 </ul>
             </div>
             <div>

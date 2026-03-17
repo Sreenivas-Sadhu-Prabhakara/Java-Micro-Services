@@ -14,6 +14,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
+            corePlugins: { preflight: false },
             theme: {
                 extend: {
                     colors: {
@@ -236,9 +237,9 @@
         .slide-light .section-label, .slide-white .section-label { color: #0070AD; }
 
         .badge-in {
-            background: rgba(18,171,219,0.12);
-            color: #12ABDB;
-            border: 1px solid rgba(18,171,219,0.3);
+            background: #0070AD;
+            color: #ffffff;
+            border: 1px solid #12ABDB;
             padding: 0.15rem 0.65rem;
             border-radius: 999px;
             font-size: 0.7rem;
@@ -246,9 +247,9 @@
             display: inline-block;
         }
         .badge-out {
-            background: rgba(0,179,136,0.1);
-            color: #00B388;
-            border: 1px solid rgba(0,179,136,0.25);
+            background: #00875A;
+            color: #ffffff;
+            border: 1px solid #00B388;
             padding: 0.15rem 0.65rem;
             border-radius: 999px;
             font-size: 0.7rem;

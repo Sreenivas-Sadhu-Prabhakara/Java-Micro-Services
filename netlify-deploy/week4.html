@@ -14,6 +14,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
+            corePlugins: { preflight: false },
             theme: {
                 extend: {
                     colors: {
@@ -236,9 +237,9 @@
         .slide-light .section-label, .slide-white .section-label { color: #0070AD; }
 
         .badge-in {
-            background: rgba(18,171,219,0.12);
-            color: #12ABDB;
-            border: 1px solid rgba(18,171,219,0.3);
+            background: #0070AD;
+            color: #ffffff;
+            border: 1px solid #12ABDB;
             padding: 0.15rem 0.65rem;
             border-radius: 999px;
             font-size: 0.7rem;
@@ -246,9 +247,9 @@
             display: inline-block;
         }
         .badge-out {
-            background: rgba(0,179,136,0.1);
-            color: #00B388;
-            border: 1px solid rgba(0,179,136,0.25);
+            background: #00875A;
+            color: #ffffff;
+            border: 1px solid #00B388;
             padding: 0.15rem 0.65rem;
             border-radius: 999px;
             font-size: 0.7rem;
@@ -418,6 +419,24 @@
         .slide-light a, .slide-white a { color: #0070AD; }
         .slide-light .check-icon, .slide-white .check-icon { color: #00875A; }
         .slide-light .section-label, .slide-white .section-label { color: #005A8C; font-weight: 700; }
+        /* ── Badge contrast on light backgrounds ── */
+        .slide-light .badge-in, .slide-white .badge-in {
+            background: #0070AD !important;
+            color: #ffffff !important;
+            border: 1px solid #005A8C !important;
+            font-weight: 700 !important;
+        }
+        .slide-light .badge-out, .slide-white .badge-out {
+            background: #00875A !important;
+            color: #ffffff !important;
+            border: 1px solid #006644 !important;
+            font-weight: 700 !important;
+        }
+        .slide-light .badge-phase, .slide-white .badge-phase {
+            background: #0070AD !important;
+            color: #ffffff !important;
+            border: 1px solid #005A8C !important;
+        }
 
         /* ====================== DARK SLIDE TEXT VISIBILITY ====================== */
         .slide-dark .badge-phase { color: #7DD3E8; background: rgba(18,171,219,0.15); border-color: rgba(18,171,219,0.35); }
@@ -588,22 +607,22 @@
             </div>
         </div>
         <div class="grid grid-cols-2 gap-5">
-            <div>
-                <div class="section-label">🔧 Activities</div>
-                <ol>
-                    <li><strong>Replace spring-boot-starter-web with gateway</strong> — BFF uses <code>spring-cloud-starter-gateway</code> (reactive/Netty). Remove <code>spring-boot-starter-web</code> (blocking/Tomcat). They conflict.</li>
-                    <li><strong>Define routes in YAML</strong> — Route <code>/api/v1/products/**</code> → middleware:8082. Route <code>/api/v1/system/**</code> → system-api:8081 (for admin). Use predicates: Path, Method, Header.</li>
-                    <li><strong>Add gateway filters</strong> — <code>AddRequestHeader</code>, <code>AddResponseHeader</code>, <code>StripPrefix</code>, <code>RewritePath</code>. Add request/response logging filter.</li>
-                    <li><strong>Create custom GlobalFilter</strong> — Log every request: method, path, duration. Add <code>X-Response-Time</code> header to every response.</li>
-                    <li><strong>Configure CORS</strong> — Allow specific origins, methods, headers. Critical for browser-based clients calling the BFF.</li>
-                    <li><strong>Test routing</strong> — <code>curl localhost:8080/api/v1/products</code> → routed to middleware → routed to system-api. Full chain through BFF.</li>
-                    <li><strong>Add Actuator gateway routes</strong> — <code>/actuator/gateway/routes</code> to inspect all configured routes and filters at runtime.</li>
+            <div style="background:#0F2847;border-radius:12px;padding:1.25rem;border:1px solid rgba(18,171,219,0.2);">
+                <div class="section-label" style="color:#7DD3E8!important;">🔧 Activities</div>
+                <ol style="color:#ffffff!important">
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Replace spring-boot-starter-web with gateway</strong> — BFF uses <code>spring-cloud-starter-gateway</code> (reactive/Netty). Remove <code>spring-boot-starter-web</code> (blocking/Tomcat). They conflict.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Define routes in YAML</strong> — Route <code>/api/v1/products/**</code> → middleware:8082. Route <code>/api/v1/system/**</code> → system-api:8081 (for admin). Use predicates: Path, Method, Header.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Add gateway filters</strong> — <code>AddRequestHeader</code>, <code>AddResponseHeader</code>, <code>StripPrefix</code>, <code>RewritePath</code>. Add request/response logging filter.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Create custom GlobalFilter</strong> — Log every request: method, path, duration. Add <code>X-Response-Time</code> header to every response.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Configure CORS</strong> — Allow specific origins, methods, headers. Critical for browser-based clients calling the BFF.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Test routing</strong> — <code>curl localhost:8080/api/v1/products</code> → routed to middleware → routed to system-api. Full chain through BFF.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Add Actuator gateway routes</strong> — <code>/actuator/gateway/routes</code> to inspect all configured routes and filters at runtime.</li>
                 </ol>
-                <div class="section-label mt-4">📐 Principles</div>
-                <ul>
-                    <li><strong>API Gateway Pattern</strong> — Single entry point. Cross-cutting concerns (auth, logging, CORS) centralized.</li>
-                    <li><strong>Reactive</strong> — Gateway uses Spring WebFlux/Netty. Non-blocking I/O. High throughput.</li>
-                    <li><strong>Defense in Depth</strong> — Only BFF port exposed. Internal services unreachable from outside.</li>
+                <div class="section-label mt-4" style="color:#7DD3E8!important;">📐 Principles</div>
+                <ul style="color:#ffffff!important">
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">API Gateway Pattern</strong> — Single entry point. Cross-cutting concerns (auth, logging, CORS) centralized.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Reactive</strong> — Gateway uses Spring WebFlux/Netty. Non-blocking I/O. High throughput.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Defense in Depth</strong> — Only BFF port exposed. Internal services unreachable from outside.</li>
                 </ul>
             </div>
             <div>

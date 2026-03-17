@@ -14,6 +14,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
+            corePlugins: { preflight: false },
             theme: {
                 extend: {
                     colors: {
@@ -236,9 +237,9 @@
         .slide-light .section-label, .slide-white .section-label { color: #0070AD; }
 
         .badge-in {
-            background: rgba(18,171,219,0.12);
-            color: #12ABDB;
-            border: 1px solid rgba(18,171,219,0.3);
+            background: #0070AD;
+            color: #ffffff;
+            border: 1px solid #12ABDB;
             padding: 0.15rem 0.65rem;
             border-radius: 999px;
             font-size: 0.7rem;
@@ -246,9 +247,9 @@
             display: inline-block;
         }
         .badge-out {
-            background: rgba(0,179,136,0.1);
-            color: #00B388;
-            border: 1px solid rgba(0,179,136,0.25);
+            background: #00875A;
+            color: #ffffff;
+            border: 1px solid #00B388;
             padding: 0.15rem 0.65rem;
             border-radius: 999px;
             font-size: 0.7rem;
@@ -418,6 +419,24 @@
         .slide-light a, .slide-white a { color: #0070AD; }
         .slide-light .check-icon, .slide-white .check-icon { color: #00875A; }
         .slide-light .section-label, .slide-white .section-label { color: #005A8C; font-weight: 700; }
+        /* ── Badge contrast on light backgrounds ── */
+        .slide-light .badge-in, .slide-white .badge-in {
+            background: #0070AD !important;
+            color: #ffffff !important;
+            border: 1px solid #005A8C !important;
+            font-weight: 700 !important;
+        }
+        .slide-light .badge-out, .slide-white .badge-out {
+            background: #00875A !important;
+            color: #ffffff !important;
+            border: 1px solid #006644 !important;
+            font-weight: 700 !important;
+        }
+        .slide-light .badge-phase, .slide-white .badge-phase {
+            background: #0070AD !important;
+            color: #ffffff !important;
+            border: 1px solid #005A8C !important;
+        }
 
         /* ====================== DARK SLIDE TEXT VISIBILITY ====================== */
         .slide-dark .badge-phase { color: #7DD3E8; background: rgba(18,171,219,0.15); border-color: rgba(18,171,219,0.35); }
@@ -555,7 +574,7 @@
 <div id="week-nav">
     <a href="index.html" style="text-decoration:none;display:inline-block;padding:0.45rem 0.9rem;border-radius:8px;border:1px solid transparent;font-size:0.72rem;font-family:Outfit,sans-serif;font-weight:700;text-align:center;line-height:1.3;transition:all 0.2s;background:linear-gradient(135deg,#0070AD,#12ABDB);color:white;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">🏠 Master</a>
       <a href="week1.html" style="text-decoration:none;display:inline-block;padding:0.45rem 0.9rem;border-radius:8px;border:1px solid transparent;font-size:0.72rem;font-family:Outfit,sans-serif;font-weight:700;text-align:center;line-height:1.3;transition:all 0.2s;background:rgba(0,112,173,0.08);border-color:rgba(0,112,173,0.2);color:rgba(255,255,255,0.7);" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">Week 1<br><span style='font-size:0.6rem'>Days 1–5</span></a>
-      <a href="week2.html" style="text-decoration:none;display:inline-block;padding:0.45rem 0.9rem;border-radius:8px;border:1px solid transparent;font-size:0.72rem;font-family:Outfit,sans-serif;font-weight:700;text-align:center;line-height:1.3;transition:all 0.2s;background:rgba(0,179,136,0.25);border-color:#00B388;color:#00B388;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">Week 2<br><span style='font-size:0.6rem'>Days 6–10</span></a>
+      <a href="week2.html" style="text-decoration:none;display:inline-block;padding:0.45rem 0.9rem;border-radius:8px;border:1px solid transparent;font-size:0.72rem;font-family:Outfit,sans-serif;font-weight:700;text-align:center;line-height:1.3;transition:all 0.2s;background:rgba(0,112,173,0.08);border-color:rgba(0,112,173,0.2);color:rgba(255,255,255,0.7);" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">Week 2<br><span style='font-size:0.6rem'>Days 6–10</span></a>
       <a href="week3.html" style="text-decoration:none;display:inline-block;padding:0.45rem 0.9rem;border-radius:8px;border:1px solid transparent;font-size:0.72rem;font-family:Outfit,sans-serif;font-weight:700;text-align:center;line-height:1.3;transition:all 0.2s;background:rgba(0,112,173,0.08);border-color:rgba(0,112,173,0.2);color:rgba(255,255,255,0.7);" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">Week 3<br><span style='font-size:0.6rem'>Days 11–15</span></a>
       <a href="week4.html" style="text-decoration:none;display:inline-block;padding:0.45rem 0.9rem;border-radius:8px;border:1px solid transparent;font-size:0.72rem;font-family:Outfit,sans-serif;font-weight:700;text-align:center;line-height:1.3;transition:all 0.2s;background:rgba(0,112,173,0.08);border-color:rgba(0,112,173,0.2);color:rgba(255,255,255,0.7);" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">Week 4<br><span style='font-size:0.6rem'>Days 16–20</span></a>
       <a href="week5.html" style="text-decoration:none;display:inline-block;padding:0.45rem 0.9rem;border-radius:8px;border:1px solid transparent;font-size:0.72rem;font-family:Outfit,sans-serif;font-weight:700;text-align:center;line-height:1.3;transition:all 0.2s;background:rgba(0,112,173,0.08);border-color:rgba(0,112,173,0.2);color:rgba(255,255,255,0.7);" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">Week 5<br><span style='font-size:0.6rem'>Days 21–25</span></a>
@@ -589,22 +608,22 @@
             </div>
         </div>
         <div class="grid grid-cols-2 gap-5">
-            <div>
-                <div class="section-label">🔧 Activities</div>
-                <ol>
-                    <li><strong>Design domain model</strong> — Create <code>Product</code>, <code>Category</code>, <code>Supplier</code> as domain entities in <code>domain.model</code>. Use Java Records for Value Objects. Define relationships: Product belongs to Category, Product has a Supplier.</li>
-                    <li><strong>Create JPA entities</strong> — In <code>adapter.out.persistence</code>, create <code>ProductJpaEntity</code>, <code>CategoryJpaEntity</code>, <code>SupplierJpaEntity</code> with <code>@Entity</code>, <code>@Table</code>, <code>@Id</code>, <code>@GeneratedValue(IDENTITY)</code>.</li>
-                    <li><strong>Map relationships</strong> — <code>@ManyToOne</code> from Product to Category. <code>@ManyToOne</code> from Product to Supplier. Use <code>@JoinColumn</code>. Set <code>fetch = LAZY</code> everywhere (prevent N+1).</li>
-                    <li><strong>Add auditing fields</strong> — <code>@CreatedDate</code>, <code>@LastModifiedDate</code> with <code>@EntityListeners(AuditingEntityListener.class)</code>. Enable with <code>@EnableJpaAuditing</code> on config.</li>
-                    <li><strong>Configure JPA properties</strong> — <code>spring.jpa.hibernate.ddl-auto=validate</code> (Flyway handles schema). <code>spring.jpa.show-sql=true</code> for dev. <code>spring.jpa.open-in-view=false</code> (critical!).</li>
-                    <li><strong>Connect to PostgreSQL</strong> — Verify <code>system-api</code> connects to Docker PostgreSQL using compose env vars. Check logs for "HikariPool-1 - Starting..."</li>
-                    <li><strong>Write domain-to-JPA mappers</strong> — Static methods or a Mapper class: <code>toDomain(ProductJpaEntity)</code> and <code>toEntity(Product)</code>. Keep in persistence adapter package.</li>
+            <div style="background:#0F2847;border-radius:12px;padding:1.25rem;border:1px solid rgba(18,171,219,0.2);">
+                <div class="section-label" style="color:#7DD3E8!important;">🔧 Activities</div>
+                <ol style="color:#ffffff!important">
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Design domain model</strong> — Create <code>Product</code>, <code>Category</code>, <code>Supplier</code> as domain entities in <code>domain.model</code>. Use Java Records for Value Objects. Define relationships: Product belongs to Category, Product has a Supplier.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Create JPA entities</strong> — In <code>adapter.out.persistence</code>, create <code>ProductJpaEntity</code>, <code>CategoryJpaEntity</code>, <code>SupplierJpaEntity</code> with <code>@Entity</code>, <code>@Table</code>, <code>@Id</code>, <code>@GeneratedValue(IDENTITY)</code>.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Map relationships</strong> — <code>@ManyToOne</code> from Product to Category. <code>@ManyToOne</code> from Product to Supplier. Use <code>@JoinColumn</code>. Set <code>fetch = LAZY</code> everywhere (prevent N+1).</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Add auditing fields</strong> — <code>@CreatedDate</code>, <code>@LastModifiedDate</code> with <code>@EntityListeners(AuditingEntityListener.class)</code>. Enable with <code>@EnableJpaAuditing</code> on config.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Configure JPA properties</strong> — <code>spring.jpa.hibernate.ddl-auto=validate</code> (Flyway handles schema). <code>spring.jpa.show-sql=true</code> for dev. <code>spring.jpa.open-in-view=false</code> (critical!).</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Connect to PostgreSQL</strong> — Verify <code>system-api</code> connects to Docker PostgreSQL using compose env vars. Check logs for "HikariPool-1 - Starting..."</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Write domain-to-JPA mappers</strong> — Static methods or a Mapper class: <code>toDomain(ProductJpaEntity)</code> and <code>toEntity(Product)</code>. Keep in persistence adapter package.</li>
                 </ol>
-                <div class="section-label mt-4">📐 Principles</div>
-                <ul>
-                    <li><strong>SOLID (S)</strong> — JPA entity ≠ domain entity. Each has a single responsibility.</li>
-                    <li><strong>Clean Architecture</strong> — Domain model is persistence-agnostic. No <code>@Entity</code> in domain.</li>
-                    <li><strong>OWASP</strong> — Parameterized queries via JPA. No string concatenation SQL.</li>
+                <div class="section-label mt-4" style="color:#7DD3E8!important;">📐 Principles</div>
+                <ul style="color:#ffffff!important">
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">SOLID (S)</strong> — JPA entity ≠ domain entity. Each has a single responsibility.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Clean Architecture</strong> — Domain model is persistence-agnostic. No <code>@Entity</code> in domain.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">OWASP</strong> — Parameterized queries via JPA. No string concatenation SQL.</li>
                 </ul>
             </div>
             <div>
@@ -827,23 +846,23 @@ training=# SELECT * FROM flyway_schema_history;
             </div>
         </div>
         <div class="grid grid-cols-2 gap-5">
-            <div>
-                <div class="section-label">🔧 Activities</div>
-                <ol>
-                    <li><strong>Create JPA repositories</strong> — <code>ProductJpaRepository extends JpaRepository&lt;ProductJpaEntity, Long&gt;</code>. Add custom query methods: <code>findByStatus()</code>, <code>findByCategoryId()</code>, <code>findByNameContainingIgnoreCase()</code>.</li>
-                    <li><strong>Implement persistence adapter</strong> — <code>ProductPersistenceAdapter implements SaveProductPort, LoadProductPort</code>. Bridges domain ports to JPA repositories with entity↔domain mapping.</li>
-                    <li><strong>Implement domain service</strong> — <code>ProductService implements CreateProductUseCase, GetProductUseCase</code>. Orchestrates domain logic, calls outbound ports.</li>
-                    <li><strong>Create REST controller</strong> — <code>ProductController</code> in <code>adapter.in.web</code>. Full CRUD: <code>GET /api/v1/products</code>, <code>GET /{id}</code>, <code>POST</code>, <code>PUT /{id}</code>, <code>DELETE /{id}</code>.</li>
-                    <li><strong>Use proper HTTP semantics</strong> — POST returns 201 + Location header. GET returns 200. PUT returns 200. DELETE returns 204. Not found returns 404.</li>
-                    <li><strong>Add pagination & sorting</strong> — <code>GET /api/v1/products?page=0&size=20&sort=name,asc</code> using Spring Data <code>Pageable</code>. Return <code>Page&lt;T&gt;</code> with metadata.</li>
-                    <li><strong>Write request/response DTOs</strong> — <code>CreateProductRequest</code>, <code>UpdateProductRequest</code>, <code>ProductResponse</code> as Records. Controller maps DTOs to/from domain.</li>
-                    <li><strong>Test with curl/httpie</strong> — Create products, list them, get by ID, update, delete. Verify all status codes.</li>
+            <div style="background:#0F2847;border-radius:12px;padding:1.25rem;border:1px solid rgba(18,171,219,0.2);">
+                <div class="section-label" style="color:#7DD3E8!important;">🔧 Activities</div>
+                <ol style="color:#ffffff!important">
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Create JPA repositories</strong> — <code>ProductJpaRepository extends JpaRepository&lt;ProductJpaEntity, Long&gt;</code>. Add custom query methods: <code>findByStatus()</code>, <code>findByCategoryId()</code>, <code>findByNameContainingIgnoreCase()</code>.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Implement persistence adapter</strong> — <code>ProductPersistenceAdapter implements SaveProductPort, LoadProductPort</code>. Bridges domain ports to JPA repositories with entity↔domain mapping.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Implement domain service</strong> — <code>ProductService implements CreateProductUseCase, GetProductUseCase</code>. Orchestrates domain logic, calls outbound ports.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Create REST controller</strong> — <code>ProductController</code> in <code>adapter.in.web</code>. Full CRUD: <code>GET /api/v1/products</code>, <code>GET /{id}</code>, <code>POST</code>, <code>PUT /{id}</code>, <code>DELETE /{id}</code>.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Use proper HTTP semantics</strong> — POST returns 201 + Location header. GET returns 200. PUT returns 200. DELETE returns 204. Not found returns 404.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Add pagination & sorting</strong> — <code>GET /api/v1/products?page=0&size=20&sort=name,asc</code> using Spring Data <code>Pageable</code>. Return <code>Page&lt;T&gt;</code> with metadata.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Write request/response DTOs</strong> — <code>CreateProductRequest</code>, <code>UpdateProductRequest</code>, <code>ProductResponse</code> as Records. Controller maps DTOs to/from domain.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Test with curl/httpie</strong> — Create products, list them, get by ID, update, delete. Verify all status codes.</li>
                 </ol>
-                <div class="section-label mt-4">📐 Principles</div>
-                <ul>
-                    <li><strong>REST</strong> — Proper HTTP methods, status codes, content negotiation, HATEOAS-ready.</li>
-                    <li><strong>SOLID (I)</strong> — Slim DTOs per operation. No god-object request/response.</li>
-                    <li><strong>API versioning</strong> — URL prefix <code>/api/v1/</code> for future backward compatibility.</li>
+                <div class="section-label mt-4" style="color:#7DD3E8!important;">📐 Principles</div>
+                <ul style="color:#ffffff!important">
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">REST</strong> — Proper HTTP methods, status codes, content negotiation, HATEOAS-ready.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">SOLID (I)</strong> — Slim DTOs per operation. No god-object request/response.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">API versioning</strong> — URL prefix <code>/api/v1/</code> for future backward compatibility.</li>
                 </ul>
             </div>
             <div>
@@ -1075,23 +1094,23 @@ $ curl -X POST localhost:8081/api/v1/products \
             </div>
         </div>
         <div class="grid grid-cols-2 gap-5">
-            <div>
-                <div class="section-label">🔧 Activities</div>
-                <ol>
-                    <li><strong>Add SpringDoc OpenAPI</strong> — <code>springdoc-openapi-starter-webmvc-ui</code> dependency. Access Swagger UI at <code>/swagger-ui.html</code>. Auto-generates spec from controllers.</li>
-                    <li><strong>Annotate controllers</strong> — Add <code>@Operation(summary=...)</code>, <code>@ApiResponse</code>, <code>@Tag</code> annotations. Enrich the generated OpenAPI spec with descriptions.</li>
-                    <li><strong>Write unit tests for domain service</strong> — Test <code>ProductService</code> with Mockito. Mock outbound ports. Verify business logic in isolation. No Spring context needed.</li>
-                    <li><strong>Write unit tests for domain model</strong> — Test validation in domain records. Negative price throws exception. Null-safe constructors.</li>
-                    <li><strong>Write integration tests for controller</strong> — Use <code>@SpringBootTest</code> + <code>@AutoConfigureMockMvc</code>. Test full HTTP request/response cycle with MockMvc.</li>
-                    <li><strong>Write repository integration tests</strong> — Use <code>@DataJpaTest</code> + Testcontainers PostgreSQL. Test custom queries, pagination, relationships.</li>
-                    <li><strong>Setup Testcontainers</strong> — Add <code>org.testcontainers:postgresql</code>. Real PostgreSQL in Docker for tests. No H2 compromises.</li>
-                    <li><strong>Achieve >80% coverage on system-api</strong> — Use JaCoCo Maven plugin. Generate coverage reports. Focus on service and controller layers.</li>
+            <div style="background:#0F2847;border-radius:12px;padding:1.25rem;border:1px solid rgba(18,171,219,0.2);">
+                <div class="section-label" style="color:#7DD3E8!important;">🔧 Activities</div>
+                <ol style="color:#ffffff!important">
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Add SpringDoc OpenAPI</strong> — <code>springdoc-openapi-starter-webmvc-ui</code> dependency. Access Swagger UI at <code>/swagger-ui.html</code>. Auto-generates spec from controllers.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Annotate controllers</strong> — Add <code>@Operation(summary=...)</code>, <code>@ApiResponse</code>, <code>@Tag</code> annotations. Enrich the generated OpenAPI spec with descriptions.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Write unit tests for domain service</strong> — Test <code>ProductService</code> with Mockito. Mock outbound ports. Verify business logic in isolation. No Spring context needed.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Write unit tests for domain model</strong> — Test validation in domain records. Negative price throws exception. Null-safe constructors.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Write integration tests for controller</strong> — Use <code>@SpringBootTest</code> + <code>@AutoConfigureMockMvc</code>. Test full HTTP request/response cycle with MockMvc.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Write repository integration tests</strong> — Use <code>@DataJpaTest</code> + Testcontainers PostgreSQL. Test custom queries, pagination, relationships.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Setup Testcontainers</strong> — Add <code>org.testcontainers:postgresql</code>. Real PostgreSQL in Docker for tests. No H2 compromises.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Achieve >80% coverage on system-api</strong> — Use JaCoCo Maven plugin. Generate coverage reports. Focus on service and controller layers.</li>
                 </ol>
-                <div class="section-label mt-4">📐 Principles</div>
-                <ul>
-                    <li><strong>Test Pyramid</strong> — Many unit tests (fast), fewer integration tests (slower), minimal E2E.</li>
-                    <li><strong>Contract-First</strong> — OpenAPI spec is the contract. Auto-generated from code annotations.</li>
-                    <li><strong>Testcontainers</strong> — Real DB in tests. Never test with H2 when deploying on PostgreSQL.</li>
+                <div class="section-label mt-4" style="color:#7DD3E8!important;">📐 Principles</div>
+                <ul style="color:#ffffff!important">
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Test Pyramid</strong> — Many unit tests (fast), fewer integration tests (slower), minimal E2E.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Contract-First</strong> — OpenAPI spec is the contract. Auto-generated from code annotations.</li>
+                    <li style="color:#ffffff!important"><strong style="color:#ffffff!important">Testcontainers</strong> — Real DB in tests. Never test with H2 when deploying on PostgreSQL.</li>
                 </ul>
             </div>
             <div>
